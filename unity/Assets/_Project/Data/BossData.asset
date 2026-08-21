@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4abf59b11843b294ba538c6e47dff8c9, type: 3}
+  m_Name: BossData
+  m_EditorClassIdentifier: 
+  monsterName: "\uB864\uBC95\uC0AC"
+  maxHealth: 1800
+  contactDamage: 15
+  moveSpeed: 1.6
+  knockbackResistance: 0.9
+  xpGemDrop: 2
+  animatorController: {fileID: 9100000, guid: 6278c47283afc2c4c9e520c2ad3e61f0, type: 2}
+  phaseOne:
+    patternInterval: 4
+    moveScale: 1
+    meteorCount: 3
+    meteorSpacing: 0.35
+    meteorWarningTime: 0.7
+    meteorDamage: 20
+    meteorRadius: 1.2
+    summonCount: 4
+    summonRadius: 4
+  phaseTwo:
+    patternInterval: 2.5
+    moveScale: 1.3
+    meteorCount: 5
+    meteorSpacing: 0.3
+    meteorWarningTime: 0.6
+    meteorDamage: 25
+    meteorRadius: 1.2
+    summonCount: 6
+    summonRadius: 4
+  phaseTwoThreshold: 0.5
