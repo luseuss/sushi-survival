@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 596849244926963855}
   - component: {fileID: 6583734508533315117}
   - component: {fileID: 1108281474064982475}
+  - component: {fileID: -2361642250285822996}
   m_Layer: 6
   m_Name: BasicMob
   m_TagString: Untagged
@@ -165,6 +166,7 @@ MonoBehaviour:
   monsterData: {fileID: 11400000, guid: ea0aff04c24c48a4782f54eef4947313, type: 2}
   knockbackForce: 3
   knockbackDecay: 12
+  spriteFlasher: {fileID: -2361642250285822996}
 --- !u!114 &1108281474064982475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,3 +186,15 @@ MonoBehaviour:
   separationRadius: 0.6
   separationStrength: 1.5
   separationInterval: 0.1
+--- !u!114 &-2361642250285822996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc5fee2692bfb49bb962ecc9b26399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

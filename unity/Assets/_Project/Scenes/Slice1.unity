@@ -1403,6 +1403,58 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -1820, y: -980}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &622797212
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 622797214}
+  - component: {fileID: 622797213}
+  m_Layer: 0
+  m_Name: JuiceDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &622797213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622797212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b21a3cd8dc2b3e4e9c6024b6eb2d4d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraFollow: {fileID: 674259427}
+  deathBurstPool: {fileID: 1064299818}
+  playerHitStopDuration: 0.08
+  enemyDeathStopDuration: 0.03
+  playerHitShakeMagnitude: 0.15
+  playerHitShakeDuration: 0.2
+  enemyDeathShakeMagnitude: 0.05
+  enemyDeathShakeDuration: 0.1
+--- !u!4 &622797214
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622797212}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1037.3837, y: 588.5466, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &674259423
 GameObject:
   m_ObjectHideFlags: 0
@@ -1661,6 +1713,7 @@ MonoBehaviour:
   - {fileID: 2012562562}
   - {fileID: 919204434}
   - {fileID: 362417628}
+  showDuration: 0.15
 --- !u!114 &760529371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1982,6 +2035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bar: {fileID: 1678444676}
   fillImage: {fileID: 860198935}
+  fillSpeed: 2
 --- !u!224 &812995557
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2417,6 +2471,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 944692465}
   m_CullTransparentMesh: 1
+--- !u!1 &1064299817
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1064299819}
+  - component: {fileID: 1064299818}
+  m_Layer: 0
+  m_Name: DeathBurstPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1064299818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064299817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea48f82176864245bf63358b74d9dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 7442037208186124930, guid: ca39b3fbace09da418b2e8ea9d9bcae4, type: 3}
+  prewarmCount: 10
+--- !u!4 &1064299819
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064299817}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1037.3837, y: 588.5466, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1079125427
 GameObject:
   m_ObjectHideFlags: 0
@@ -4105,3 +4205,5 @@ SceneRoots:
   - {fileID: 1599481367}
   - {fileID: 2623615708070852071}
   - {fileID: 1703294349}
+  - {fileID: 1064299819}
+  - {fileID: 622797214}

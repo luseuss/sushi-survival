@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2060466612959061517}
   - component: {fileID: 8006865704914087385}
   - component: {fileID: 6343328608926914217}
+  - component: {fileID: 859233559979313158}
   m_Layer: 0
   m_Name: ShrimpPlayer
   m_TagString: Player
@@ -193,6 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1ff3d2bac081724caad4ddd30fe1f3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteFlasher: {fileID: 859233559979313158}
 --- !u!114 &8006865704914087385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,6 +228,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterData: {fileID: 11400000, guid: 26a145f3263f0fd4a9ea2329d7a96c03, type: 2}
   baseMagnetRange: 0.5
+--- !u!114 &859233559979313158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629794472604786000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc5fee2692bfb49bb962ecc9b26399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4398265970697189465
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,6 +508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth: {fileID: 2060466612959061517}
   fillImage: {fileID: 7117919162416185106}
+  fillSpeed: 2
 --- !u!1 &7212407171583317725
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 405356964781061093}
   - component: {fileID: 6247406205898824425}
   - component: {fileID: 1440815608935356904}
+  - component: {fileID: 7980025061145666681}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Untagged
@@ -190,6 +191,7 @@ MonoBehaviour:
   monsterData: {fileID: 11400000, guid: 2f78239dad335eb40b9e74e40f1a5748, type: 2}
   knockbackForce: 3
   knockbackDecay: 12
+  spriteFlasher: {fileID: 7980025061145666681}
 --- !u!114 &8522117477275594241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,7 +225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossData: {fileID: 11400000, guid: 2f78239dad335eb40b9e74e40f1a5748, type: 2}
   animator: {fileID: 5390301135880506290}
-  spriteRenderer: {fileID: 6129037749586866933}
+  spriteFlasher: {fileID: 7980025061145666681}
   meteorPattern: {fileID: 6247406205898824425}
   summonPattern: {fileID: 1440815608935356904}
   castDuration: 1.08
@@ -253,3 +255,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   summonDelayOverride: 0
+--- !u!114 &7980025061145666681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8929938124051220094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc5fee2692bfb49bb962ecc9b26399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
