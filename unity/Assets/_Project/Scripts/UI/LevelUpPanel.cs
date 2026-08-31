@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SushiSurvival.Core;
@@ -11,14 +12,19 @@ namespace SushiSurvival.UI
         [SerializeField] private GameObject root;
         [Tooltip("선택지 버튼 3개.")]
         [SerializeField] private LevelUpOptionButton[] optionButtons;
+        [Tooltip("스케일인에 걸리는 실시간(초). Show() 직후 timeScale이 0이 되므로 " +
+                 "반드시 실시간으로 진행한다.")]
+        [SerializeField] private float showDuration = 0.15f;
 
         private GameObject Root => root != null ? root : gameObject;
+        private Coroutine _showRoutine;
 
         private void Awake() => Hide();
 
         public void Show(IReadOnlyList<IUpgradeOption> options, Action<IUpgradeOption> onChosen)
         {
             Root.SetActive(true);
+            Root.transform.localScale = Vector3.zero;
 
             for (int i = 0; i < optionButtons.Length; i++)
             {
@@ -27,8 +33,28 @@ namespace SushiSurvival.UI
                 else
                     optionButtons[i].Clear();
             }
+
+            if (_showRoutine != null) StopCoroutine(_showRoutine);
+            _showRoutine = StartCoroutine(ScaleIn());
         }
 
         public void Hide() => Root.SetActive(false);
+
+        private IEnumerator ScaleIn()
+        {
+            Transform t = Root.transform;
+            float elapsed = 0f;
+
+            while (elapsed < showDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float p = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / showDuration));
+                t.localScale = Vector3.one * p;
+                yield return null;
+            }
+
+            t.localScale = Vector3.one;
+            _showRoutine = null;
+        }
     }
 }
