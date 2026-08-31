@@ -25,7 +25,7 @@ namespace SushiSurvival.Enemies.Boss
 
         [SerializeField] private BossData bossData;
         [SerializeField] private Animator animator;
-        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private SushiSurvival.Core.SpriteFlasher spriteFlasher;
         [SerializeField] private MeteorPattern meteorPattern;
         [SerializeField] private SummonPattern summonPattern;
 
@@ -39,7 +39,6 @@ namespace SushiSurvival.Enemies.Boss
 
         private EnemyBase _enemy;
         private EnemyAI _ai;
-        private Color _baseColor = Color.white;
 
         private BossPatternType _previousPattern;
         private int _phase = BossPhaseLogic.PhaseOne;
@@ -51,9 +50,6 @@ namespace SushiSurvival.Enemies.Boss
         {
             _enemy = GetComponent<EnemyBase>();
             _ai = GetComponent<EnemyAI>();
-
-            if (spriteRenderer != null)
-                _baseColor = spriteRenderer.color;
         }
 
         public void Activate(PlayerHealth player, GameObjectPool meteorPool,
@@ -113,7 +109,9 @@ namespace SushiSurvival.Enemies.Boss
             _ai.MoveScale = bossData.GetPhaseValues(_phase).moveScale;
 
             Debug.Log($"[BossController] 페이즈 {_phase} 전환");
-            StartCoroutine(FlashPhaseChange());
+
+            if (spriteFlasher != null)
+                spriteFlasher.Flash(Color.red, phaseFlashDuration);
         }
 
         private IEnumerator Cast(BossPatternType pattern)
@@ -147,15 +145,6 @@ namespace SushiSurvival.Enemies.Boss
             _ai.MoveScale = values.moveScale;
             _patternTimer = values.patternInterval;
             _casting = false;
-        }
-
-        private IEnumerator FlashPhaseChange()
-        {
-            if (spriteRenderer == null) yield break;
-
-            spriteRenderer.color = Color.red;
-            yield return new WaitForSeconds(phaseFlashDuration);
-            spriteRenderer.color = _baseColor;
         }
     }
 }
