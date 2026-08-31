@@ -14,7 +14,20 @@ namespace SushiSurvival.Core
         [Tooltip("클수록 빠르게 따라붙는다. 0이면 따라가지 않는다.")]
         [SerializeField] private float followSpeed = 5f;
 
+        // 흔들리지 않는 실제 추적 위치. transform.position은 여기에 흔들림
+        // 오프셋을 얹은 값이라, 흔들림이 다음 프레임의 추적 기준을 오염시키지 않는다.
+        private Vector3 _basePosition;
+        private Vector2 _shakeOffset;
+
         public void SetTarget(Transform newTarget) => target = newTarget;
+
+        /// <summary>JuiceDirector가 매 프레임 흔들림 오프셋을 여기로 밀어넣는다.</summary>
+        public void SetShakeOffset(Vector2 offset) => _shakeOffset = offset;
+
+        private void Awake()
+        {
+            _basePosition = transform.position;
+        }
 
         private void Start()
         {
@@ -32,8 +45,8 @@ namespace SushiSurvival.Core
             if (target == null) return;
 
             float factor = followSpeed * Time.deltaTime;
-            transform.position = CameraFollowLogic.ComputeFollowPosition(
-                transform.position, target.position, factor);
+            _basePosition = CameraFollowLogic.ComputeFollowPosition(_basePosition, target.position, factor);
+            transform.position = _basePosition + (Vector3)_shakeOffset;
         }
     }
 }
