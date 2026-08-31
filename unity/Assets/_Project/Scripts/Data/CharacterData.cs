@@ -13,5 +13,7 @@ namespace SushiSurvival.Data
         public float baseMaxHealth = 100f;
         public WeaponData weaponData;
         public RuntimeAnimatorController animatorController;
+        [Tooltip("호감도 대화 #1 데이터. 비워두면 대화 없이 바로 런이 시작된다.")]
+        public AffinityDialogueData affinityDialogue;
     }
 }
