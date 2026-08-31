@@ -17,6 +17,8 @@ namespace SushiSurvival.Enemies
         [SerializeField] private float knockbackForce = 3f;
         [Tooltip("넉백 속도가 초당 이만큼씩 줄어든다.")]
         [SerializeField] private float knockbackDecay = 12f;
+        [Tooltip("피격 시 흰색으로 번쩍인다. 비워두면 플래시 없이 조용히 넘어간다.")]
+        [SerializeField] private SpriteFlasher spriteFlasher;
 
         private XPGemPoolSet _xpGemPools;
         private GameObjectPool _selfPool;
@@ -72,6 +74,9 @@ namespace SushiSurvival.Enemies
             KnockbackVelocity += KnockbackLogic.ComputeImpulse(
                 sourcePosition, transform.position, knockbackForce, monsterData.knockbackResistance);
 
+            if (spriteFlasher != null)
+                spriteFlasher.Flash(Color.white, 0.08f);
+
             CurrentHealth = HealthLogic.ApplyDamage(CurrentHealth, damage);
 
             if (HealthLogic.IsDead(CurrentHealth))
@@ -102,6 +107,13 @@ namespace SushiSurvival.Enemies
                 GameManager.Instance.RegisterKill();
 
             OnDeath?.Invoke(this);
+
+            // 보스는 BossDirector.DeathSequence가 이미 자기만의 슬로모션 연출을
+            // 한다. 여기서도 히트스톱을 걸면 같은 프레임에 두 코루틴이
+            // timeScale을 서로 다른 값으로 건드리다가, 히트스톱이 먼저 끝나며
+            // BossDirector가 설정한 슬로모션을 조기에 지워버릴 수 있다.
+            if (!(monsterData is BossData) && JuiceDirector.Instance != null)
+                JuiceDirector.Instance.EnemyDied(transform.position);
 
             // 죽은 적을 풀로 돌려보낸다. 이걸 하지 않으면 시체가 화면에 남아
             // 계속 플레이어를 쫓아오고 접촉 데미지까지 준다.

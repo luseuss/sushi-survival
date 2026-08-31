@@ -8,6 +8,8 @@ namespace SushiSurvival.Player
     public class PlayerHealth : MonoBehaviour
     {
         private PlayerStats _stats;
+        [Tooltip("피격 시 빨간색으로 번쩍인다. 비워두면 플래시 없이 조용히 넘어간다.")]
+        [SerializeField] private SpriteFlasher spriteFlasher;
         private float _regenCarry;
         private int _revivesUsed;
 
@@ -47,6 +49,12 @@ namespace SushiSurvival.Player
         public void TakeDamage(float damage)
         {
             if (HealthLogic.IsDead(CurrentHealth)) return;
+
+            if (spriteFlasher != null)
+                spriteFlasher.Flash(Color.red, 0.15f);
+
+            if (JuiceDirector.Instance != null)
+                JuiceDirector.Instance.PlayerHit();
 
             float reduced = ArmorLogic.ApplyArmor(damage, _stats.GetValue(StatType.Armor));
             CurrentHealth = HealthLogic.ApplyDamage(CurrentHealth, reduced);
