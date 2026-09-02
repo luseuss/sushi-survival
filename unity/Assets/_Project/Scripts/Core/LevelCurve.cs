@@ -34,5 +34,12 @@ namespace SushiSurvival.Core
 
             return new LevelProgress { XpTowardNext = remaining, LevelsGained = gained };
         }
+
+        /// <summary>다음 레벨까지의 진행률(0~1). XP 게이지에 쓴다.</summary>
+        public static float GetProgressRatio(float xpTowardNext, int level, float baseXp, float increment)
+        {
+            float required = GetRequiredXp(level, baseXp, increment);
+            return required <= 0f ? 0f : UnityEngine.Mathf.Clamp01(xpTowardNext / required);
+        }
     }
 }

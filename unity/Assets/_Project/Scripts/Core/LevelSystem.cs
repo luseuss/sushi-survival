@@ -27,6 +27,9 @@ namespace SushiSurvival.Core
 
         public int CurrentLevel { get; private set; } = 1;
 
+        /// <summary>다음 레벨까지의 진행률(0~1). XpGaugeDisplay가 매 프레임 읽는다.</summary>
+        public float ProgressRatio => LevelCurve.GetProgressRatio(_xpTowardNext, CurrentLevel, baseXp, xpIncrementPerLevel);
+
         private readonly Dictionary<AugmentData, float> _accumulated = new Dictionary<AugmentData, float>();
         private readonly List<AugmentData> _pickedAugments = new List<AugmentData>();
 
