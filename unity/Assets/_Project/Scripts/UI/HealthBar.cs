@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using SushiSurvival.Core;
 using SushiSurvival.Player;
 
 namespace SushiSurvival.UI
@@ -18,6 +19,8 @@ namespace SushiSurvival.UI
         [SerializeField] private Image portraitImage;
         [Tooltip("초당 채움 변화량. 2면 0→1이 0.5초 걸린다.")]
         [SerializeField] private float fillSpeed = 2f;
+        [Tooltip("RunState.Playing이 아닐 때(대화 중 등) 숨기는 데 쓴다. 비워두면 항상 보인다.")]
+        [SerializeField] private CanvasGroup canvasGroup;
 
         private float _currentFill = 1f;
         private float _targetFill = 1f;
@@ -56,6 +59,15 @@ namespace SushiSurvival.UI
 
         private void Update()
         {
+            // Update가 계속 돌아야 상태가 Playing으로 바뀌는 순간을 다시 잡을 수
+            // 있으므로, 여기서는 GameObject를 끄지 않고 CanvasGroup 알파만
+            // 조절한다(자기 자신을 SetActive(false)하면 이 메서드 자체가 멈춘다).
+            if (canvasGroup != null && GameManager.Instance != null)
+            {
+                bool playing = GameManager.Instance.CurrentState == RunState.Playing;
+                canvasGroup.alpha = playing ? 1f : 0f;
+            }
+
             if (fillImage == null) return;
 
             _currentFill = HealthBarLogic.MoveTowardsFill(_currentFill, _targetFill, fillSpeed * Time.deltaTime);
