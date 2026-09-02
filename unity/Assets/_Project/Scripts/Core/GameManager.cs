@@ -10,6 +10,8 @@ namespace SushiSurvival.Core
     public enum RunState
     {
         CharacterSelect,
+        /// <summary>플레이어는 스폰됐지만 대화 #1이 끝날 때까지 전투가 시작되지 않은 상태.</summary>
+        Intro,
         Playing,
         Result
     }
@@ -32,6 +34,8 @@ namespace SushiSurvival.Core
         [SerializeField] private GameObject characterSelectPanel;
         [SerializeField] private SushiSurvival.UI.ResultPanel resultPanel;
         [SerializeField] private SushiSurvival.Enemies.Boss.BossDirector bossDirector;
+        [Tooltip("호감도 대화 #1을 보여준다. 비워두면 대화 없이 바로 시작한다.")]
+        [SerializeField] private AffinityDialogueController affinityDialogueController;
         [Tooltip("보스가 등장하는 시각(초). 5:00 = 300")]
         [SerializeField] private float bossSpawnTime = 300f;
 
@@ -57,6 +61,8 @@ namespace SushiSurvival.Core
 
         private PlayerHealth _playerHealth;
         private PlayerStats _playerStats;
+        private Transform _playerTransform;
+        private string _activeCharacterName;
 
         private void Awake() => Instance = this;
 
@@ -96,23 +102,45 @@ namespace SushiSurvival.Core
                 Debug.LogError($"{player.name}: PlayerHealth가 없어 사망 처리를 연결할 수 없습니다.");
 
             _playerStats = player.GetComponent<PlayerStats>();
+            _playerTransform = player.transform;
+            _activeCharacterName = characterData.characterName;
 
             var weapon = player.GetComponent<WeaponBase>();
             levelSystem.SetPlayer(_playerStats, _playerHealth, weapon);
 
-            cameraFollow.SetTarget(player.transform);
-            enemySpawner.StartSpawning(player.transform);
+            cameraFollow.SetTarget(_playerTransform);
 
-            if (waveDirector != null)
-                waveDirector.StartTimeline(player.transform);
-
+            // 대화 중에 다시 누르지 못하도록 여기서 바로 끈다.
             if (characterSelectPanel != null)
                 characterSelectPanel.SetActive(false);
+
+            if (characterData.affinityDialogue != null && affinityDialogueController != null)
+            {
+                CurrentState = RunState.Intro;
+                affinityDialogueController.Show(
+                    characterData.affinityDialogue, characterData.portraitSprite,
+                    _playerStats, _playerHealth, BeginCombat);
+            }
+            else
+            {
+                BeginCombat();
+            }
+        }
+
+        /// <summary>
+        /// 대화 #1이 끝난 뒤(또는 대화가 없으면 스폰 직후 곧바로) 실제 전투를 연다.
+        /// </summary>
+        private void BeginCombat()
+        {
+            enemySpawner.StartSpawning(_playerTransform);
+
+            if (waveDirector != null)
+                waveDirector.StartTimeline(_playerTransform);
 
             ElapsedTime = 0f;
             KillCount = 0;
             CurrentState = RunState.Playing;
-            Debug.Log($"[GameManager] 런 시작: {characterData.characterName}");
+            Debug.Log($"[GameManager] 런 시작: {_activeCharacterName}");
         }
 
         public void AddExperience(float amount)

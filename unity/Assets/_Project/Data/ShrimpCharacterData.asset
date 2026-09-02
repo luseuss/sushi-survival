@@ -19,3 +19,4 @@ MonoBehaviour:
   baseMaxHealth: 100
   weaponData: {fileID: 11400000, guid: b77dcefefb47f7344b9e259da98ca698, type: 2}
   animatorController: {fileID: 0}
+  affinityDialogue: {fileID: 11400000, guid: 791a1e1e7c7d1a040b9dff0c7e21db59, type: 2}
