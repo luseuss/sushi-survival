@@ -67,7 +67,7 @@ git add unity/Assets/_Project/Scripts/Weapons/InariClawWeapon.cs \
 있고, 그 손상은 diff 리뷰로도 안 잡힌다. 대신:
 
 ```bash
-# rebase 중이라면 방향(ours/theirs)이 헷갈리니 브랜치 이름으로 명시한다
+# ours/theirs 방향이 헷갈리니(특히 드물게 rebase를 쓸 때) 브랜치 이름으로 명시한다
 git checkout main -- unity/Assets/_Project/Scenes/GameScene.unity
 git add unity/Assets/_Project/Scenes/GameScene.unity
 ```
@@ -153,17 +153,37 @@ git add <파일> <파일>.meta
 git commit -m "feat: 이나리 발톱 할퀴기 무기 로직"
 
 # 하루 1회 이상 main 끌어오기 — 충돌을 매일 조금씩
-git fetch origin && git rebase origin/main
+git fetch origin
+git merge origin/main            # rebase 아님 — 아래 "왜 merge인가" 참고
 
 git push -u origin feature/inari-claw
-git push --force-with-lease      # rebase 이후
+git push                          # merge 이후에도 그냥 push. force 필요 없음
 # → PR 생성 → 상대 리뷰 → 사람이 Squash merge
 ```
+
+### 왜 rebase가 아니라 merge인가
+
+로컬 동기화 방법으로 `rebase`도 검토했지만 **`merge`로 통일한다.** 이유:
+
+- 이 저장소는 PR을 **Squash merge**한다. 브랜치 안에서 병합 커밋이 쌓이든
+  안 쌓이든, `main`에 최종적으로 남는 히스토리는 어느 쪽을 쓰든 똑같다 —
+  즉 브랜치 안 히스토리가 깔끔한 건 여기서 실익이 없다.
+- `rebase`는 이미 푸시한 커밋의 해시를 바꾸므로 그 뒤엔 반드시
+  `git push --force-with-lease`가 필요하다. `merge`는 이게 아예 없다 —
+  "강제로 덮어쓰기"라는 위험한 개념 자체가 팀 작업에서 사라진다.
+- 충돌이 나면 `merge`는 한 번에 다 풀고 커밋 하나로 끝나지만, `rebase`는
+  옮겨지는 커밋마다 순서대로 다시 풀어야 한다. 익숙하지 않으면 더 헷갈린다.
+
+> 0장의 "절대 실행하지 않는 명령"에 있는 `git merge <브랜치>`는 **`main`으로
+> 병합하는 것**을 금지하는 것이다. 여기서 말하는 `git merge origin/main`은
+> 반대 방향 — **최신 `main`을 내 작업 브랜치로 끌어오는 것**이라 다른 얘기다.
+> 헷갈리지 않게: `main`에 뭔가를 합치는 건 사람만, 내 브랜치에 `main`을
+> 합치는 건 누구나 수시로 한다.
 
 ### 알아둘 것
 
 **브랜치는 충돌을 없애지 않는다. 미룰 뿐이다.** 같은 파일을 둘 다 고치면 각자
-브랜치에선 멀쩡하다가 머지하는 순간 터진다. → 하루 한 번 이상 rebase.
+브랜치에선 멀쩡하다가 머지하는 순간 터진다. → 하루 한 번 이상 `merge origin/main`.
 
 **깨끗하게 머지된다고 빌드되는 건 아니다.** Git은 텍스트만 본다. 둘 다
 `Core/GameManager.cs`에 메서드를 추가하면 충돌 없이 머지되지만 컴파일에서 터질 수 있다.
@@ -181,15 +201,15 @@ git push --force-with-lease      # rebase 이후
 
 실제로 겪은 사례(3-2절): 호감도 대화 #1 브랜치가 며칠 열려 있는 사이 씬 분리
 작업이 조용히 `main`에 병합됐고, 그 사실을 모른 채 옛 씬 위에서 계속 작업하다가
-병합 시점에야 충돌을 발견했다. 미리 알렸다면 그 타이밍에 바로 `rebase`해서
-충돌이 훨씬 작을 때 잡을 수 있었다.
+병합 시점에야 충돌을 발견했다. 미리 알렸다면 그 타이밍에 바로 `merge
+origin/main`을 해서 충돌이 훨씬 작을 때 잡을 수 있었다.
 
 **두 타이밍에 짧게 알린다 — 거창한 절차는 필요 없다.**
 
 - **머지 직전** — "지금 `main`에 씬/공용 파일 건드리는 거 올린다." 특히 아래
   "공용 — 건드리기 전 상의" 목록(`Scripts/Core/`, `Scripts/Data/`, 씬 파일,
   `EditorBuildSettings.asset` 등)에 해당하면 반드시.
-- **머지 직후** — "올라갔다, 작업 중이면 rebase해라."
+- **머지 직후** — "올라갔다, 작업 중이면 `main` 당겨서 merge해라."
 
 ---
 
@@ -551,7 +571,7 @@ Tests/EditMode/SushiSurvival.EditModeTests.asmdef
 
 ### 공용 — 건드리기 전 상의
 `Scripts/Core/`, `Scripts/Data/`, `Tests/EditMode/`, `*.asmdef`, `EditorBuildSettings.asset`
-작게 잘라 먼저 머지하고, 각자 브랜치에서 rebase로 받아간다.
+작게 잘라 먼저 머지하고, 각자 브랜치에서 `git merge origin/main`으로 받아간다.
 
 ### 커밋 메시지
 기존 형식 유지 (`chore: 타격감 슬라이스 배선 — SpriteFlasher·JuiceDirector·DeathBurstPool`)
