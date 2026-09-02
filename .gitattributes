@@ -3,9 +3,9 @@
 * text=auto
 
 *.cs        text diff=csharp
-*.unity     text
-*.prefab    text
-*.asset     text
+*.unity     text merge=unityyamlmerge
+*.prefab    text merge=unityyamlmerge
+*.asset     text merge=unityyamlmerge
 *.mat       text
 *.anim      text
 *.controller text
