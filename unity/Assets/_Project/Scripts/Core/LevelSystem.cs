@@ -16,6 +16,7 @@ namespace SushiSurvival.Core
         private const int OptionCount = 3;
 
         [SerializeField] private LevelUpPanel panel;
+        [SerializeField] private RoyalWasabiController royalWasabiController;
         [SerializeField] private AugmentData[] augments;
         [Tooltip("무기 강화 선택지에 쓸 아이콘. 비워도 동작한다.")]
         [SerializeField] private Sprite weaponUpgradeIcon;
@@ -88,11 +89,30 @@ namespace SushiSurvival.Core
 
                 _panelOpen = true;
                 Time.timeScale = 0f;
-                panel.Show(options, OnOptionChosen);
+                panel.Show(options, OnOptionChosen, HandleRoyalWasabiRequested);
                 return;
             }
 
             CloseAndResume();
+        }
+
+        /// <summary>
+        /// "와사비를 하사받으러 간다"를 눌렀을 때. _panelOpen은 여기서 건드리지
+        /// 않는다 — 왕궁 연출이 끝나기 전까지 게임이 재개되면 안 되기 때문이다.
+        /// CloseAndResume()에서만 false로 돌아간다.
+        /// </summary>
+        private void HandleRoyalWasabiRequested()
+        {
+            panel.Hide();
+
+            if (royalWasabiController == null)
+            {
+                Debug.LogError($"{name}: royalWasabiController가 비어 있어 도박을 진행할 수 없습니다.");
+                ShowNext();
+                return;
+            }
+
+            royalWasabiController.Show(_playerStats, _playerHealth, ShowNext);
         }
 
         private void OnOptionChosen(IUpgradeOption option)
