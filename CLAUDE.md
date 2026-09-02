@@ -9,7 +9,7 @@
 > - 버프·스탯은 `Core/StatSystem`을 재사용한다. 별도 시스템을 만들면 캡 예산이 깨진다
 >
 > 현재 2인 + AI 협업 체제로 전환했다. `GameScene.unity`·`ResultScene.unity` 분리는
-> 완료됐고 `Title.unity`만 남았다.
+> 완료됐고 `IntroScene.unity`만 남았다.
 
 Unity로 제작하는 뱀파이어 서바이벌류 로그라이크. 스시왕국 IP 세계관 기반 스핀오프.
 이 파일은 게임 기획서(v1.3)를 코드 작업용으로 압축한 컨텍스트다. 세부 설계 근거나 미확정 항목의

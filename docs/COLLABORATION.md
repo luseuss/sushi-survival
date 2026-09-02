@@ -108,7 +108,7 @@ UI 배치가 통째로 사라져서, 머지 후 새 씬에 다시 배치해야 �
 ### 남은 것
 | # | 항목 | 스코프 | 확인 |
 |---|---|---|---|
-| 0 | **Title 씬 분리** | 구조 | Game/Result는 완료(#1). Title만 남음 |
+| 0 | **IntroScene 분리** | 구조 | Game/Result는 완료(#1). IntroScene만 남음 |
 | 1 | 이나리 캐릭터 + 발톱 할퀴기 무기 | **Must** | 코드에 `Inari`/`Claw` **0건**. 씬에 `Button_Inari`는 이미 있음(잠금 상태) |
 | 2 | 호감도 대화 #1 씬 재배치 | **Must** | PR #2로 코드·데이터 완료. `GameScene.unity`에 UI 오브젝트 재배치만 남음 |
 | 3 | 사운드 / 오디오 | Should | `AudioSource` 사용처 **0건** |
@@ -175,7 +175,7 @@ git push --force-with-lease      # rebase 이후
 
 ---
 
-## 3. 씬 분리 — Game/Result 완료, Title 남음
+## 3. 씬 분리 — Game/Result 완료, IntroScene 남음
 
 ### 3-1. 현재 상태
 
@@ -184,8 +184,9 @@ git push --force-with-lease      # rebase 이후
 `GameManager.FinishRun()`이 `RunResultCarrier`를 채우고 `GameOverPanel`을 보여준 뒤
 `ResultScene`으로 넘어간다.
 
-**남은 것:** `Title.unity`. 타이틀, 시작 버튼, 조작 설명만 있으면 된다 — 의존성이
-없어 가장 쉬운 작업이다.
+**남은 것:** `IntroScene.unity`. 타이틀, 시작 버튼, 조작 설명만 있으면 된다 —
+의존성이 없어 가장 쉬운 작업이다. **이름은 `GameScene`/`ResultScene`과 맞춘
+`IntroScene`으로 통일한다** (기획서·구 버전 초안의 "Title.unity" 표기는 폐기).
 
 > **캐릭터 선택은 `GameScene.unity`에 남아 있다.** `CharacterSelectButton`이
 > `GameManager.Instance.StartRun()`을 직접 호출하고 `PlayerSpawner`·`LevelSystem`·
@@ -201,8 +202,30 @@ git push --force-with-lease      # rebase 이후
 ### 3-3. 빌드 설정
 
 `ProjectSettings/EditorBuildSettings.asset`에 `GameScene`, `ResultScene`이 이미
-등록돼 있다. `Title.unity`를 만들면 여기에 추가하는 작은 PR을 먼저 머지해둔다 —
-공유 파일이라 나중에 합치면 충돌한다.
+등록돼 있다. `IntroScene.unity`를 만들면 여기에 추가하는 작은 PR을 먼저
+머지해둔다 — 공유 파일이라 나중에 합치면 충돌한다.
+
+### 3-4. `IntroScene`을 만들 때 같이 해야 하는 코드 변경
+
+씬만 만들고 끝나지 않는다. **`ResultPanel.HandleRestart()`가 지금
+`GameScene`으로 곧장 되돌아가는데, 이걸 `IntroScene`으로 바꿔야 부스 데모의
+"다음 관람객 대기" 흐름(결과 → 인트로 → 다시 캐릭터 선택)이 완성된다.**
+
+```csharp
+// unity/Assets/_Project/Scripts/UI/ResultPanel.cs
+public void HandleRestart()
+{
+    // 씬 분리 이후 Result 씬에서 Intro 씬으로 명시적 이동 —
+    // 결과 화면 다음은 곧장 캐릭터 선택이 아니라 부스 대기 화면(인트로)이다.
+    Time.timeScale = 1f;
+    SceneManager.LoadScene("IntroScene");
+}
+```
+
+**씬이 아직 없는 상태에서 이 코드를 먼저 넣지 않는다.** `LoadScene`에 존재하지
+않는 씬 이름을 넣으면 컴파일은 되지만 재시작 버튼을 누르는 순간 런타임 에러가
+난다 — `IntroScene.unity`를 만들고 빌드 설정에 등록하는 것과 **같은 PR/같은
+커밋**으로 묶는다.
 
 ---
 
@@ -300,7 +323,7 @@ unity/Assets/
       World/      무한 타일 스트리밍
     Data/         ScriptableObject 에셋. 밸런스는 여기서 만진다
     Prefabs/
-    Scenes/       GameScene / ResultScene / (Title 예정)
+    Scenes/       GameScene / ResultScene / (IntroScene 예정)
   Tests/EditMode/ ← asmdef: SushiSurvival.EditModeTests
   캐릭터/ 환경/    아트 원본 (한글 경로)
 ```
@@ -500,9 +523,9 @@ Tests/EditMode/SushiSurvival.EditModeTests.asmdef
 → 주 작업: 이나리 캐릭터 + 발톱 할퀴기
 
 ### 트랙 B — 시스템 / 흐름 / 오디오
-**`Scenes/Title.unity`(예정)·`Scenes/ResultScene.unity`(단독 소유)**,
+**`Scenes/IntroScene.unity`(예정)·`Scenes/ResultScene.unity`(단독 소유)**,
 `Scripts/UI/`, `Scripts/Core/AudioDirector.cs`(신규), `_Project/Data/*.asset`
-→ 주 작업: Title 씬 → 호감도 대화 #2
+→ 주 작업: IntroScene → 호감도 대화 #2
 
 **호감도 대화 #1(PR #2)은 `GameScene.unity`에 UI를 배치해야 해서 트랙 A 소유
 씬을 건드린다.** 이런 경우 작업 전 상대 트랙에 알리고, 가능하면 트랙 A가 그 부분을
@@ -541,8 +564,8 @@ test: 테스트     balance: SO 수치    docs: 문서
 | # | 브랜치 | 트랙 | 내용 | 상태 |
 |---|---|---|---|---|
 | 1 | `chore/gitattributes-yamlmerge` | 공용 | 병합 도구 설정 | 이 문서와 함께 설치 |
-| 2 | `chore/build-settings-scenes` | 공용 | 씬 빌드 등록 | GameScene·ResultScene 완료, Title 남음 |
-| 3 | `feature/title-scene` | B | 타이틀 씬 분리 | 남음 — 의존 없음, 다음 우선순위 |
+| 2 | `chore/build-settings-scenes` | 공용 | 씬 빌드 등록 | GameScene·ResultScene 완료, IntroScene 남음 |
+| 3 | `feature/intro-scene` | B | `IntroScene` 분리 + `ResultPanel.HandleRestart()` 수정 | 남음 — 의존 없음, 다음 우선순위 |
 | 4 | `feature/result-scene` | B | 결과 씬 + `RunResultCarrier` | **완료** |
 
 ### 2단계: 기능 (병렬 가능)
