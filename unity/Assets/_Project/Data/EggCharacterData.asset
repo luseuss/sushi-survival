@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: EggCharacterData
   m_EditorClassIdentifier: 
   characterName: "\"\uC544\uB378\uB9B0\""
-  portraitSprite: {fileID: 21300000, guid: 67cacb5cc621fd942ab6c8863d236211, type: 3}
+  portraitSprite: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+  selectCardSprite: {fileID: 21300000, guid: 2126082c3e025074fb1a9d23866a493a, type: 3}
   playerPrefab: {fileID: 7970024696858197383, guid: 4f68848eaa6f10e4cbca6a769705fd19, type: 3}
   baseMoveSpeed: 3
   baseMaxHealth: 100

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: ShrimpCharacterData
   m_EditorClassIdentifier: 
   characterName: "\"\uCE74\uB9C8\uB9AC\uC628\""
-  portraitSprite: {fileID: 21300000, guid: 28fa18cd21ab41e4eaeb5eebe980052b, type: 3}
+  portraitSprite: {fileID: 21300000, guid: 34c8a59fb576e2943b03f20d9221f163, type: 3}
+  selectCardSprite: {fileID: 21300000, guid: 4455ab7f08418684a9b52543de207823, type: 3}
   playerPrefab: {fileID: 629794472604786000, guid: 66e3d160060242e4bab256e40d0c7565, type: 3}
   baseMoveSpeed: 3
   baseMaxHealth: 100
