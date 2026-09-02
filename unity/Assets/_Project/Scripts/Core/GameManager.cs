@@ -33,6 +33,8 @@ namespace SushiSurvival.Core
         [Tooltip("캐릭터 선택 UI 루트. 런이 시작되면 비활성화된다.")]
         [SerializeField] private GameObject characterSelectPanel;
         [SerializeField] private SushiSurvival.UI.ResultPanel resultPanel;
+        [Tooltip("HUD 코너의 플레이어 체력바. 스폰 직후 연결된다.")]
+        [SerializeField] private SushiSurvival.UI.HealthBar hudHealthBar;
         [SerializeField] private SushiSurvival.Enemies.Boss.BossDirector bossDirector;
         [Tooltip("호감도 대화 #1을 보여준다. 비워두면 대화 없이 바로 시작한다.")]
         [SerializeField] private AffinityDialogueController affinityDialogueController;
@@ -109,6 +111,9 @@ namespace SushiSurvival.Core
             levelSystem.SetPlayer(_playerStats, _playerHealth, weapon);
 
             cameraFollow.SetTarget(_playerTransform);
+
+            if (hudHealthBar != null)
+                hudHealthBar.SetTarget(_playerHealth, characterData.portraitSprite);
 
             // 대화 중에 다시 누르지 못하도록 여기서 바로 끈다.
             if (characterSelectPanel != null)
