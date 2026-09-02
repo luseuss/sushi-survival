@@ -22,6 +22,7 @@ namespace SushiSurvival.Core
 
     public class GameManager : MonoBehaviour
     {
+        [SerializeField] private SushiSurvival.UI.GameOverPanel gameOverPanel; // 인스펙터 연결 필요
         [SerializeField] private PlayerSpawner playerSpawner;
         [SerializeField] private EnemySpawner enemySpawner;
         [SerializeField] private WaveDirector waveDirector;
@@ -151,34 +152,22 @@ namespace SushiSurvival.Core
         /// </summary>
         public void FinishRun(RunOutcome outcome)
         {
-            // 승리와 패배가 같은 프레임에 성립할 수 있다. 먼저 성립한 것만 처리한다.
-            if (CurrentState != RunState.Playing) return;
-
-            CurrentState = RunState.Result;
-            enemySpawner.StopSpawning();
-
-            if (waveDirector != null)
-                waveDirector.StopTimeline();
-
-            // 결과 화면 동안에는 적도 젬도 움직이지 않게 멈춘다.
             Time.timeScale = 0f;
 
-            if (resultPanel != null)
+            RunResultCarrier.Outcome = outcome;
+            RunResultCarrier.ElapsedTime = ElapsedTime;
+            RunResultCarrier.Level = levelSystem.CurrentLevel;
+            RunResultCarrier.KillCount = KillCount;
+            RunResultCarrier.Augments = AugmentTally.Summarize(levelSystem.PickedAugments);
+
+            if (gameOverPanel != null)
             {
-                resultPanel.Show(
-                    outcome,
-                    ElapsedTime,
-                    levelSystem.CurrentLevel,
-                    KillCount,
-                    AugmentTally.Summarize(levelSystem.PickedAugments));
+                gameOverPanel.Show();
             }
             else
             {
-                Debug.LogError($"{name}: resultPanel이 비어 있어 결과 화면을 띄울 수 없습니다.");
+                Debug.LogError("[GameManager] GameOverPanel이 연결되지 않았습니다.");
             }
-
-            Debug.Log($"[GameManager] 런 종료: {outcome} / 생존 {RunClock.FormatElapsed(ElapsedTime)} / " +
-                      $"Lv{levelSystem.CurrentLevel} / 처치 {KillCount}");
         }
 
         private void OnDisable()

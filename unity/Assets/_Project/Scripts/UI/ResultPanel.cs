@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using SushiSurvival.Core;
+using UnityEngine.UI;
 
 namespace SushiSurvival.UI
 {
@@ -22,12 +23,16 @@ namespace SushiSurvival.UI
 
         private GameObject Root => root != null ? root : gameObject;
 
-        private void Awake()
+        private void Start()
         {
-            Hide();
-
-            if (restartButton != null)
-                restartButton.onClick.AddListener(HandleRestart);
+            // 씬 로드 직후 RunResultCarrier에 담긴 데이터를 읽어와 표시한다[cite: 1]
+            Show(
+                RunResultCarrier.Outcome,
+                RunResultCarrier.ElapsedTime,
+                RunResultCarrier.Level,
+                RunResultCarrier.KillCount,
+                RunResultCarrier.Augments
+            );
         }
 
         private void OnDestroy()
@@ -37,7 +42,7 @@ namespace SushiSurvival.UI
         }
 
         public void Show(RunOutcome outcome, float elapsed, int level, int kills,
-                         IReadOnlyList<AugmentCount> augments)
+                           IReadOnlyList<AugmentCount> augments)
         {
             Root.SetActive(true);
 
@@ -77,10 +82,11 @@ namespace SushiSurvival.UI
             }
         }
 
-        private void HandleRestart()
+        public void HandleRestart()
         {
-            if (GameManager.Instance != null)
-                GameManager.Instance.Restart();
+            // 씬 분리 이후 Result 씬에서 Game 씬으로 명시적 이동[cite: 1]
+            Time.timeScale = 1f;
+            SceneManager.LoadScene("GameScene");
         }
     }
 }
