@@ -43,3 +43,7 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 채팅으로 주고받는 참고 문서 임시 보관함. 프로젝트 콘텐츠가 아니다.
+/files/
+/files.zip
