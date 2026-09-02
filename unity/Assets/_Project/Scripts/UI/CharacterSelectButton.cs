@@ -29,7 +29,9 @@ namespace SushiSurvival.UI
         private void Start()
         {
             if (portraitImage != null && characterData != null)
-                portraitImage.sprite = characterData.portraitSprite;
+                portraitImage.sprite = characterData.selectCardSprite != null
+                    ? characterData.selectCardSprite
+                    : characterData.portraitSprite;
 
             _button.interactable = !locked;
 

@@ -7,6 +7,8 @@ namespace SushiSurvival.Data
     {
         public string characterName;
         public Sprite portraitSprite;
+        [Tooltip("캐릭터 선택 화면 버튼 전용 카드 아트. 비워두면 portraitSprite로 대신 표시한다.")]
+        public Sprite selectCardSprite;
         [Tooltip("이 캐릭터로 플레이할 때 생성할 프리팹. 캐릭터마다 무기·애니메이터가 다르므로 종류별로 따로 만든다.")]
         public GameObject playerPrefab;
         public float baseMoveSpeed = 3f;
