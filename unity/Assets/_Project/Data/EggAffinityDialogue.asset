@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d09f59162db04f43b3729a8f2130e37, type: 3}
+  m_Name: EggAffinityDialogue
+  m_EditorClassIdentifier: 
+  question1:
+    questionText: "\uBAB0\uB824\uC624\uB294 \uC801\uB4E4 \uC55E\uC5D0\uC11C, \uB10C
+      \uC5B4\uB5BB\uAC8C \uC2F8\uC6B8 \uAC70\uC57C?"
+    choices:
+    - choiceText: "\uC81C \uC591\uC0B0\uC774 \uB2FF\uB294 \uACF3\uC740 \uC804\uBD80
+        \uC4F8\uC5B4\uBC84\uB9AC\uACA0\uC5B4\uC694."
+      augment: {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
+    - choiceText: "\uBB34\uB108\uC9C0\uC9C0 \uC54A\uB294 \uAC8C \uBA3C\uC800\uC608\uC694.
+        \uBC84\uD2F8 \uC218 \uC788\uC5B4\uC57C \uC774\uAE38 \uC218 \uC788\uC73C\uB2C8\uAE4C\uC694."
+      augment: {fileID: 11400000, guid: 38c7d0896b5bf0841a10b1b5866d413f, type: 2}
+    - choiceText: "\uBC1C\uC774 \uBE60\uB974\uBA74, \uC560\uCD08\uC5D0 \uB2E4\uCE60
+        \uC77C\uC774 \uC5C6\uC8E0."
+      augment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
