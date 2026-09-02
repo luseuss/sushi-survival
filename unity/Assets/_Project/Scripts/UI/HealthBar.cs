@@ -5,15 +5,17 @@ using SushiSurvival.Player;
 namespace SushiSurvival.UI
 {
     /// <summary>
-    /// 캐릭터 발밑에 붙는 체력바. PlayerHealth의 변경 이벤트로 목표값만 받고,
-    /// 실제 표시는 매 프레임 그 쪽으로 부드럽게 옮겨간다 — 스냅으로 바뀌면
-    /// 얼마나 깎였는지 체감이 안 된다.
+    /// 플레이어 체력바. 캐릭터 종류와 무관한 HUD 코너 오브젝트라 인스펙터로
+    /// 미리 연결할 수 없다 — GameManager가 스폰 직후 SetTarget으로 알려준다
+    /// (CameraFollow.SetTarget과 같은 패턴).
     /// </summary>
     public class HealthBar : MonoBehaviour
     {
         [SerializeField] private PlayerHealth playerHealth;
         [Tooltip("Image Type을 Filled로 설정한 채움 이미지.")]
         [SerializeField] private Image fillImage;
+        [Tooltip("캐릭터 초상화. 비워두면 표시하지 않는다.")]
+        [SerializeField] private Image portraitImage;
         [Tooltip("초당 채움 변화량. 2면 0→1이 0.5초 걸린다.")]
         [SerializeField] private float fillSpeed = 2f;
 
@@ -32,6 +34,24 @@ namespace SushiSurvival.UI
             if (playerHealth == null) return;
 
             playerHealth.OnHealthChanged -= HandleHealthChanged;
+        }
+
+        /// <summary>
+        /// 런타임에 플레이어가 스폰된 뒤 GameManager가 호출한다. 이전 대상이
+        /// 있으면(재시작 등) 먼저 구독을 해제해 중복 구독을 막는다.
+        /// </summary>
+        public void SetTarget(PlayerHealth health, Sprite portrait)
+        {
+            if (playerHealth != null)
+                playerHealth.OnHealthChanged -= HandleHealthChanged;
+
+            playerHealth = health;
+
+            if (playerHealth != null)
+                playerHealth.OnHealthChanged += HandleHealthChanged;
+
+            if (portraitImage != null)
+                portraitImage.sprite = portrait;
         }
 
         private void Update()
