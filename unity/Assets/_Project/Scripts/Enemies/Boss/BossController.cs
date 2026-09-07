@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using SushiSurvival.Core;
 using SushiSurvival.Data;
@@ -7,14 +8,6 @@ using SushiSurvival.Player;
 
 namespace SushiSurvival.Enemies.Boss
 {
-    /// <summary>
-    /// 보스의 행동을 관장한다. 이동·피격·사망은 EnemyBase/EnemyAI가 이미
-    /// 처리하므로 여기서는 패턴 발동과 페이즈 전환만 다룬다.
-    ///
-    /// 플레이어 캐릭터와 달리 보스는 공격 모션을 몸통 애니메이터에 넣는다.
-    /// 보스의 시전 시트는 무기 단독 그림이 아니라 보스 본체가 그려진 그림이라,
-    /// 캐릭터 3종에서 겪었던 "공격 중 캐릭터가 무기 그림으로 교체되는" 문제가 없다.
-    /// </summary>
     [RequireComponent(typeof(EnemyBase))]
     [RequireComponent(typeof(EnemyAI))]
     public class BossController : MonoBehaviour
@@ -29,7 +22,7 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private MeteorPattern meteorPattern;
         [SerializeField] private SummonPattern summonPattern;
 
-        [Tooltip("시전 애니메이션 길이(초). 13프레임 @12FPS = 약 1.08초.")]
+        [Tooltip("시전 애니메이션 길이(초).")]
         [SerializeField] private float castDuration = 1.08f;
         [Tooltip("페이즈 전환 시 붉게 번쩍이는 시간(초).")]
         [SerializeField] private float phaseFlashDuration = 0.3f;
@@ -62,22 +55,26 @@ namespace SushiSurvival.Enemies.Boss
                 return;
             }
 
-            if (meteorPattern != null)
+            if (_enemy == null) _enemy = GetComponent<EnemyBase>();
+            if (_ai == null) _ai = GetComponent<EnemyAI>();
+            if (summonPattern == null) summonPattern = GetComponentInChildren<SummonPattern>();
+            if (meteorPattern == null) meteorPattern = GetComponentInChildren<MeteorPattern>();
+
+            if (meteorPattern != null && meteorPool != null)
                 meteorPattern.SetDependencies(player, meteorPool);
 
-            if (summonPattern != null)
+            if (summonPattern != null && mobPool != null && summonEffectPool != null)
                 summonPattern.SetDependencies(
                     player != null ? player.transform : null, mobPool, summonEffectPool, gemPools);
 
             _phase = BossPhaseLogic.PhaseOne;
-
-            // 직전 패턴을 소환으로 두면 첫 패턴이 메테오가 된다.
-            // 등장하자마자 잡몹을 뿌리면 등장 연출이 묻힌다.
             _previousPattern = BossPatternType.Summon;
 
             BossPhaseValues values = bossData.GetPhaseValues(_phase);
             _patternTimer = values.patternInterval;
-            _ai.MoveScale = values.moveScale;
+
+            if (_ai != null)
+                _ai.MoveScale = values.moveScale;
 
             _casting = false;
             _active = true;
@@ -108,8 +105,6 @@ namespace SushiSurvival.Enemies.Boss
             _phase = phase;
             _ai.MoveScale = bossData.GetPhaseValues(_phase).moveScale;
 
-            Debug.Log($"[BossController] 페이즈 {_phase} 전환");
-
             if (spriteFlasher != null)
                 spriteFlasher.Flash(Color.red, phaseFlashDuration);
         }
@@ -119,7 +114,6 @@ namespace SushiSurvival.Enemies.Boss
             _casting = true;
             _previousPattern = pattern;
 
-            // 시전 중에는 제자리에 선다. 넉백은 MoveScale과 무관하게 계속 먹는다.
             _ai.MoveScale = 0f;
 
             if (animator != null)
@@ -130,7 +124,6 @@ namespace SushiSurvival.Enemies.Boss
 
             yield return new WaitForSeconds(castDuration);
 
-            // 시전 애니가 끝나는 프레임 = 구슬이 화면 위로 사라지는 프레임이다.
             BossPhaseValues values = bossData.GetPhaseValues(_phase);
 
             if (pattern == BossPatternType.Meteor)

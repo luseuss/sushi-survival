@@ -1,9 +1,10 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using SushiSurvival.Data;
 using SushiSurvival.Enemies;
 using SushiSurvival.Player;
 using SushiSurvival.Weapons;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SushiSurvival.Core
 {
@@ -24,7 +25,7 @@ namespace SushiSurvival.Core
 
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private SushiSurvival.UI.GameOverPanel gameOverPanel; // 인스펙터 연결 필요
+        [SerializeField] private SushiSurvival.UI.GameOverPanel gameOverPanel;
         [SerializeField] private PlayerSpawner playerSpawner;
         [SerializeField] private EnemySpawner enemySpawner;
         [SerializeField] private WaveDirector waveDirector;
@@ -54,9 +55,6 @@ namespace SushiSurvival.Core
         public float ElapsedTime { get; private set; }
         public float BossSpawnTime => bossSpawnTime;
 
-        /// <summary>
-        /// 지금 스폰되는 잡몹에 곱할 체력 배율. EnemyBase가 OnEnable에서 읽는다.
-        /// </summary>
         public float EnemyHealthMultiplier =>
             DifficultyCurve.GetMultiplier(ElapsedTime, enemyHealthScalePerMinute, maxEnemyHealthScale);
         public int KillCount { get; private set; }
@@ -65,34 +63,96 @@ namespace SushiSurvival.Core
         private PlayerStats _playerStats;
         private Transform _playerTransform;
         private string _activeCharacterName;
+        private CharacterData _selectedCharacterData;
 
         private void Awake() => Instance = this;
 
         private void Start()
         {
-            CurrentState = RunState.CharacterSelect;
+            // 보스 씬으로 진입한 경우 캐릭터 선택창을 건너뛰고 바로 스폰 및 시작
+            if (SceneManager.GetActiveScene().name == "BossScene")
+            {
+                InitializeBossSceneRun();
+            }
+            else
+            {
+                CurrentState = RunState.CharacterSelect;
+
+                if (characterSelectPanel != null)
+                    characterSelectPanel.SetActive(true);
+            }
+        }
+
+        private void InitializeBossSceneRun()
+        {
+            CurrentState = RunState.Playing;
+            Time.timeScale = 1f;
+
+            CharacterData selectedCharacter = RunResultCarrier.SelectedCharacterData;
+            if (selectedCharacter == null)
+            {
+                Debug.LogWarning("[GameManager] RunResultCarrier에 선택된 캐릭터 데이터가 없습니다.");
+                return;
+            }
+
+            GameObject player = playerSpawner.Spawn(selectedCharacter);
+            if (player == null) return;
+
+            _playerHealth = player.GetComponent<PlayerHealth>();
+            if (_playerHealth != null)
+                _playerHealth.OnDeath += HandlePlayerDeath;
+            else
+                Debug.LogError($"{player.name}: PlayerHealth가 없어 사망 처리를 연결할 수 없습니다.");
+
+            _playerStats = player.GetComponent<PlayerStats>();
+            _playerTransform = player.transform;
+            _activeCharacterName = selectedCharacter.characterName;
+
+            var weapon = player.GetComponent<WeaponBase>();
+            if (levelSystem != null)
+                levelSystem.SetPlayer(_playerStats, _playerHealth, weapon);
+
+            if (cameraFollow != null)
+                cameraFollow.SetTarget(_playerTransform);
+
+            if (hudHealthBar != null)
+            {
+                hudHealthBar.gameObject.SetActive(true);
+                hudHealthBar.SetTarget(_playerHealth, selectedCharacter.portraitSprite);
+            }
 
             if (characterSelectPanel != null)
-                characterSelectPanel.SetActive(true);
+                characterSelectPanel.SetActive(false);
+
+            ElapsedTime = 0f;
+            KillCount = 0;
+            Debug.Log($"[GameManager] 보스 씬 런 자동 시작: {_activeCharacterName}");
         }
 
         private void Update()
         {
             if (CurrentState != RunState.Playing) return;
 
-            // 스케일 적용 시간을 쓰므로 레벨업 팝업이 열린 동안에는 타이머가 멈춘다.
             ElapsedTime += Time.deltaTime;
 
-            // 5:00은 이제 승리가 아니라 보스 등장 시각이다. 승리는 오직 보스
-            // 처치에서만 나온다. BeginIntro는 스스로 중복 호출을 막는다.
-            if (ElapsedTime >= bossSpawnTime && bossDirector != null)
-                bossDirector.BeginIntro(_playerHealth);
+            // 만약 일반 게임 씬("Game")이라면 보스 스폰 시간을 체크한다.
+            // 보스 씬("BossScene")에서는 이미 보스전이 시작된 상태이므로 이 체크를 건너 뛴다.
+            if (SceneManager.GetActiveScene().name == "GameScene")
+            {
+                if (ElapsedTime >= bossSpawnTime)
+                {
+                    EnterBossFight();
+                    return;
+                }
+            }
         }
 
         public void StartRun(CharacterData characterData)
         {
             // 버튼 연타로 플레이어가 두 번 생성되는 것을 막는다.
             if (CurrentState != RunState.CharacterSelect) return;
+
+            _selectedCharacterData = characterData;
 
             GameObject player = playerSpawner.Spawn(characterData);
             if (player == null) return;
@@ -132,9 +192,6 @@ namespace SushiSurvival.Core
             }
         }
 
-        /// <summary>
-        /// 대화 #1이 끝난 뒤(또는 대화가 없으면 스폰 직후 곧바로) 실제 전투를 연다.
-        /// </summary>
         private void BeginCombat()
         {
             enemySpawner.StartSpawning(_playerTransform);
@@ -166,43 +223,69 @@ namespace SushiSurvival.Core
             KillCount++;
         }
 
-        /// <summary>
-        /// 씬을 다시 열어 런의 모든 흔적을 지운다. 세이브가 없는 원런 구조라
-        /// 다음 판으로 넘길 상태가 하나도 없어서 이 방식이 가장 안전하다.
-        /// </summary>
         public void Restart()
         {
-            // timeScale은 씬을 다시 로드해도 초기화되지 않는다. 직접 되돌린다.
+            // 게임 씬을 다시 로드하는 의미로 씬 이름을 명확히 지정한다
             Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene("Game");
         }
 
-        private void HandlePlayerDeath() => FinishRun(RunOutcome.Defeat);
-
-        /// <summary>
-        /// 런을 끝낸다. 패배는 PlayerHealth.OnDeath에서, 승리는 BossDirector의
-        /// 격파 연출이 끝난 뒤에 호출한다.
-        /// </summary>
-        public void FinishRun(RunOutcome outcome)
+        private void HandlePlayerDeath()
         {
+            // 1. 런 결과를 미리 저장해 둘 수 있습니다 (선택 사항)
+            RunResultCarrier.Outcome = RunOutcome.Defeat;
+            RunResultCarrier.ElapsedTime = ElapsedTime;
+            RunResultCarrier.Level = levelSystem.CurrentLevel;
+            RunResultCarrier.KillCount = KillCount;
+            RunResultCarrier.Augments = AugmentTally.Summarize(levelSystem.PickedAugments);
+
+            // 2. 게임 일시 정지
             Time.timeScale = 0f;
 
+            // 3. 패배 패널 활성화
+            if (gameOverPanel != null)
+            {
+                gameOverPanel.gameObject.SetActive(true);
+                // 만약 패널 내부에 별도의 Show 메서드가 있다면 아래와 같이 호출할 수도 있습니다.
+                // gameOverPanel.Show(); 
+            }
+            else
+            {
+                // 패널이 연결되어 있지 않다면 기존처럼 바로 결과 씬으로 이동
+                FinishRun(RunOutcome.Defeat);
+            }
+        }
+
+        public void FinishRun(RunOutcome outcome)
+        {
+            // 1. RunResultCarrier에 최종 결과를 담는다
             RunResultCarrier.Outcome = outcome;
             RunResultCarrier.ElapsedTime = ElapsedTime;
             RunResultCarrier.Level = levelSystem.CurrentLevel;
             RunResultCarrier.KillCount = KillCount;
             RunResultCarrier.Augments = AugmentTally.Summarize(levelSystem.PickedAugments);
 
-            if (gameOverPanel != null)
-            {
-                gameOverPanel.Show();
-            }
-            else
-            {
-                Debug.LogError("[GameManager] GameOverPanel이 연결되지 않았습니다.");
-            }
+            // 2. 씬을 넘기기 전 시간 정지를 반드시 해제한다
+            Time.timeScale = 1f;
+
+            // 3. 결과 씬으로 넘어간다
+            SceneManager.LoadScene("ResultScene");
         }
 
+        public void EnterBossFight()
+        {
+            RunResultCarrier.SelectedCharacterData = _selectedCharacterData;
+            RunResultCarrier.ElapsedTime = ElapsedTime;
+            RunResultCarrier.KillCount = KillCount;
+
+            if (_playerHealth != null)
+            {
+                RunResultCarrier.PlayerCurrentHealth = _playerHealth.CurrentHealth;
+            }
+
+            Time.timeScale = 1f;
+            SceneManager.LoadScene("BossScene"); // 또는 해당 보스 씬 이름
+        }
         private void OnDisable()
         {
             if (_playerHealth != null)
