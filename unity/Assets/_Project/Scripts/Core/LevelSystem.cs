@@ -5,6 +5,7 @@ using SushiSurvival.Player;
 using SushiSurvival.UI;
 using SushiSurvival.Weapons;
 
+
 namespace SushiSurvival.Core
 {
     /// <summary>
@@ -75,6 +76,8 @@ namespace SushiSurvival.Core
             if (!_panelOpen)
                 ShowNext();
         }
+        /// <summary>현재 씬에서 쌓은 다음 레벨까지의 누적 경험치</summary>
+        public float CurrentExperience => _xpTowardNext;
 
         private void ShowNext()
         {

@@ -19,20 +19,64 @@ namespace SushiSurvival.UI
                  "반드시 실시간으로 진행한다.")]
         [SerializeField] private float showDuration = 0.15f;
 
-        private GameObject Root => root != null ? root : gameObject;
         private Coroutine _showRoutine;
         private Action _onRoyalWasabi;
 
-        private void Awake() => Hide();
+        public static LevelUpPanel Instance { get; private set; }
+
+        private GameObject GetRoot()
+        {
+            if (this == null) return null;
+            if (root != null) return root;
+            try
+            {
+                if (gameObject != null) return gameObject;
+            }
+            catch
+            {
+                // 이미 파괴된 객체 접근 시 예외 방어
+            }
+            return null;
+        }
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            Hide();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+
+            if (_showRoutine != null)
+            {
+                StopCoroutine(_showRoutine);
+                _showRoutine = null;
+            }
+        }
 
         public void Show(IReadOnlyList<IUpgradeOption> options, Action<IUpgradeOption> onChosen,
-                         Action onRoyalWasabi)
+                           Action onRoyalWasabi)
         {
-            Root.SetActive(true);
-            Root.transform.localScale = Vector3.zero;
+            GameObject activeRoot = GetRoot();
+            if (activeRoot == null) return;
+
+            activeRoot.SetActive(true);
+            activeRoot.transform.localScale = Vector3.zero;
 
             for (int i = 0; i < optionButtons.Length; i++)
             {
+                if (optionButtons[i] == null) continue;
+
                 if (i < options.Count)
                     optionButtons[i].Bind(options[i], onChosen);
                 else
@@ -50,24 +94,39 @@ namespace SushiSurvival.UI
             _showRoutine = StartCoroutine(ScaleIn());
         }
 
-        public void Hide() => Root.SetActive(false);
+        public void Hide()
+        {
+            GameObject activeRoot = GetRoot();
+            if (activeRoot != null)
+            {
+                activeRoot.SetActive(false);
+            }
+        }
 
         private void HandleRoyalWasabiClicked() => _onRoyalWasabi?.Invoke();
 
         private IEnumerator ScaleIn()
         {
-            Transform t = Root.transform;
+            GameObject activeRoot = GetRoot();
+            if (activeRoot == null) yield break;
+
+            Transform t = activeRoot.transform;
             float elapsed = 0f;
 
             while (elapsed < showDuration)
             {
+                if (this == null || t == null) yield break;
+
                 elapsed += Time.unscaledDeltaTime;
                 float p = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / showDuration));
                 t.localScale = Vector3.one * p;
                 yield return null;
             }
 
-            t.localScale = Vector3.one;
+            if (t != null)
+            {
+                t.localScale = Vector3.one;
+            }
             _showRoutine = null;
         }
     }

@@ -94,5 +94,10 @@ namespace SushiSurvival.Player
             _regenCarry = 0f;
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
+        public void SetHealth(float amount)
+        {
+            CurrentHealth = Mathf.Clamp(amount, 0f, MaxHealth);
+            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        }
     }
 }
