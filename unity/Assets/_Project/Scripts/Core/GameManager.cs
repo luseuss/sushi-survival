@@ -225,9 +225,10 @@ namespace SushiSurvival.Core
 
         public void Restart()
         {
-            // 게임 씬을 다시 로드하는 의미로 씬 이름을 명확히 지정한다
+            // 실제 씬 파일/Build Settings에 등록된 이름은 "GameScene"이다
+            // ("Game"이라는 씬은 존재하지 않아 로드가 조용히 실패했다).
             Time.timeScale = 1f;
-            SceneManager.LoadScene("Game");
+            SceneManager.LoadScene("GameScene");
         }
 
         private void HandlePlayerDeath()
