@@ -110,7 +110,7 @@ namespace SushiSurvival.Core
 
             var weapon = player.GetComponent<WeaponBase>();
             if (levelSystem != null)
-                levelSystem.SetPlayer(_playerStats, _playerHealth, weapon);
+                levelSystem.SetPlayer(_playerStats, _playerHealth, weapon, selectedCharacter.portraitSprite);
 
             if (cameraFollow != null)
                 cameraFollow.SetTarget(_playerTransform);
@@ -168,7 +168,7 @@ namespace SushiSurvival.Core
             _activeCharacterName = characterData.characterName;
 
             var weapon = player.GetComponent<WeaponBase>();
-            levelSystem.SetPlayer(_playerStats, _playerHealth, weapon);
+            levelSystem.SetPlayer(_playerStats, _playerHealth, weapon, characterData.portraitSprite);
 
             cameraFollow.SetTarget(_playerTransform);
 

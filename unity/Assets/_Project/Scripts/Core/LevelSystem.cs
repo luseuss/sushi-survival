@@ -48,16 +48,18 @@ namespace SushiSurvival.Core
         private PlayerStats _playerStats;
         private PlayerHealth _playerHealth;
         private WeaponBase _weapon;
+        private Sprite _portrait;
 
         private float _xpTowardNext;
         private int _pendingLevelUps;
         private bool _panelOpen;
 
-        public void SetPlayer(PlayerStats stats, PlayerHealth health, WeaponBase weapon)
+        public void SetPlayer(PlayerStats stats, PlayerHealth health, WeaponBase weapon, Sprite portrait)
         {
             _playerStats = stats;
             _playerHealth = health;
             _weapon = weapon;
+            _portrait = portrait;
         }
 
         public void AddExperience(float amount)
@@ -118,7 +120,7 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            royalWasabiController.Show(_playerStats, _playerHealth, ShowNext);
+            royalWasabiController.Show(_playerStats, _playerHealth, _portrait, ShowNext);
         }
 
         private void OnOptionChosen(IUpgradeOption option)
