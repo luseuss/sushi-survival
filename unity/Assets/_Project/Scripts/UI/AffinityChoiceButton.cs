@@ -9,8 +9,6 @@ namespace SushiSurvival.UI
     public class AffinityChoiceButton : MonoBehaviour
     {
         [SerializeField] private Text choiceText;
-        [Tooltip("이 선택이 매핑된 증강 아이콘. 비워두면 표시하지 않는다.")]
-        [SerializeField] private Image iconImage;
 
         private Button _button;
         private AffinityDialogueChoice _choice;
@@ -37,12 +35,6 @@ namespace SushiSurvival.UI
 
             if (choiceText != null)
                 choiceText.text = choice.choiceText;
-
-            if (iconImage != null)
-            {
-                iconImage.sprite = choice.augment != null ? choice.augment.icon : null;
-                iconImage.enabled = iconImage.sprite != null;
-            }
         }
 
         public void Clear()

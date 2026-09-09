@@ -12,6 +12,8 @@ namespace SushiSurvival.UI
     {
         [Tooltip("패널 루트. 비워두면 이 오브젝트 자신을 켜고 끈다.")]
         [SerializeField] private GameObject root;
+        [Tooltip("대화창 안 작은 초상화 창. 비워두면 표시하지 않는다.")]
+        [SerializeField] private Image portraitImage;
         [SerializeField] private Text flavorText;
         [SerializeField] private Text resultText;
         [Tooltip("결과 확인 버튼. 처음엔 숨겨져 있다가 결과와 함께 나타난다.")]
@@ -43,11 +45,14 @@ namespace SushiSurvival.UI
                 confirmButton.onClick.RemoveListener(HandleConfirmClicked);
         }
 
-        public void Show(bool success, Action onConfirm)
+        public void Show(bool success, Sprite portrait, Action onConfirm)
         {
             _onConfirm = onConfirm;
 
             Root.SetActive(true);
+
+            if (portraitImage != null)
+                portraitImage.sprite = portrait;
 
             if (flavorText != null)
                 flavorText.text = flavorMessage;

@@ -10,6 +10,8 @@ namespace SushiSurvival.UI
         [Tooltip("패널 루트. 비워두면 이 오브젝트 자신을 켜고 끈다.")]
         [SerializeField] private GameObject root;
         [SerializeField] private Image portraitImage;
+        [Tooltip("대화창 안 작은 초상화 창. 비워두면 표시하지 않는다.")]
+        [SerializeField] private Image miniPortraitImage;
         [SerializeField] private Text questionText;
         [Tooltip("선택지 버튼 최대 3개.")]
         [SerializeField] private AffinityChoiceButton[] choiceButtons;
@@ -24,6 +26,9 @@ namespace SushiSurvival.UI
 
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
+
+            if (miniPortraitImage != null)
+                miniPortraitImage.sprite = portrait;
 
             if (questionText != null)
                 questionText.text = question.questionText;

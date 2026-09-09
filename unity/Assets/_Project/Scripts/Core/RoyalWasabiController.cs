@@ -29,7 +29,7 @@ namespace SushiSurvival.Core
 
         private readonly System.Random _random = new System.Random();
 
-        public void Show(PlayerStats stats, PlayerHealth health, Action onComplete)
+        public void Show(PlayerStats stats, PlayerHealth health, Sprite portrait, Action onComplete)
         {
             if (panel == null)
             {
@@ -48,7 +48,7 @@ namespace SushiSurvival.Core
                 Apply(maxHealthAugment, stats, health);
             }
 
-            panel.Show(success, () =>
+            panel.Show(success, portrait, () =>
             {
                 panel.Hide();
                 onComplete?.Invoke();
