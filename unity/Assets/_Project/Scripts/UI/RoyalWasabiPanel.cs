@@ -68,6 +68,11 @@ namespace SushiSurvival.UI
         {
             yield return new WaitForSecondsRealtime(flavorDuration);
 
+            // flavorText를 지우지 않으면 resultText와 같은 자리에 겹쳐 보인다
+            // (두 Text의 RectTransform이 같은 위치에 겹쳐 배치돼 있음).
+            if (flavorText != null)
+                flavorText.text = string.Empty;
+
             if (resultText != null)
                 resultText.text = success ? successMessage : failureMessage;
 
