@@ -19,6 +19,8 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private PlayerSpawner playerSpawner;
         [SerializeField] private CameraFollow cameraFollow;
         [SerializeField] private BossController boss;
+        [Tooltip("레벨업 팝업이 이 씬에서도 뜨려면 스폰된 플레이어를 여기 넘겨야 한다.")]
+        [SerializeField] private LevelSystem levelSystem;
 
         [Header("보스 패턴 및 연출용 풀")]
         [SerializeField] private XPGemPoolSet gemPools;
@@ -74,19 +76,38 @@ namespace SushiSurvival.Enemies.Boss
             var playerStats = playerObj.GetComponent<PlayerStats>();
             var weapon = playerObj.GetComponent<WeaponBase>();
 
-            // 👇 이전 씬에서 가져온 체력이 있다면 복원
+            // 이전 씬(GameScene)에서 가져온 체력을 그대로 반영한다. 안 하면
+            // 항상 풀피로 보스전이 시작돼 GameScene에서 입은 피해가 사라진다.
             if (_playerHealth != null && RunResultCarrier.PlayerCurrentHealth > 0f)
-            {
-                float healthDifference = RunResultCarrier.PlayerCurrentHealth - _playerHealth.CurrentHealth;
-                if (healthDifference > 0f)
-                {
-                    // PlayerHealth 클래스의 기존 회복 메서드 활용 또는 차이만큼 보정
-                    // (만약 PlayerHealth에 SetHealth나 Heal 방식이 있다면 그에 맞춤)
-                }
-            }
+                _playerHealth.SetHealth(RunResultCarrier.PlayerCurrentHealth);
 
             if (cameraFollow != null)
                 cameraFollow.SetTarget(playerTransform);
+
+            // 레벨업 팝업(3택)이 이 씬에서도 뜨려면 LevelSystem에 플레이어를
+            // 알려줘야 한다 — GameManager는 더 이상 이 씬에서 플레이어를
+            // 스폰하지 않으므로(중복 스폰 버그 수정) 여기서 직접 배선한다.
+            if (levelSystem != null)
+            {
+                levelSystem.SetPlayer(playerStats, _playerHealth, weapon, selectedCharacter.portraitSprite);
+
+                // GameScene에서 쌓은 레벨·경험치·증강을 복원한다. 안 하면
+                // 5분간의 성장이 전부 사라지고 Lv1 기본 스탯으로 다시 시작한다.
+                if (RunResultCarrier.CurrentLevel >= 1)
+                {
+                    levelSystem.RestoreProgress(
+                        RunResultCarrier.CurrentLevel,
+                        RunResultCarrier.CurrentExperience,
+                        RunResultCarrier.PickedAugments);
+                }
+            }
+
+            // 무기 강화 레벨도 같은 이유로 복원한다.
+            if (weapon != null)
+            {
+                while (weapon.CurrentLevel < RunResultCarrier.WeaponLevel && weapon.CanLevelUp)
+                    weapon.LevelUp();
+            }
 
             if (hudHealthBar != null && _playerHealth != null)
             {
@@ -187,10 +208,26 @@ namespace SushiSurvival.Enemies.Boss
 
         private void HandlePlayerDeath()
         {
-            // 1. 런 결과 상태만 패배(Defeat)로 변경 (기존에 백업된 ElapsedTime, Level, KillCount 등은 유지)
+            // RunResultCarrier.Level/Augments는 FinishRun()에서만 채워진다.
+            // EnterBossFight()가 채우는 건 ElapsedTime/KillCount/PlayerCurrentHealth
+            // /CurrentLevel/CurrentExperience/PickedAugments뿐이라("Level"·
+            // "Augments"와는 다른 필드), 여기서 직접 안 채우면 ResultPanel이
+            // Augments를 null로 순회하다 죽는다.
             RunResultCarrier.Outcome = RunOutcome.Defeat;
 
-            // 2. 게임 시간 정지
+            if (GameManager.Instance != null)
+            {
+                RunResultCarrier.ElapsedTime = GameManager.Instance.ElapsedTime;
+                RunResultCarrier.KillCount = GameManager.Instance.KillCount;
+            }
+
+            if (levelSystem != null)
+            {
+                RunResultCarrier.Level = levelSystem.CurrentLevel;
+                RunResultCarrier.Augments = AugmentTally.Summarize(levelSystem.PickedAugments);
+            }
+
+            // 게임 시간 정지
             Time.timeScale = 0f;
 
             // 3. 게임 오버 패널 활성화

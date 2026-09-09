@@ -83,50 +83,25 @@ namespace SushiSurvival.Core
             }
         }
 
+        /// <summary>
+        /// BossScene 진입 시 상태만 맞춘다. 플레이어 스폰·카메라·HUD·LevelSystem
+        /// 배선은 BossFightDirector가 전담한다 — 여기서 또 스폰하면 플레이어가
+        /// 두 명 생겨서(각자 따로 OnDeath 구독) 화면에 안 보이는 쪽이 살짝만
+        /// 맞아도 죽어 조작 중인 캐릭터가 멀쩡한데 게임오버가 뜨는 버그가 났다.
+        /// </summary>
         private void InitializeBossSceneRun()
         {
             CurrentState = RunState.Playing;
             Time.timeScale = 1f;
 
-            CharacterData selectedCharacter = RunResultCarrier.SelectedCharacterData;
-            if (selectedCharacter == null)
-            {
-                Debug.LogWarning("[GameManager] RunResultCarrier에 선택된 캐릭터 데이터가 없습니다.");
-                return;
-            }
-
-            GameObject player = playerSpawner.Spawn(selectedCharacter);
-            if (player == null) return;
-
-            _playerHealth = player.GetComponent<PlayerHealth>();
-            if (_playerHealth != null)
-                _playerHealth.OnDeath += HandlePlayerDeath;
-            else
-                Debug.LogError($"{player.name}: PlayerHealth가 없어 사망 처리를 연결할 수 없습니다.");
-
-            _playerStats = player.GetComponent<PlayerStats>();
-            _playerTransform = player.transform;
-            _activeCharacterName = selectedCharacter.characterName;
-
-            var weapon = player.GetComponent<WeaponBase>();
-            if (levelSystem != null)
-                levelSystem.SetPlayer(_playerStats, _playerHealth, weapon, selectedCharacter.portraitSprite);
-
-            if (cameraFollow != null)
-                cameraFollow.SetTarget(_playerTransform);
-
-            if (hudHealthBar != null)
-            {
-                hudHealthBar.gameObject.SetActive(true);
-                hudHealthBar.SetTarget(_playerHealth, selectedCharacter.portraitSprite);
-            }
+            // GameScene에서 넘어온 진행 상태를 이어받는다(초기화하지 않는다).
+            ElapsedTime = RunResultCarrier.ElapsedTime;
+            KillCount = RunResultCarrier.KillCount;
 
             if (characterSelectPanel != null)
                 characterSelectPanel.SetActive(false);
 
-            ElapsedTime = 0f;
-            KillCount = 0;
-            Debug.Log($"[GameManager] 보스 씬 런 자동 시작: {_activeCharacterName}");
+            Debug.Log("[GameManager] 보스 씬 진입 — 스폰은 BossFightDirector가 담당");
         }
 
         private void Update()
@@ -284,8 +259,24 @@ namespace SushiSurvival.Core
                 RunResultCarrier.PlayerCurrentHealth = _playerHealth.CurrentHealth;
             }
 
+            // 레벨/경험치/증강/무기 강화 — 안 넘기면 보스 씬에서 완전히 새
+            // 캐릭터(Lv1, 기본 무기)로 다시 시작해 5분간 쌓은 성장이 사라진다.
+            if (levelSystem != null)
+            {
+                RunResultCarrier.CurrentLevel = levelSystem.CurrentLevel;
+                RunResultCarrier.CurrentExperience = levelSystem.CurrentExperience;
+                RunResultCarrier.PickedAugments = new List<AugmentData>(levelSystem.PickedAugments);
+            }
+
+            if (_playerTransform != null)
+            {
+                var weapon = _playerTransform.GetComponent<WeaponBase>();
+                if (weapon != null)
+                    RunResultCarrier.WeaponLevel = weapon.CurrentLevel;
+            }
+
             Time.timeScale = 1f;
-            SceneManager.LoadScene("BossScene"); // 또는 해당 보스 씬 이름
+            SceneManager.LoadScene("BossScene");
         }
         private void OnDisable()
         {

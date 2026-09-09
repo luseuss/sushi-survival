@@ -62,6 +62,37 @@ namespace SushiSurvival.Core
             _portrait = portrait;
         }
 
+        /// <summary>
+        /// 씬 전환(GameScene → BossScene) 직후, 이전 씬에서 쌓은 레벨·경험치·
+        /// 증강을 복원한다. SetPlayer로 새 PlayerStats가 연결된 뒤에 불러야
+        /// 한다. 최대체력 증강의 현재체력 보정은 일부러 건너뛴다 — 현재체력은
+        /// PlayerHealth.SetHealth로 이전 씬 값을 그대로 복원하므로, 여기서
+        /// 또 더하면 중복 적용된다(AugmentOption.Apply와 다른 점).
+        /// </summary>
+        public void RestoreProgress(int level, float xpTowardNext, IReadOnlyList<AugmentData> pickedAugments)
+        {
+            CurrentLevel = level;
+            _xpTowardNext = xpTowardNext;
+
+            if (pickedAugments == null || _playerStats == null) return;
+
+            foreach (var augment in pickedAugments)
+            {
+                if (augment == null) continue;
+
+                _playerStats.AddModifier(new StatModifier
+                {
+                    Stat = augment.statType,
+                    Type = ModifierType.Additive,
+                    Value = augment.valuePerPick
+                });
+
+                _accumulated.TryGetValue(augment, out float current);
+                _accumulated[augment] = current + augment.valuePerPick;
+                _pickedAugments.Add(augment);
+            }
+        }
+
         public void AddExperience(float amount)
         {
             _xpTowardNext += amount;
