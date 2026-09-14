@@ -84,9 +84,10 @@ namespace SushiSurvival.UI
 
         public void HandleRestart()
         {
-            // 씬 분리 이후 Result 씬에서 Game 씬으로 명시적 이동[cite: 1]
+            // 씬 분리 이후 Result 씬에서 Intro 씬으로 명시적 이동 —
+            // 결과 화면 다음은 곧장 캐릭터 선택이 아니라 부스 대기 화면(인트로)이다.
             Time.timeScale = 1f;
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("IntroScene");
         }
     }
 }
