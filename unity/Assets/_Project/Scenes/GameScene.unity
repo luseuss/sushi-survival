@@ -697,6 +697,7 @@ GameObject:
   - component: {fileID: 163040881}
   - component: {fileID: 163040883}
   - component: {fileID: 163040882}
+  - component: {fileID: 163040884}
   m_Layer: 5
   m_Name: Backgrund
   m_TagString: Untagged
@@ -721,7 +722,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 80}
-  m_SizeDelta: {x: 1017.6357, y: 574.5322}
+  m_SizeDelta: {x: 1199, y: 1001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &163040882
 MonoBehaviour:
@@ -743,9 +744,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7d6d771bfc41ae14a9f9f61a592defbb, type: 3}
+  m_Sprite: {fileID: -1655964885, guid: 27b0c35b875138749a5bc7d4512b5c4f, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -761,6 +762,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 163040880}
   m_CullTransparentMesh: 1
+--- !u!95 &163040884
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163040880}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2a6bfad19bb23214887dbe1fab5cf0e7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 2
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &209595822
 GameObject:
   m_ObjectHideFlags: 0
@@ -5315,7 +5337,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -300}
-  m_SizeDelta: {x: 1891, y: 567}
+  m_SizeDelta: {x: 1600, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1332863663
 MonoBehaviour:
@@ -6207,7 +6229,7 @@ MonoBehaviour:
   hudHealthBar: {fileID: 262871687}
   bossDirector: {fileID: 0}
   affinityDialogueController: {fileID: 366438088}
-  bossSpawnTime: 10
+  bossSpawnTime: 300
   enemyHealthScalePerMinute: 0.6
   maxEnemyHealthScale: 4
 --- !u!4 &1832550895
@@ -7026,8 +7048,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -675, y: -5}
-  m_SizeDelta: {x: 190, y: 190}
+  m_AnchoredPosition: {x: -569.9, y: 8}
+  m_SizeDelta: {x: 170, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2048930029
 MonoBehaviour:
