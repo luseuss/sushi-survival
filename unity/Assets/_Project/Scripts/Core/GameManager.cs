@@ -116,10 +116,40 @@ namespace SushiSurvival.Core
             {
                 if (ElapsedTime >= bossSpawnTime)
                 {
-                    EnterBossFight();
+                    TriggerBossIntroDialogue();
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// 보스전 진입 직전 인터럽트(호감도 대화 #2). LevelUpPanel/RoyalWasabiPanel과
+        /// 같은 방식으로 timeScale을 0으로 걸어 멈춘다 — 이미 스폰 중인 잡몹이 대화
+        /// 도중에도 계속 움직이며 플레이어를 때리는 걸 막기 위해서다. 대화 데이터가
+        /// 없으면(캐릭터에 #2 대본이 없거나 아직 미작성) 인터럽트 없이 바로 넘어간다.
+        /// </summary>
+        private void TriggerBossIntroDialogue()
+        {
+            CurrentState = RunState.Intro;
+            Time.timeScale = 0f;
+
+            if (_selectedCharacterData != null && _selectedCharacterData.affinityDialogue != null &&
+                affinityDialogueController != null)
+            {
+                affinityDialogueController.ShowSecond(
+                    _selectedCharacterData.affinityDialogue, _selectedCharacterData.portraitSprite,
+                    _playerStats, _playerHealth, ResumeAndEnterBossFight);
+            }
+            else
+            {
+                ResumeAndEnterBossFight();
+            }
+        }
+
+        private void ResumeAndEnterBossFight()
+        {
+            CurrentState = RunState.Playing;
+            EnterBossFight();
         }
 
         public void StartRun(CharacterData characterData)

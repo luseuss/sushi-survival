@@ -22,10 +22,15 @@ namespace SushiSurvival.Data
         public AffinityDialogueChoice[] choices;
     }
 
-    /// <summary>캐릭터 하나가 가지는 호감도 대화. #1만 다룬다(#2는 별도 슬라이스).</summary>
+    /// <summary>
+    /// 캐릭터 하나가 가지는 호감도 대화. question1은 런 시작 직전, question2는
+    /// 5:00 보스전 진입 직전에 쓴다. question2를 비워두면 그 인터럽트 없이
+    /// 바로 보스전으로 넘어간다.
+    /// </summary>
     [CreateAssetMenu(menuName = "SushiSurvival/Affinity Dialogue Data", fileName = "NewAffinityDialogueData")]
     public class AffinityDialogueData : ScriptableObject
     {
         public AffinityDialogueQuestion question1;
+        public AffinityDialogueQuestion question2;
     }
 }
