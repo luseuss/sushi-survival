@@ -138,7 +138,7 @@ namespace SushiSurvival.Core
             {
                 affinityDialogueController.ShowSecond(
                     _selectedCharacterData.affinityDialogue, _selectedCharacterData.portraitSprite,
-                    _playerStats, _playerHealth, ResumeAndEnterBossFight);
+                    _playerStats, _playerHealth, levelSystem.RecordExternalBuff, ResumeAndEnterBossFight);
             }
             else
             {
@@ -189,7 +189,7 @@ namespace SushiSurvival.Core
                 CurrentState = RunState.Intro;
                 affinityDialogueController.Show(
                     characterData.affinityDialogue, characterData.portraitSprite,
-                    _playerStats, _playerHealth, BeginCombat);
+                    _playerStats, _playerHealth, levelSystem.RecordExternalBuff, BeginCombat);
             }
             else
             {
@@ -296,6 +296,7 @@ namespace SushiSurvival.Core
                 RunResultCarrier.CurrentLevel = levelSystem.CurrentLevel;
                 RunResultCarrier.CurrentExperience = levelSystem.CurrentExperience;
                 RunResultCarrier.PickedAugments = new List<AugmentData>(levelSystem.PickedAugments);
+                RunResultCarrier.ExternalBuffs = new List<AugmentBuff>(levelSystem.ExternalBuffs);
             }
 
             if (_playerTransform != null)

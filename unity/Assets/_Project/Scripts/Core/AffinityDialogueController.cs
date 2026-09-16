@@ -19,16 +19,21 @@ namespace SushiSurvival.Core
         [Range(0f, 1f)]
         [SerializeField] private float buffRatio = 0.125f;
 
-        public void Show(AffinityDialogueData data, Sprite portrait,
-                         PlayerStats stats, PlayerHealth health, Action onComplete)
-            => ShowQuestion(data?.question1, portrait, stats, health, onComplete);
+        /// <param name="recordBuff">
+        /// 적용된 증강·수치를 호출자(LevelSystem)에 되돌려준다. 보스 씬으로 넘어갈 때
+        /// 이 버프를 다시 적용할 수 있도록 LevelSystem.RecordExternalBuff를 넘겨받는다 —
+        /// 안 넘기면 GameScene→BossScene 전환 시 대화로 받은 버프가 사라진다.
+        /// </param>
+        public void Show(AffinityDialogueData data, Sprite portrait, PlayerStats stats, PlayerHealth health,
+                         Action<AugmentData, float> recordBuff, Action onComplete)
+            => ShowQuestion(data?.question1, portrait, stats, health, recordBuff, onComplete);
 
-        public void ShowSecond(AffinityDialogueData data, Sprite portrait,
-                         PlayerStats stats, PlayerHealth health, Action onComplete)
-            => ShowQuestion(data?.question2, portrait, stats, health, onComplete);
+        public void ShowSecond(AffinityDialogueData data, Sprite portrait, PlayerStats stats, PlayerHealth health,
+                         Action<AugmentData, float> recordBuff, Action onComplete)
+            => ShowQuestion(data?.question2, portrait, stats, health, recordBuff, onComplete);
 
-        private void ShowQuestion(AffinityDialogueQuestion question, Sprite portrait,
-                         PlayerStats stats, PlayerHealth health, Action onComplete)
+        private void ShowQuestion(AffinityDialogueQuestion question, Sprite portrait, PlayerStats stats,
+                         PlayerHealth health, Action<AugmentData, float> recordBuff, Action onComplete)
         {
             if (question == null || question.choices == null || question.choices.Length == 0)
             {
@@ -49,6 +54,7 @@ namespace SushiSurvival.Core
                 {
                     float amount = AffinityBuffLogic.GetBuffAmount(choice.augment.maxCap, buffRatio);
                     AffinityBuffApplier.Apply(choice.augment, amount, stats, health);
+                    recordBuff?.Invoke(choice.augment, amount);
                 }
                 else
                 {

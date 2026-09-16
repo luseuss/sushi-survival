@@ -9,6 +9,22 @@ using SushiSurvival.Weapons;
 namespace SushiSurvival.Core
 {
     /// <summary>
+    /// 카드 픽(valuePerPick 고정)과 달리 왕궁 와사비·호감도 대화는 비율×maxCap 같은
+    /// 임의의 양을 적용하므로, 씬 전환 복원을 위해 증강과 적용량을 함께 들고 있어야 한다.
+    /// </summary>
+    public readonly struct AugmentBuff
+    {
+        public readonly AugmentData Augment;
+        public readonly float Amount;
+
+        public AugmentBuff(AugmentData augment, float amount)
+        {
+            Augment = augment;
+            Amount = amount;
+        }
+    }
+
+    /// <summary>
     /// 경험치 누적 → 레벨업 → 3택 팝업 → 적용까지를 관장한다.
     /// 황금 젬으로 여러 레벨이 한 번에 오를 수 있으므로 대기 큐를 둔다.
     /// </summary>
@@ -33,8 +49,13 @@ namespace SushiSurvival.Core
 
         private readonly Dictionary<AugmentData, float> _accumulated = new Dictionary<AugmentData, float>();
         private readonly List<AugmentData> _pickedAugments = new List<AugmentData>();
+        private readonly List<AugmentBuff> _externalBuffs = new List<AugmentBuff>();
 
         public IReadOnlyList<AugmentData> PickedAugments => _pickedAugments;
+
+        /// <summary>왕궁 와사비·호감도 대화로 적용된 버프. EnterBossFight()가 이걸 읽어
+        /// RunResultCarrier에 실어 보내고, RestoreProgress()가 새 씬에서 재적용한다.</summary>
+        public IReadOnlyList<AugmentBuff> ExternalBuffs => _externalBuffs;
 
         /// <summary>
         /// 팝업이 열려 있거나 아직 못 띄운 레벨업이 남아 있으면 true.
@@ -64,33 +85,57 @@ namespace SushiSurvival.Core
 
         /// <summary>
         /// 씬 전환(GameScene → BossScene) 직후, 이전 씬에서 쌓은 레벨·경험치·
-        /// 증강을 복원한다. SetPlayer로 새 PlayerStats가 연결된 뒤에 불러야
-        /// 한다. 최대체력 증강의 현재체력 보정은 일부러 건너뛴다 — 현재체력은
-        /// PlayerHealth.SetHealth로 이전 씬 값을 그대로 복원하므로, 여기서
-        /// 또 더하면 중복 적용된다(AugmentOption.Apply와 다른 점).
+        /// 증강·외부 버프(왕궁 와사비·호감도 대화)를 복원한다. SetPlayer로 새
+        /// PlayerStats가 연결된 뒤에 불러야 한다. 최대체력 증강의 현재체력 보정은
+        /// 일부러 건너뛴다 — 현재체력은 PlayerHealth.SetHealth로 이전 씬 값을
+        /// 그대로 복원하므로, 여기서 또 더하면 중복 적용된다(AugmentOption.Apply와
+        /// 다른 점). 단, GrantMaxHealthIncrease로 최대체력 자체를 올리는 건 필요하다
+        /// — 안 하면 최대체력 증강분이 상한에서 빠진다.
         /// </summary>
-        public void RestoreProgress(int level, float xpTowardNext, IReadOnlyList<AugmentData> pickedAugments)
+        public void RestoreProgress(int level, float xpTowardNext, IReadOnlyList<AugmentData> pickedAugments,
+                                     IReadOnlyList<AugmentBuff> externalBuffs = null)
         {
             CurrentLevel = level;
             _xpTowardNext = xpTowardNext;
 
-            if (pickedAugments == null || _playerStats == null) return;
-
-            foreach (var augment in pickedAugments)
+            if (_playerStats != null && pickedAugments != null)
             {
-                if (augment == null) continue;
-
-                _playerStats.AddModifier(new StatModifier
+                foreach (var augment in pickedAugments)
                 {
-                    Stat = augment.statType,
-                    Type = ModifierType.Additive,
-                    Value = augment.valuePerPick
-                });
+                    if (augment == null) continue;
 
-                _accumulated.TryGetValue(augment, out float current);
-                _accumulated[augment] = current + augment.valuePerPick;
-                _pickedAugments.Add(augment);
+                    _playerStats.AddModifier(new StatModifier
+                    {
+                        Stat = augment.statType,
+                        Type = ModifierType.Additive,
+                        Value = augment.valuePerPick
+                    });
+
+                    _accumulated.TryGetValue(augment, out float current);
+                    _accumulated[augment] = current + augment.valuePerPick;
+                    _pickedAugments.Add(augment);
+                }
             }
+
+            if (_playerStats != null && externalBuffs != null)
+            {
+                foreach (var buff in externalBuffs)
+                {
+                    if (buff.Augment == null) continue;
+
+                    AffinityBuffApplier.Apply(buff.Augment, buff.Amount, _playerStats, _playerHealth);
+                    _externalBuffs.Add(buff);
+                }
+            }
+        }
+
+        /// <summary>왕궁 와사비·호감도 대화가 스탯에 버프를 적용한 직후 호출해,
+        /// 다음 씬 전환 때도 이 버프가 유지되도록 기록한다.</summary>
+        public void RecordExternalBuff(AugmentData augment, float amount)
+        {
+            if (augment == null) return;
+
+            _externalBuffs.Add(new AugmentBuff(augment, amount));
         }
 
         public void AddExperience(float amount)
@@ -151,7 +196,7 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            royalWasabiController.Show(_playerStats, _playerHealth, _portrait, ShowNext);
+            royalWasabiController.Show(_playerStats, _playerHealth, _portrait, RecordExternalBuff, ShowNext);
         }
 
         private void OnOptionChosen(IUpgradeOption option)
