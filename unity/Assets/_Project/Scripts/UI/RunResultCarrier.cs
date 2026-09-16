@@ -16,6 +16,7 @@ namespace SushiSurvival.Core
         public static float CurrentExperience;
         public static int CurrentLevel;
         public static List<AugmentData> PickedAugments;
+        public static List<AugmentBuff> ExternalBuffs;
         public static float PlayerCurrentHealth;
         public static int WeaponLevel;
     }

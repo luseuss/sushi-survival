@@ -27,7 +27,13 @@ namespace SushiSurvival.Core
         [SerializeField] private AugmentData moveSpeedAugment;
         [SerializeField] private AugmentData maxHealthAugment;
 
-        public void Show(PlayerStats stats, PlayerHealth health, Sprite portrait, Action onComplete)
+        /// <param name="recordBuff">
+        /// 적용된 증강·수치를 호출자(LevelSystem)에 되돌려준다. 보스 씬으로 넘어갈 때
+        /// 이 버프를 다시 적용할 수 있도록 LevelSystem.RecordExternalBuff를 넘겨받는다 —
+        /// 안 넘기면 GameScene→BossScene 전환 시 와사비 버프가 사라진다.
+        /// </param>
+        public void Show(PlayerStats stats, PlayerHealth health, Sprite portrait,
+                          Action<AugmentData, float> recordBuff, Action onComplete)
         {
             if (panel == null || rpsPanel == null)
             {
@@ -42,10 +48,10 @@ namespace SushiSurvival.Core
 
                 if (success)
                 {
-                    Apply(attackDamageAugment, stats, health);
-                    Apply(attackSpeedAugment, stats, health);
-                    Apply(moveSpeedAugment, stats, health);
-                    Apply(maxHealthAugment, stats, health);
+                    Apply(attackDamageAugment, stats, health, recordBuff);
+                    Apply(attackSpeedAugment, stats, health, recordBuff);
+                    Apply(moveSpeedAugment, stats, health, recordBuff);
+                    Apply(maxHealthAugment, stats, health, recordBuff);
                 }
 
                 panel.Show(success, portrait, () =>
@@ -56,7 +62,8 @@ namespace SushiSurvival.Core
             });
         }
 
-        private void Apply(AugmentData augment, PlayerStats stats, PlayerHealth health)
+        private void Apply(AugmentData augment, PlayerStats stats, PlayerHealth health,
+                            Action<AugmentData, float> recordBuff)
         {
             if (augment == null)
             {
@@ -66,6 +73,7 @@ namespace SushiSurvival.Core
 
             float amount = AffinityBuffLogic.GetBuffAmount(augment.maxCap, buffRatio);
             AffinityBuffApplier.Apply(augment, amount, stats, health);
+            recordBuff?.Invoke(augment, amount);
         }
     }
 }

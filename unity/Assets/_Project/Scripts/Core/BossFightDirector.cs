@@ -98,7 +98,8 @@ namespace SushiSurvival.Enemies.Boss
                     levelSystem.RestoreProgress(
                         RunResultCarrier.CurrentLevel,
                         RunResultCarrier.CurrentExperience,
-                        RunResultCarrier.PickedAugments);
+                        RunResultCarrier.PickedAugments,
+                        RunResultCarrier.ExternalBuffs);
                 }
             }
 
