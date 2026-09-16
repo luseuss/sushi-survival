@@ -7,9 +7,10 @@ using SushiSurvival.UI;
 namespace SushiSurvival.Core
 {
     /// <summary>
-    /// 호감도 대화 #1의 진입점. GameManager가 캐릭터 스폰 직후 이걸 부른다.
-    /// 대화 데이터가 없거나 비어 있으면 즉시 onComplete를 불러 건너뛴다 —
-    /// 아직 대본이 없는 캐릭터도 런이 정상적으로 진행돼야 한다.
+    /// 호감도 대화 #1(런 시작 직전)·#2(5:00 보스전 진입 직전)의 진입점. 둘 다
+    /// 같은 패널·같은 버프 로직을 쓰고 질문만 다르다. 대화 데이터가 없거나
+    /// 비어 있으면 즉시 onComplete를 불러 건너뛴다 — 아직 대본이 없는
+    /// 캐릭터/시점도 런이 정상적으로 진행돼야 한다.
     /// </summary>
     public class AffinityDialogueController : MonoBehaviour
     {
@@ -20,9 +21,16 @@ namespace SushiSurvival.Core
 
         public void Show(AffinityDialogueData data, Sprite portrait,
                          PlayerStats stats, PlayerHealth health, Action onComplete)
+            => ShowQuestion(data?.question1, portrait, stats, health, onComplete);
+
+        public void ShowSecond(AffinityDialogueData data, Sprite portrait,
+                         PlayerStats stats, PlayerHealth health, Action onComplete)
+            => ShowQuestion(data?.question2, portrait, stats, health, onComplete);
+
+        private void ShowQuestion(AffinityDialogueQuestion question, Sprite portrait,
+                         PlayerStats stats, PlayerHealth health, Action onComplete)
         {
-            if (data == null || data.question1 == null ||
-                data.question1.choices == null || data.question1.choices.Length == 0)
+            if (question == null || question.choices == null || question.choices.Length == 0)
             {
                 onComplete?.Invoke();
                 return;
@@ -35,7 +43,7 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            panel.Show(portrait, data.question1, choice =>
+            panel.Show(portrait, question, choice =>
             {
                 if (choice.augment != null)
                 {

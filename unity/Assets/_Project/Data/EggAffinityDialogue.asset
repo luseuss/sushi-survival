@@ -25,3 +25,15 @@ MonoBehaviour:
     - choiceText: "\uBC1C\uC774 \uBE60\uB974\uBA74, \uC560\uCD08\uC5D0 \uB2E4\uCE60
         \uC77C\uC774 \uC5C6\uC8E0."
       augment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
+  question2:
+    questionText: "\uB4DC\uB514\uC5B4 \uBCF4\uC2A4\uAC00 \uB098\uD0C0\uB0AC\uB2E4.
+      \uB9C8\uC9C0\uB9C9\uC73C\uB85C, \uB10C \uC5B4\uB5BB\uAC8C \uC900\uBE44\uD560
+      \uAC70\uC57C?"
+    choices:
+    - choiceText: "\uBAB0\uC544\uCCD0\uC11C \uB05D\uB0B4\uBC84\uB9AC\uACA0\uC5B4."
+      augment: {fileID: 11400000, guid: 4a11df250143f904ab55a4c91725671f, type: 2}
+    - choiceText: "\uC77C\uB2E8 \uBC84\uD2F8 \uCCB4\uB825\uBD80\uD130 \uCC44\uC6CC\uC57C\uC9C0."
+      augment: {fileID: 11400000, guid: f1184b778388d584c97b9c56339b2ce4, type: 2}
+    - choiceText: "\uCC9C\uCC9C\uD788, \uAFB8\uC900\uD788 \uD68C\uBCF5\uD558\uBA74\uC11C
+        \uC2F8\uC6B0\uACA0\uC5B4."
+      augment: {fileID: 11400000, guid: 026394673cbe2c84c901ef8b8e363c68, type: 2}
