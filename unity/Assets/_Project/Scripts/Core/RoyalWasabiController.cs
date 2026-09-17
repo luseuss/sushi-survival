@@ -46,7 +46,9 @@ namespace SushiSurvival.Core
             // 넘어간다 — 결과 확인용 패널을 도입부 연출로도 재사용한다.
             panel.ShowFlavor(portrait, () =>
             {
-                panel.Hide();
+                // panel.Hide()가 아니라 HideDialogueBox() — 왕궁 배경은
+                // 가위바위보 도중에도 계속 보여야 한다.
+                panel.HideDialogueBox();
 
                 rpsPanel.Show(success =>
                 {

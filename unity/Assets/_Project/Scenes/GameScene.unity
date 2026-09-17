@@ -5597,6 +5597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   root: {fileID: 0}
+  textBar: {fileID: 275762230}
   portraitImage: {fileID: 712658979}
   flavorText: {fileID: 1171330002}
   resultText: {fileID: 1185149767}

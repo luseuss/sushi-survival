@@ -12,6 +12,9 @@ namespace SushiSurvival.UI
     {
         [Tooltip("패널 루트. 비워두면 이 오브젝트 자신을 켜고 끈다.")]
         [SerializeField] private GameObject root;
+        [Tooltip("대사/결과 텍스트 뒤 배경 바. 왕궁 배경(Background)과 형제 오브젝트라 " +
+                 "따로 꺼야 왕궁 배경이 가위바위보 중에도 유지된다.")]
+        [SerializeField] private GameObject textBar;
         [Tooltip("대화창 안 작은 초상화 창. 비워두면 표시하지 않는다.")]
         [SerializeField] private Image portraitImage;
         [SerializeField] private Text flavorText;
@@ -52,6 +55,7 @@ namespace SushiSurvival.UI
         public void ShowFlavor(Sprite portrait, Action onFlavorDone)
         {
             Root.SetActive(true);
+            ShowDialogueBox();
 
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
@@ -69,12 +73,32 @@ namespace SushiSurvival.UI
             _routine = StartCoroutine(WaitThenInvoke(flavorDuration, onFlavorDone));
         }
 
+        /// <summary>
+        /// 가위바위보가 진행되는 동안 대화상자(텍스트바/대사/결과/확인버튼)만 숨긴다.
+        /// Root를 통째로 끄면 왕궁 배경(Background)도 같이 꺼져버려서 따로 둔다.
+        /// </summary>
+        public void HideDialogueBox()
+        {
+            if (textBar != null) textBar.SetActive(false);
+            if (flavorText != null) flavorText.gameObject.SetActive(false);
+            if (resultText != null) resultText.gameObject.SetActive(false);
+            if (confirmButtonRoot != null) confirmButtonRoot.SetActive(false);
+        }
+
+        private void ShowDialogueBox()
+        {
+            if (textBar != null) textBar.SetActive(true);
+            if (flavorText != null) flavorText.gameObject.SetActive(true);
+            if (resultText != null) resultText.gameObject.SetActive(true);
+        }
+
         /// <summary>가위바위보 결과가 나온 뒤 성공/실패 문구와 확인 버튼을 보여준다.</summary>
         public void ShowResult(bool success, Sprite portrait, Action onConfirm)
         {
             _onConfirm = onConfirm;
 
             Root.SetActive(true);
+            ShowDialogueBox();
 
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
