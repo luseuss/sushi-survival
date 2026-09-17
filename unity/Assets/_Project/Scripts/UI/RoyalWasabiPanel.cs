@@ -45,10 +45,12 @@ namespace SushiSurvival.UI
                 confirmButton.onClick.RemoveListener(HandleConfirmClicked);
         }
 
-        public void Show(bool success, Sprite portrait, Action onConfirm)
+        /// <summary>
+        /// 가위바위보 시작 전 "알현" 대사만 보여준다. flavorDuration이 지나면
+        /// onFlavorDone을 불러 호출자가 RPS 패널로 넘어가게 한다.
+        /// </summary>
+        public void ShowFlavor(Sprite portrait, Action onFlavorDone)
         {
-            _onConfirm = onConfirm;
-
             Root.SetActive(true);
 
             if (portraitImage != null)
@@ -64,14 +66,18 @@ namespace SushiSurvival.UI
                 confirmButtonRoot.SetActive(false);
 
             if (_routine != null) StopCoroutine(_routine);
-            _routine = StartCoroutine(RevealResult(success));
+            _routine = StartCoroutine(WaitThenInvoke(flavorDuration, onFlavorDone));
         }
 
-        public void Hide() => Root.SetActive(false);
-
-        private IEnumerator RevealResult(bool success)
+        /// <summary>가위바위보 결과가 나온 뒤 성공/실패 문구와 확인 버튼을 보여준다.</summary>
+        public void ShowResult(bool success, Sprite portrait, Action onConfirm)
         {
-            yield return new WaitForSecondsRealtime(flavorDuration);
+            _onConfirm = onConfirm;
+
+            Root.SetActive(true);
+
+            if (portraitImage != null)
+                portraitImage.sprite = portrait;
 
             // flavorText를 지우지 않으면 resultText와 같은 자리에 겹쳐 보인다
             // (두 Text의 RectTransform이 같은 위치에 겹쳐 배치돼 있음).
@@ -83,8 +89,15 @@ namespace SushiSurvival.UI
 
             if (confirmButtonRoot != null)
                 confirmButtonRoot.SetActive(true);
+        }
 
+        public void Hide() => Root.SetActive(false);
+
+        private IEnumerator WaitThenInvoke(float delay, Action callback)
+        {
+            yield return new WaitForSecondsRealtime(delay);
             _routine = null;
+            callback?.Invoke();
         }
 
         private void HandleConfirmClicked() => _onConfirm?.Invoke();
