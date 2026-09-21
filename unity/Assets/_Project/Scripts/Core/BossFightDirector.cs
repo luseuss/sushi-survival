@@ -76,11 +76,6 @@ namespace SushiSurvival.Enemies.Boss
             var playerStats = playerObj.GetComponent<PlayerStats>();
             var weapon = playerObj.GetComponent<WeaponBase>();
 
-            // 이전 씬(GameScene)에서 가져온 체력을 그대로 반영한다. 안 하면
-            // 항상 풀피로 보스전이 시작돼 GameScene에서 입은 피해가 사라진다.
-            if (_playerHealth != null && RunResultCarrier.PlayerCurrentHealth > 0f)
-                _playerHealth.SetHealth(RunResultCarrier.PlayerCurrentHealth);
-
             if (cameraFollow != null)
                 cameraFollow.SetTarget(playerTransform);
 
@@ -102,6 +97,13 @@ namespace SushiSurvival.Enemies.Boss
                         RunResultCarrier.ExternalBuffs);
                 }
             }
+
+            // 이전 씬(GameScene)에서 가져온 체력을 그대로 반영한다. 안 하면
+            // 항상 풀피로 보스전이 시작돼 GameScene에서 입은 피해가 사라진다.
+            // 최대체력 증강이 RestoreProgress로 복원된 뒤에 해야 한다 — 먼저 하면
+            // 최대치가 아직 낮아서 그 값으로 잘려 나간다.
+            if (_playerHealth != null && RunResultCarrier.PlayerCurrentHealth > 0f)
+                _playerHealth.SetHealth(RunResultCarrier.PlayerCurrentHealth);
 
             // 무기 강화 레벨도 같은 이유로 복원한다.
             if (weapon != null)

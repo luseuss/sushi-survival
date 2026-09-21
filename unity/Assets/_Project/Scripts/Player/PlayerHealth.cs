@@ -12,6 +12,7 @@ namespace SushiSurvival.Player
         [SerializeField] private SpriteFlasher spriteFlasher;
         private float _regenCarry;
         private int _revivesUsed;
+        private bool _healthInitialized;
 
         public float CurrentHealth { get; private set; }
         public float MaxHealth => _stats.GetValue(StatType.MaxHealth);
@@ -27,7 +28,14 @@ namespace SushiSurvival.Player
 
         private void Start()
         {
-            CurrentHealth = MaxHealth;
+            // 스폰 직후 SetHealth로 체력을 복원한 경우(보스 씬 진입), 첫 프레임에
+            // 여기서 풀피로 덮어쓰지 않는다.
+            if (!_healthInitialized)
+            {
+                CurrentHealth = MaxHealth;
+                _healthInitialized = true;
+            }
+
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
 
@@ -96,6 +104,7 @@ namespace SushiSurvival.Player
         }
         public void SetHealth(float amount)
         {
+            _healthInitialized = true;
             CurrentHealth = Mathf.Clamp(amount, 0f, MaxHealth);
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
