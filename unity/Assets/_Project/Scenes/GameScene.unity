@@ -723,7 +723,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -340, y: -255}
+  m_AnchoredPosition: {x: 0, y: -255}
   m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &141949994
@@ -2320,38 +2320,11 @@ MonoBehaviour:
   tilemap: {fileID: 500583901}
   followTarget: {fileID: 0}
   grassSprites:
-  - {fileID: -1600246382, guid: b4ddb4918e47c3f4e99af89686b7ede4, type: 3}
-  - {fileID: -1828446250, guid: b4ddb4918e47c3f4e99af89686b7ede4, type: 3}
-  - {fileID: -1990010167, guid: b4ddb4918e47c3f4e99af89686b7ede4, type: 3}
-  grassDetailSprites:
-  - {fileID: -438617366, guid: b4ddb4918e47c3f4e99af89686b7ede4, type: 3}
-  sandSprites:
-  - {fileID: 562574921, guid: 5bf07146462bf364abc067e442922958, type: 3}
-  - {fileID: -419779058, guid: 5bf07146462bf364abc067e442922958, type: 3}
-  - {fileID: 534844544, guid: 5bf07146462bf364abc067e442922958, type: 3}
-  - {fileID: -1898818326, guid: 5bf07146462bf364abc067e442922958, type: 3}
-  ruinSets:
-  - sprites:
-    - {fileID: 1356896031, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: 1883672617, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: 993794565, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: 1978083833, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: -1104996050, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: 1246352044, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: -1255446291, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: -1709123966, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-    - {fileID: -1521932982, guid: ffabdc54e52477c4bbbf45f4e04afa9f, type: 3}
-  - sprites:
-    - {fileID: -451401004, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: -1273229399, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: -1043715302, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: 1027148632, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: -1056684298, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: 1721217388, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: 302066485, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: 1800665208, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-    - {fileID: -599831797, guid: 5624ff98ba7bcb1458050ca063967a51, type: 3}
-  tileSize: 0.32
+  - {fileID: 21300000, guid: 3788d38e027e85f4c8a9f9782fbdecd4, type: 3}
+  grassDetailSprites: []
+  sandSprites: []
+  ruinSets: []
+  tileSize: 1
   chunkSize: 16
   chunkRadius: 2
   regionSize: 4
@@ -4087,7 +4060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &887385866
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4295,7 +4268,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 340, y: -255}
+  m_AnchoredPosition: {x: -340, y: -255}
   m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &927835451
@@ -6477,7 +6450,7 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1599481365}
   m_Enabled: 1
-  m_CellSize: {x: 0.32, y: 0.32, z: 1}
+  m_CellSize: {x: 1, y: 1, z: 1}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
@@ -7489,7 +7462,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -255}
+  m_AnchoredPosition: {x: 340, y: -255}
   m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1992434011
