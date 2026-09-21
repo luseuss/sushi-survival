@@ -12,12 +12,19 @@
 
 ## 브랜치 / PR 분할
 
-| PR | 브랜치 | 태스크 | 성격 |
-|---|---|---|---|
-| **PR 1** | `feature/story-intro-scene` (현재 브랜치, 스펙 커밋 있음) | Task 1, 2 | 코드만. 씬이 아직 없어 게임 동작은 안 바뀜 |
-| **PR 2** | `feature/story-scene-wiring` (PR 1 병합 후 `main`에서 새로) | Task 3, 4, 5 | 대본 에셋 + `StoryScene` 씬 + `IntroSceneController` 한 줄 + 빌드 세팅 |
+서로 파일이 겹치지 않고 의존하지 않는 작업은 `main`에서 **미리 따로 브랜치를 파서 병렬로** 진행하고, 앞 PR의 타입이 필요한 작업만 그 PR이 병합된 **뒤에** 브랜치를 판다.
 
-`IntroSceneController` 수정은 **반드시 씬과 같은 PR 2에 넣는다** — 따로 병합하면 시작 버튼이 존재하지 않는 씬으로 이동한다.
+| PR | 브랜치 | 태스크 | 브랜치 시작 시점 | 의존 |
+|---|---|---|---|---|
+| **문서** | `feature/story-intro-scene` | 스펙 + 계획서 | 이미 있음 | 없음 |
+| **A** | `feature/story-dialogue-logic` | Task 1 (`StoryDialogueLogic` + 테스트) | `main`에서 지금 | 없음 |
+| **B** | `feature/story-dialogue-data` | Task 2 (`StoryDialogueData`) | `main`에서 지금 | 없음 (A와 파일이 안 겹침) |
+| **C** | `feature/story-dialogue-ui` | Task 3 (`StoryPanel` + `StorySceneController`) | **A·B 병합 후** | A의 로직, B의 `StoryLine`/`StoryDialogueData` |
+| **D** | `feature/story-scene-wiring` | Task 4·5·6 (대본 에셋, 씬, 연결) | **C 병합 후** | C의 컴포넌트, B의 데이터 클래스 |
+
+A와 B는 서로의 타입을 쓰지 않으므로 각각 `main` 기준으로 컴파일·테스트가 통과해야 한다. 브랜치마다 EditMode 총 개수가 다르니 기대값을 각 태스크에 적어 뒀다(A: 255, B: 239, C 이후: 255, D: 259).
+
+`IntroSceneController` 수정은 **반드시 씬과 같은 PR D에 넣는다** — 따로 병합하면 시작 버튼이 존재하지 않는 씬으로 이동한다.
 
 ## Global Constraints
 
@@ -49,17 +56,23 @@ head -c 300 TestResults.xml
 | `unity/Assets/_Project/Scripts/Data/StoryDialogueData.cs` (신규) | `StoryLine` + `StoryDialogueData` ScriptableObject |
 | `unity/Assets/_Project/Scripts/UI/StoryPanel.cs` (신규) | 배경 크로스페이드, 이름표/초상화/대사 표시(뷰) |
 | `unity/Assets/_Project/Scripts/UI/StorySceneController.cs` (신규) | 입력 처리, 줄 진행, 건너뛰기, 다음 씬 이동 |
-| `unity/Assets/_Project/Data/WorldIntroStory.asset` (신규, PR 2) | 4페이지 대본 11줄 |
-| `unity/Assets/Tests/EditMode/WorldIntroStoryAssetTests.cs` (신규, PR 2) | 대본 에셋 무결성 테스트 |
-| `unity/Assets/_Project/Scenes/StoryScene.unity` (신규, PR 2) | 사용자가 에디터에서 구성 |
-| `unity/Assets/_Project/Scripts/UI/IntroSceneController.cs` (수정, PR 2) | 이동 대상 `"GameScene"` → `"StoryScene"` (협업자 파일) |
-| `unity/ProjectSettings/EditorBuildSettings.asset` (수정, PR 2) | `StoryScene` 등록 |
+| `unity/Assets/_Project/Data/WorldIntroStory.asset` (신규, PR D) | 4페이지 대본 11줄 |
+| `unity/Assets/Tests/EditMode/WorldIntroStoryAssetTests.cs` (신규, PR D) | 대본 에셋 무결성 테스트 |
+| `unity/Assets/_Project/Scenes/StoryScene.unity` (신규, PR D) | 사용자가 에디터에서 구성 |
+| `unity/Assets/_Project/Scripts/UI/IntroSceneController.cs` (수정, PR D) | 이동 대상 `"GameScene"` → `"StoryScene"` (협업자 파일) |
+| `unity/ProjectSettings/EditorBuildSettings.asset` (수정, PR D) | `StoryScene` 등록 |
 
 ---
 
-# PR 1 — 대화 엔진 코드
+# PR A · B — 서로 독립인 두 기반 작업 (`main`에서 각각 시작)
 
-### Task 1: `StoryDialogueLogic` (TDD)
+### Task 1: `StoryDialogueLogic` (TDD) — 브랜치 A `feature/story-dialogue-logic`
+
+```bash
+cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
+git checkout main && git fetch origin && git merge origin/main --ff-only
+git checkout -b feature/story-dialogue-logic
+```
 
 **Files:**
 - Create: `unity/Assets/Tests/EditMode/StoryDialogueLogicTests.cs`
@@ -67,7 +80,7 @@ head -c 300 TestResults.xml
 
 **Interfaces:**
 - Consumes: 없음
-- Produces (Task 2가 사용):
+- Produces (Task 3이 사용):
   - `static int NextIndex(int current, int count)` — 다음 줄 번호. 끝을 넘으면 `count`, 음수는 "첫 줄 이전"으로 취급해 0
   - `static bool IsFinished(int index, int count)` — `count <= 0 || index >= count`
   - `static int ResolveBackgroundIndex(IReadOnlyList<bool> hasBackground, int index)` — `index` 이하에서 가장 가까운 "배경 지정 줄" 번호, 없거나 잘못된 입력이면 -1
@@ -279,7 +292,7 @@ ls "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요\unity\Asse
 
 (`.meta`가 없으면 에디터를 한 번 열었다가 닫은 뒤 다시 확인한다.)
 
-- [ ] **Step 5: 커밋**
+- [ ] **Step 5: 커밋, 푸시, PR A**
 
 ```bash
 cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
@@ -287,26 +300,46 @@ git add unity/Assets/_Project/Scripts/Core/StoryDialogueLogic.cs unity/Assets/_P
 git commit -m "feat: 선형 대화 진행 판정 로직 StoryDialogueLogic 추가
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
+git push -u origin feature/story-dialogue-logic
+gh pr create --title "feat: 선형 대화 진행 판정 로직 StoryDialogueLogic (세계관 설명 단계 A)" --body "$(cat <<'EOF'
+## 요약
+세계관 설명 단계(`StoryScene`)용 선형 대화 엔진의 순수 로직. 줄 진행·끝 판정·배경 유지/전환 판정만 담고 Unity 오브젝트에 의존하지 않습니다. 아직 이 코드를 쓰는 곳이 없어 게임 동작은 바뀌지 않습니다.
+
+- 스펙: `docs/superpowers/specs/2026-09-21-story-intro-design.md`
+- 계획: `docs/superpowers/plans/2026-09-21-story-intro.md` (PR A)
+
+## 테스트
+- EditMode 255/255 통과 (기존 239 + 신규 16)
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
 ```
+
+**PR A를 올린 뒤 멈추지 않고 곧바로 Task 2(브랜치 B)로 넘어간다** — B는 A와 파일이 안 겹쳐서 `main`에서 따로 시작한다. 병합 버튼은 사람만 누른다.
 
 ---
 
-### Task 2: 데이터 · 뷰 · 컨트롤러
+### Task 2: `StoryDialogueData` — 브랜치 B `feature/story-dialogue-data`
+
+```bash
+cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
+git checkout main && git fetch origin && git merge origin/main --ff-only
+git checkout -b feature/story-dialogue-data
+```
+
+(A가 아직 병합 전이어도 `main` 기준이라 문제없다. 이 브랜치에는 Task 1의 코드가 **없으므로** EditMode 총 개수는 **239**가 정상이다.)
 
 **Files:**
 - Create: `unity/Assets/_Project/Scripts/Data/StoryDialogueData.cs`
-- Create: `unity/Assets/_Project/Scripts/UI/StoryPanel.cs`
-- Create: `unity/Assets/_Project/Scripts/UI/StorySceneController.cs`
 
 **Interfaces:**
-- Consumes (Task 1): `StoryDialogueLogic.NextIndex / IsFinished / ResolveBackgroundIndex / IsBackgroundChange` (시그니처는 Task 1 참고)
-- Produces (Task 3~5가 사용):
+- Consumes: 없음
+- Produces (Task 3·4가 사용):
   - `StoryLine { string speakerName; Sprite portrait; string text; Sprite background; }` (`[Serializable]`)
   - `StoryDialogueData : ScriptableObject { StoryLine[] lines; }`, 메뉴 `SushiSurvival/Story Dialogue Data`
-  - `StoryPanel` 직렬화 필드: `backgroundFront`, `backgroundBack`(둘 다 `Image`), `nameplateRoot`(`GameObject`), `nameText`(`Text`), `miniPortrait`(`Image`), `bodyText`(`Text`)
-  - `StorySceneController` 직렬화 필드: `data`(`StoryDialogueData`), `panel`(`StoryPanel`), `skipButton`(`Button`), `nextSceneName`(`string`, 기본 `"GameScene"`), `backgroundFadeSeconds`(`float`, 기본 0.35)
 
-이 세 파일은 MonoBehaviour/ScriptableObject라 기존 관례대로 EditMode 테스트 대상이 아니다. 검증은 컴파일 + 기존 테스트 회귀 없음으로 한다.
+ScriptableObject라 기존 관례대로 EditMode 테스트 대상이 아니다. 검증은 컴파일 + 기존 테스트 회귀 없음으로 한다.
 
 - [ ] **Step 1: 데이터 클래스 작성**
 
@@ -341,7 +374,71 @@ namespace SushiSurvival.Data
 }
 ```
 
-- [ ] **Step 2: 뷰 작성**
+- [ ] **Step 2: 컴파일 + 회귀 확인**
+
+"배치 테스트 실행 명령"을 실행한다.
+Expected: `error CS` 없음, `total="239" passed="239" failed="0"` (이 브랜치는 `main` 기준이라 239가 정상). 끝나면 `rm -f TestResults.xml`. `.meta`가 만들어졌는지 확인한다:
+
+```bash
+cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
+git status --short unity/Assets/_Project/Scripts/Data
+```
+
+Expected: `StoryDialogueData.cs`와 `StoryDialogueData.cs.meta`가 `??`로 나온다.
+
+- [ ] **Step 3: 커밋, 푸시, PR B**
+
+```bash
+cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
+git add unity/Assets/_Project/Scripts/Data/StoryDialogueData.cs unity/Assets/_Project/Scripts/Data/StoryDialogueData.cs.meta
+git commit -m "feat: 선형 대화 데이터 StoryDialogueData 추가
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
+git push -u origin feature/story-dialogue-data
+gh pr create --title "feat: 선형 대화 데이터 StoryDialogueData (세계관 설명 단계 B)" --body "$(cat <<'EOF'
+## 요약
+세계관 설명 단계(`StoryScene`)용 선형 대화의 데이터 모델. 대사 한 줄(`StoryLine`: 화자·초상화·대사·배경)과 그 묶음(`StoryDialogueData` ScriptableObject). 호감도 대화와 달리 선택지·스탯 버프는 없습니다. 아직 이 데이터를 쓰는 곳이 없어 게임 동작은 바뀌지 않습니다.
+
+- 스펙: `docs/superpowers/specs/2026-09-21-story-intro-design.md`
+- 계획: `docs/superpowers/plans/2026-09-21-story-intro.md` (PR B)
+
+## 테스트
+- EditMode 239/239 통과 (컴파일 확인, 신규 테스트 없음 — ScriptableObject)
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
+```
+
+**A·B PR을 올린 뒤 사용자가 둘 다 병합하길 기다린다.** (병합 버튼은 사람만 누른다.)
+
+---
+
+# PR C — 뷰와 컨트롤러 (A·B 병합 후)
+
+### Task 3: `StoryPanel` + `StorySceneController` — 브랜치 C `feature/story-dialogue-ui`
+
+```bash
+cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
+git checkout main && git fetch origin && git merge origin/main --ff-only
+git log --oneline -6   # A(로직)와 B(데이터) 병합 커밋이 둘 다 보여야 한다
+git checkout -b feature/story-dialogue-ui
+```
+
+**Files:**
+- Create: `unity/Assets/_Project/Scripts/UI/StoryPanel.cs`
+- Create: `unity/Assets/_Project/Scripts/UI/StorySceneController.cs`
+
+**Interfaces:**
+- Consumes (Task 1): `StoryDialogueLogic.NextIndex / IsFinished / ResolveBackgroundIndex / IsBackgroundChange` (시그니처는 Task 1 참고)
+- Consumes (Task 2): `StoryLine`, `StoryDialogueData`
+- Produces (Task 4~6이 사용):
+  - `StoryPanel` 직렬화 필드: `backgroundFront`, `backgroundBack`(둘 다 `Image`), `nameplateRoot`(`GameObject`), `nameText`(`Text`), `miniPortrait`(`Image`), `bodyText`(`Text`)
+  - `StorySceneController` 직렬화 필드: `data`(`StoryDialogueData`), `panel`(`StoryPanel`), `skipButton`(`Button`), `nextSceneName`(`string`, 기본 `"GameScene"`), `backgroundFadeSeconds`(`float`, 기본 0.35)
+
+MonoBehaviour라 기존 관례대로 EditMode 테스트 대상이 아니다. 검증은 컴파일 + 기존 테스트 회귀 없음으로 한다.
+
+- [ ] **Step 1: 뷰 작성**
 
 `unity/Assets/_Project/Scripts/UI/StoryPanel.cs`:
 
@@ -477,7 +574,7 @@ namespace SushiSurvival.UI
 }
 ```
 
-- [ ] **Step 3: 컨트롤러 작성**
+- [ ] **Step 2: 컨트롤러 작성**
 
 `unity/Assets/_Project/Scripts/UI/StorySceneController.cs`:
 
@@ -610,63 +707,57 @@ namespace SushiSurvival.UI
 }
 ```
 
-- [ ] **Step 4: 컴파일 + 회귀 확인**
+- [ ] **Step 3: 컴파일 + 회귀 확인**
 
 "배치 테스트 실행 명령"을 실행한다.
-Expected: `error CS` 없음, `total="255" passed="255" failed="0"`. 끝나면 `rm -f TestResults.xml`.
-새 `.meta` 3개가 생겼는지 확인한다:
+Expected: `error CS` 없음, `total="255" passed="255" failed="0"` (A가 병합됐으므로 239 + 16). 끝나면 `rm -f TestResults.xml`.
+새 `.meta` 2개가 생겼는지 확인한다:
 
 ```bash
 cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
-git status --short unity/Assets/_Project/Scripts
+git status --short unity/Assets/_Project/Scripts/UI
 ```
 
-Expected: `StoryDialogueData.cs`, `StoryPanel.cs`, `StorySceneController.cs`와 각 `.meta`가 `??`로 나온다.
+Expected: `StoryPanel.cs`, `StorySceneController.cs`와 각 `.meta`가 `??`로 나온다.
 
-- [ ] **Step 5: 커밋, 푸시, PR 1**
+- [ ] **Step 4: 커밋, 푸시, PR C**
 
 ```bash
 cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
-git add unity/Assets/_Project/Scripts/Data/StoryDialogueData.cs unity/Assets/_Project/Scripts/Data/StoryDialogueData.cs.meta unity/Assets/_Project/Scripts/UI/StoryPanel.cs unity/Assets/_Project/Scripts/UI/StoryPanel.cs.meta unity/Assets/_Project/Scripts/UI/StorySceneController.cs unity/Assets/_Project/Scripts/UI/StorySceneController.cs.meta
-git commit -m "feat: 선형 대화 엔진(데이터·뷰·컨트롤러) 추가
+git add unity/Assets/_Project/Scripts/UI/StoryPanel.cs unity/Assets/_Project/Scripts/UI/StoryPanel.cs.meta unity/Assets/_Project/Scripts/UI/StorySceneController.cs unity/Assets/_Project/Scripts/UI/StorySceneController.cs.meta
+git commit -m "feat: 선형 대화 뷰·컨트롤러 StoryPanel/StorySceneController 추가
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
-git push -u origin feature/story-intro-scene
-gh pr create --title "feat: 선형 대화 엔진 (세계관 설명 단계 1/2)" --body "$(cat <<'EOF'
+git push -u origin feature/story-dialogue-ui
+gh pr create --title "feat: 선형 대화 뷰·컨트롤러 (세계관 설명 단계 C)" --body "$(cat <<'EOF'
 ## 요약
-세계관 설명 단계(`StoryScene`)를 위한 범용 선형 대화 엔진. 이 PR은 코드만 담고, 씬·대본·연결은 다음 PR(2/2)에서 합니다. 이 PR만 병합돼도 게임 동작은 바뀌지 않습니다(아직 이 코드를 쓰는 씬이 없음).
+세계관 설명 단계(`StoryScene`)용 선형 대화의 뷰(`StoryPanel`: 배경 크로스페이드, 이름표/초상화/대사)와 진입점(`StorySceneController`: 클릭/Space/Enter로 넘기기, 건너뛰기, 다음 씬 이동). 아직 이 컴포넌트를 쓰는 씬이 없어 게임 동작은 바뀌지 않습니다.
 
 - 스펙: `docs/superpowers/specs/2026-09-21-story-intro-design.md`
-- 계획: `docs/superpowers/plans/2026-09-21-story-intro.md`
-
-## 변경 사항
-- `StoryDialogueLogic`(순수 로직) + EditMode 테스트 16개
-- `StoryDialogueData`(ScriptableObject), `StoryPanel`(뷰), `StorySceneController`(진입점)
+- 계획: `docs/superpowers/plans/2026-09-21-story-intro.md` (PR C)
+- 선행 PR: A(`StoryDialogueLogic`), B(`StoryDialogueData`)
 
 ## 테스트
-- EditMode 255/255 통과 (기존 239 + 신규 16)
+- EditMode 255/255 통과 (컴파일 확인, MonoBehaviour라 신규 테스트 없음)
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 EOF
 )"
 ```
 
-**여기서 멈추고 사용자가 PR 1을 병합하길 기다린다.** (병합 버튼은 사람만 누른다.)
+**여기서 멈추고 사용자가 PR C를 병합하길 기다린다.** (병합 버튼은 사람만 누른다.)
 
 ---
 
-# PR 2 — 대본 · 씬 · 연결
-
-PR 1 병합 후 시작한다:
+# PR D — 대본 · 씬 · 연결 (C 병합 후)
 
 ```bash
 cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
 git checkout main && git fetch origin && git merge origin/main --ff-only
-git branch -d feature/story-intro-scene && git push origin --delete feature/story-intro-scene
 git checkout -b feature/story-scene-wiring
 ```
 
-### Task 3: 대본 데이터 에셋 (TDD)
+### Task 4: 대본 데이터 에셋 (TDD)
 
 **Files:**
 - Create: `unity/Assets/Tests/EditMode/WorldIntroStoryAssetTests.cs`
@@ -674,7 +765,7 @@ git checkout -b feature/story-scene-wiring
 
 **Interfaces:**
 - Consumes (Task 2): `StoryDialogueData`, `StoryLine` — 필드 `speakerName`, `portrait`, `text`, `background`
-- Produces (Task 4가 사용): 에셋 경로 `Assets/_Project/Data/WorldIntroStory.asset`, 11줄
+- Produces (Task 5가 사용): 에셋 경로 `Assets/_Project/Data/WorldIntroStory.asset`, 11줄
 
 - [ ] **Step 1: 실패하는 무결성 테스트 작성**
 
@@ -759,7 +850,7 @@ Expected: 컴파일은 통과하고 새 4개 테스트가 `Assert.IsNotNull fail
 
 - [ ] **Step 3: 에셋 생성 스크립트 작성·실행**
 
-Task 2에서 만들어진 `StoryDialogueData.cs.meta`의 GUID를 읽어 에셋 YAML을 생성한다. 이 스크립트는 **일회용이라 저장소에 커밋하지 않고** `$TEMP`에 둔다. 초상화/배경 GUID는 기존 에셋에서 그대로 가져온 값이다(`EggCharacterData.asset`의 `portraitSprite`, `ShrimpCharacterData.asset`의 `portraitSprite`, `IntroScene`이 쓰는 왕궁 배경).
+병합된 `StoryDialogueData.cs.meta`(Task 2)의 GUID를 읽어 에셋 YAML을 생성한다. 이 스크립트는 **일회용이라 저장소에 커밋하지 않고** `$TEMP`에 둔다. 초상화/배경 GUID는 기존 에셋에서 그대로 가져온 값이다(`EggCharacterData.asset`의 `portraitSprite`, `ShrimpCharacterData.asset`의 `portraitSprite`, `IntroScene`이 쓰는 왕궁 배경).
 
 `$TEMP/gen_story_asset.js`:
 
@@ -859,7 +950,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 ---
 
-### Task 4: `StoryScene` 씬 구성 (사용자 에디터 작업)
+### Task 5: `StoryScene` 씬 구성 (사용자 에디터 작업)
 
 **Files:**
 - Create: `unity/Assets/_Project/Scenes/StoryScene.unity` (+ `.meta`)
@@ -928,13 +1019,13 @@ Expected: `StoryScene.unity`(+`.meta`)와 `EditorBuildSettings.asset`이 변경/
 
 ---
 
-### Task 5: `IntroSceneController` 연결 + 전체 흐름 확인 + PR 2
+### Task 6: `IntroSceneController` 연결 + 전체 흐름 확인 + PR D
 
 **Files:**
 - Modify: `unity/Assets/_Project/Scripts/UI/IntroSceneController.cs` (협업자 파일 — 한 줄)
 
 **Interfaces:**
-- Consumes (Task 4): 빌드 세팅에 등록된 씬 이름 `StoryScene`
+- Consumes (Task 5): 빌드 세팅에 등록된 씬 이름 `StoryScene`
 
 - [ ] **Step 1: 이동 대상 변경**
 
@@ -964,7 +1055,7 @@ Expected: `StoryScene.unity`(+`.meta`)와 `EditorBuildSettings.asset`이 변경/
 - [ ] 다시 Intro부터 시작해 **건너뛰기** 버튼 → 즉시 `GameScene`, 이때 건너뛰기를 누른 클릭이 다음 줄로도 넘어가지 않음(마지막 줄에서 눌러도 씬이 두 번 로드되지 않음)
 - [ ] 결과 화면 "다시 하기" → `IntroScene` → 다시 `StoryScene`을 거침
 
-- [ ] **Step 4: 커밋, 푸시, PR 2**
+- [ ] **Step 4: 커밋, 푸시, PR D**
 
 ```bash
 cd "C:\Users\wnsdn\Desktop\와사비를 먹으면 강해지는 군요"
@@ -977,9 +1068,9 @@ git commit -m "feat: IntroScene 다음에 세계관 설명 장면(StoryScene) �
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 git push -u origin feature/story-scene-wiring
-gh pr create --title "feat: 세계관 설명 단계 StoryScene (2/2)" --body "$(cat <<'EOF'
+gh pr create --title "feat: 세계관 설명 단계 StoryScene (D)" --body "$(cat <<'EOF'
 ## 요약
-`IntroScene`의 시작 버튼 뒤에 캐릭터 3인의 세계관 대화 장면을 추가합니다. 엔진 코드는 이전 PR(1/2)에 있습니다.
+`IntroScene`의 시작 버튼 뒤에 캐릭터 3인의 세계관 대화 장면을 추가합니다. 엔진 코드는 이전 PR A(로직)·B(데이터)·C(뷰/컨트롤러)에 있습니다.
 
 - 스펙: `docs/superpowers/specs/2026-09-21-story-intro-design.md`
 - 계획: `docs/superpowers/plans/2026-09-21-story-intro.md`
@@ -1001,4 +1092,4 @@ EOF
 )"
 ```
 
-**여기서 멈추고 사용자가 PR 2를 병합하길 기다린다.** 병합 후 `main` 동기화, 브랜치 정리, 메모리(`sushi-survival-project.md`) 업데이트, `docs/game-flow-roadmap.md`의 2번 항목 상태를 ✅로 갱신하는 작은 문서 PR을 이어서 한다.
+**여기서 멈추고 사용자가 PR D를 병합하길 기다린다.** 병합 후 `main` 동기화, 브랜치 정리, 메모리(`sushi-survival-project.md`) 업데이트, `docs/game-flow-roadmap.md`의 2번 항목 상태를 ✅로 갱신하는 작은 문서 PR을 이어서 한다.
