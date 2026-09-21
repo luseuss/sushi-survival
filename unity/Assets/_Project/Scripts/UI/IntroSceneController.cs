@@ -22,7 +22,7 @@ namespace SushiSurvival.UI
 
         private void OnStartClicked()
         {
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("StoryScene");
         }
     }
 }
