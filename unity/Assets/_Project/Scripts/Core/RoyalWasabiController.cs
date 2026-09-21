@@ -42,22 +42,31 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            rpsPanel.Show(success =>
+            // "와사비를 받으러 왔습니다" 대사를 먼저 보여준 뒤에야 가위바위보로
+            // 넘어간다 — 결과 확인용 패널을 도입부 연출로도 재사용한다.
+            panel.ShowFlavor(portrait, () =>
             {
-                rpsPanel.Hide();
+                // panel.Hide()가 아니라 HideDialogueBox() — 왕궁 배경은
+                // 가위바위보 도중에도 계속 보여야 한다.
+                panel.HideDialogueBox();
 
-                if (success)
+                rpsPanel.Show(success =>
                 {
-                    Apply(attackDamageAugment, stats, health, recordBuff);
-                    Apply(attackSpeedAugment, stats, health, recordBuff);
-                    Apply(moveSpeedAugment, stats, health, recordBuff);
-                    Apply(maxHealthAugment, stats, health, recordBuff);
-                }
+                    rpsPanel.Hide();
 
-                panel.Show(success, portrait, () =>
-                {
-                    panel.Hide();
-                    onComplete?.Invoke();
+                    if (success)
+                    {
+                        Apply(attackDamageAugment, stats, health, recordBuff);
+                        Apply(attackSpeedAugment, stats, health, recordBuff);
+                        Apply(moveSpeedAugment, stats, health, recordBuff);
+                        Apply(maxHealthAugment, stats, health, recordBuff);
+                    }
+
+                    panel.ShowResult(success, portrait, () =>
+                    {
+                        panel.Hide();
+                        onComplete?.Invoke();
+                    });
                 });
             });
         }

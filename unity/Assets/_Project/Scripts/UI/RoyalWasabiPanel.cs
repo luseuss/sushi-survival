@@ -12,6 +12,9 @@ namespace SushiSurvival.UI
     {
         [Tooltip("패널 루트. 비워두면 이 오브젝트 자신을 켜고 끈다.")]
         [SerializeField] private GameObject root;
+        [Tooltip("대사/결과 텍스트 뒤 배경 바. 왕궁 배경(Background)과 형제 오브젝트라 " +
+                 "따로 꺼야 왕궁 배경이 가위바위보 중에도 유지된다.")]
+        [SerializeField] private GameObject textBar;
         [Tooltip("대화창 안 작은 초상화 창. 비워두면 표시하지 않는다.")]
         [SerializeField] private Image portraitImage;
         [SerializeField] private Text flavorText;
@@ -45,11 +48,14 @@ namespace SushiSurvival.UI
                 confirmButton.onClick.RemoveListener(HandleConfirmClicked);
         }
 
-        public void Show(bool success, Sprite portrait, Action onConfirm)
+        /// <summary>
+        /// 가위바위보 시작 전 "알현" 대사만 보여준다. flavorDuration이 지나면
+        /// onFlavorDone을 불러 호출자가 RPS 패널로 넘어가게 한다.
+        /// </summary>
+        public void ShowFlavor(Sprite portrait, Action onFlavorDone)
         {
-            _onConfirm = onConfirm;
-
             Root.SetActive(true);
+            ShowDialogueBox();
 
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
@@ -64,14 +70,38 @@ namespace SushiSurvival.UI
                 confirmButtonRoot.SetActive(false);
 
             if (_routine != null) StopCoroutine(_routine);
-            _routine = StartCoroutine(RevealResult(success));
+            _routine = StartCoroutine(WaitThenInvoke(flavorDuration, onFlavorDone));
         }
 
-        public void Hide() => Root.SetActive(false);
-
-        private IEnumerator RevealResult(bool success)
+        /// <summary>
+        /// 가위바위보가 진행되는 동안 대화상자(텍스트바/대사/결과/확인버튼)만 숨긴다.
+        /// Root를 통째로 끄면 왕궁 배경(Background)도 같이 꺼져버려서 따로 둔다.
+        /// </summary>
+        public void HideDialogueBox()
         {
-            yield return new WaitForSecondsRealtime(flavorDuration);
+            if (textBar != null) textBar.SetActive(false);
+            if (flavorText != null) flavorText.gameObject.SetActive(false);
+            if (resultText != null) resultText.gameObject.SetActive(false);
+            if (confirmButtonRoot != null) confirmButtonRoot.SetActive(false);
+        }
+
+        private void ShowDialogueBox()
+        {
+            if (textBar != null) textBar.SetActive(true);
+            if (flavorText != null) flavorText.gameObject.SetActive(true);
+            if (resultText != null) resultText.gameObject.SetActive(true);
+        }
+
+        /// <summary>가위바위보 결과가 나온 뒤 성공/실패 문구와 확인 버튼을 보여준다.</summary>
+        public void ShowResult(bool success, Sprite portrait, Action onConfirm)
+        {
+            _onConfirm = onConfirm;
+
+            Root.SetActive(true);
+            ShowDialogueBox();
+
+            if (portraitImage != null)
+                portraitImage.sprite = portrait;
 
             // flavorText를 지우지 않으면 resultText와 같은 자리에 겹쳐 보인다
             // (두 Text의 RectTransform이 같은 위치에 겹쳐 배치돼 있음).
@@ -83,8 +113,15 @@ namespace SushiSurvival.UI
 
             if (confirmButtonRoot != null)
                 confirmButtonRoot.SetActive(true);
+        }
 
+        public void Hide() => Root.SetActive(false);
+
+        private IEnumerator WaitThenInvoke(float delay, Action callback)
+        {
+            yield return new WaitForSecondsRealtime(delay);
             _routine = null;
+            callback?.Invoke();
         }
 
         private void HandleConfirmClicked() => _onConfirm?.Invoke();
