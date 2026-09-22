@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f9b4ca6822e7624da4f07cb15aa3b05, type: 3}
+  m_Name: InariCharacterData
+  m_EditorClassIdentifier:
+  characterName: "\uc774\ub098\ub9ac"
+  portraitSprite: {fileID: 0}
+  selectCardSprite: {fileID: 21300000, guid: 13421d0012f84374998c1f654bea96f2, type: 3}
+  playerPrefab: {fileID: 0}
+  baseMoveSpeed: 3
+  baseMaxHealth: 100
+  weaponData: {fileID: 0}
+  animatorController: {fileID: 0}
+  affinityDialogue: {fileID: 0}
+  lockedMessage: "\uc774\ub098\ub9ac\ub294 \ud2b9\uc815 \uce90\ub9ad\ud130 \ub514\uc790\uc778 \uc774\uc288\ub85c \uc120\ud0dd\uc774 \uc81c\ud55c\ub429\ub2c8\ub2e4."
