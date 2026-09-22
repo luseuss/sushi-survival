@@ -15,9 +15,11 @@ namespace SushiSurvival.Data
         public float baseMaxHealth = 100f;
         public WeaponData weaponData;
         public RuntimeAnimatorController animatorController;
-        [Tooltip("호감도 대화 #1(런 시작 직전)·#2(보스전 진입 직전) 데이터. question1이 " +
-                 "비어 있으면 대화 없이 바로 런이 시작되고, question2가 비어 있으면 " +
+        [Tooltip("호감도 대화 #1(런 시작 직전)·#2(보스전 진입 직전) 데이터. introLines/question1이 " +
+                 "비어 있으면 대화 없이 바로 런이 시작되고, bossIntroLines가 비어 있으면 " +
                  "인터럽트 없이 바로 보스전으로 넘어간다.")]
         public AffinityDialogueData affinityDialogue;
+        [Tooltip("locked 캐릭터를 클릭했을 때 보여줄 안내 문구. locked가 아니면 안 쓴다.")]
+        public string lockedMessage;
     }
 }
