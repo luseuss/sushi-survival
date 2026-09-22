@@ -262,20 +262,30 @@ namespace SushiSurvival.Core
             }
         }
 
+        /// <summary>
+        /// 런을 끝내고 결과를 표시한다. 예전에는 ResultScene으로 씬을 넘겼지만,
+        /// 지금은 같은 씬(GameScene/BossScene) 위에 resultPanel을 오버레이로
+        /// 띄운다 — 씬 전환 대신 다른 팝업들처럼 timeScale을 0으로 멈춘다.
+        /// </summary>
         public void FinishRun(RunOutcome outcome)
         {
-            // 1. RunResultCarrier에 최종 결과를 담는다
             RunResultCarrier.Outcome = outcome;
             RunResultCarrier.ElapsedTime = ElapsedTime;
             RunResultCarrier.Level = levelSystem.CurrentLevel;
             RunResultCarrier.KillCount = KillCount;
             RunResultCarrier.Augments = AugmentTally.Summarize(levelSystem.PickedAugments);
 
-            // 2. 씬을 넘기기 전 시간 정지를 반드시 해제한다
-            Time.timeScale = 1f;
+            CurrentState = RunState.Result;
+            Time.timeScale = 0f;
 
-            // 3. 결과 씬으로 넘어간다
-            SceneManager.LoadScene("ResultScene");
+            if (resultPanel != null)
+            {
+                resultPanel.Show(outcome, ElapsedTime, levelSystem.CurrentLevel, KillCount, RunResultCarrier.Augments);
+            }
+            else
+            {
+                Debug.LogError($"{name}: resultPanel이 비어 있어 결과를 표시할 수 없습니다.");
+            }
         }
 
         public void EnterBossFight()
