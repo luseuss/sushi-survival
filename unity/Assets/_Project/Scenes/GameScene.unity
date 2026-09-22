@@ -648,6 +648,7 @@ MonoBehaviour:
   characterData: {fileID: 11400000, guid: 26a145f3263f0fd4a9ea2329d7a96c03, type: 2}
   portraitImage: {fileID: 116013458}
   locked: 0
+  lockedCharacterController: {fileID: 0}
 --- !u!114 &116013457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1781,6 +1782,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 662309027}
+  introPanel: {fileID: 0}
   buffRatio: 0.125
 --- !u!4 &366438089
 Transform:
@@ -3251,6 +3253,7 @@ MonoBehaviour:
   characterData: {fileID: 11400000, guid: 920fb1f04bd4b3642a9eb25be2ff9806, type: 2}
   portraitImage: {fileID: 795678761}
   locked: 0
+  lockedCharacterController: {fileID: 0}
 --- !u!114 &795678760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8741,6 +8744,7 @@ MonoBehaviour:
   characterData: {fileID: 0}
   portraitImage: {fileID: 2106802820}
   locked: 1
+  lockedCharacterController: {fileID: 0}
 --- !u!114 &2106802819
 MonoBehaviour:
   m_ObjectHideFlags: 0
