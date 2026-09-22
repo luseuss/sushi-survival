@@ -1745,7 +1745,7 @@ MonoBehaviour:
   tilemap: {fileID: 500583901}
   followTarget: {fileID: 0}
   grassSprites:
-  - {fileID: 21300000, guid: 3788d38e027e85f4c8a9f9782fbdecd4, type: 3}
+  - {fileID: 21300000, guid: f00fd0456914d1f44a64d3696aada261, type: 3}
   grassDetailSprites: []
   sandSprites: []
   ruinSets: []
