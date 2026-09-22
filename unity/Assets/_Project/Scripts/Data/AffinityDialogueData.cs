@@ -23,14 +23,17 @@ namespace SushiSurvival.Data
     }
 
     /// <summary>
-    /// 캐릭터 하나가 가지는 호감도 대화. question1은 런 시작 직전, question2는
-    /// 5:00 보스전 진입 직전에 쓴다. question2를 비워두면 그 인터럽트 없이
-    /// 바로 보스전으로 넘어간다.
+    /// 캐릭터 하나가 가지는 호감도 대화.
+    /// introLines → question1(증강 3택)은 런 시작 직전에, bossIntroLines는
+    /// 5:00 보스전 진입 직전에 쓴다. 각각 비어 있으면 그 단계를 건너뛴다.
     /// </summary>
     [CreateAssetMenu(menuName = "SushiSurvival/Affinity Dialogue Data", fileName = "NewAffinityDialogueData")]
     public class AffinityDialogueData : ScriptableObject
     {
+        [Tooltip("question1 앞에 순서대로 재생되는 자기소개 나레이션. 비우면 곧바로 question1이 뜬다.")]
+        public StoryLine[] introLines;
         public AffinityDialogueQuestion question1;
-        public AffinityDialogueQuestion question2;
+        [Tooltip("보스전 진입 직전 재생되는 나레이션(선택지 없음). 비우면 인터럽트 없이 바로 보스전.")]
+        public StoryLine[] bossIntroLines;
     }
 }
