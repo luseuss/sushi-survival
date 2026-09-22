@@ -15,8 +15,10 @@ namespace SushiSurvival.UI
         [SerializeField] private CharacterData characterData;
         [Tooltip("캐릭터 초상화를 표시할 Image. 비워두면 표시하지 않는다.")]
         [SerializeField] private Image portraitImage;
-        [Tooltip("아직 구현되지 않은 캐릭터는 체크. 회색 처리되고 선택할 수 없다.")]
+        [Tooltip("아직 구현되지 않은 캐릭터는 체크. 회색 처리되고, 클릭하면 선택 제한 안내로 이어진다.")]
         [SerializeField] private bool locked;
+        [Tooltip("locked일 때 클릭하면 보여줄 안내 컨트롤러. locked가 아니면 안 쓴다.")]
+        [SerializeField] private LockedCharacterController lockedCharacterController;
 
         private Button _button;
 
@@ -33,8 +35,6 @@ namespace SushiSurvival.UI
                     ? characterData.selectCardSprite
                     : characterData.portraitSprite;
 
-            _button.interactable = !locked;
-
             if (locked && portraitImage != null)
                 portraitImage.color = Color.gray;
         }
@@ -47,7 +47,14 @@ namespace SushiSurvival.UI
 
         private void OnClicked()
         {
-            if (locked) return;
+            if (locked)
+            {
+                if (lockedCharacterController != null)
+                    lockedCharacterController.Show(characterData);
+                else
+                    Debug.LogError($"{name}: lockedCharacterController가 비어 있어 제한 안내를 표시할 수 없습니다.");
+                return;
+            }
 
             GameManager.Instance.StartRun(characterData);
         }
