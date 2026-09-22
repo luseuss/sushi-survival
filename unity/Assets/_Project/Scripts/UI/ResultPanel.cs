@@ -23,16 +23,10 @@ namespace SushiSurvival.UI
 
         private GameObject Root => root != null ? root : gameObject;
 
-        private void Start()
+        private void Awake()
         {
-            // 씬 로드 직후 RunResultCarrier에 담긴 데이터를 읽어와 표시한다[cite: 1]
-            Show(
-                RunResultCarrier.Outcome,
-                RunResultCarrier.ElapsedTime,
-                RunResultCarrier.Level,
-                RunResultCarrier.KillCount,
-                RunResultCarrier.Augments
-            );
+            if (restartButton != null)
+                restartButton.onClick.AddListener(HandleRestart);
         }
 
         private void OnDestroy()
@@ -84,7 +78,6 @@ namespace SushiSurvival.UI
 
         public void HandleRestart()
         {
-            // 씬 분리 이후 Result 씬에서 Intro 씬으로 명시적 이동 —
             // 결과 화면 다음은 곧장 캐릭터 선택이 아니라 부스 대기 화면(인트로)이다.
             Time.timeScale = 1f;
             SceneManager.LoadScene("IntroScene");

@@ -5,7 +5,6 @@ using SushiSurvival.Data;
 using SushiSurvival.Pickups;
 using SushiSurvival.Player;
 using SushiSurvival.Weapons;
-using UnityEngine.SceneManagement;
 
 namespace SushiSurvival.Enemies.Boss
 {
@@ -204,8 +203,7 @@ namespace SushiSurvival.Enemies.Boss
             }
             else
             {
-                // GameManager가 씬에 없을 경우 직접 결과 씬으로 전환
-                SceneManager.LoadScene("ResultScene");
+                Debug.LogError("[BossFightDirector] GameManager.Instance가 없어 결과를 표시할 수 없습니다.");
             }
         }
 
@@ -240,14 +238,14 @@ namespace SushiSurvival.Enemies.Boss
             }
             else
             {
-                // 패널이 연결되어 있지 않다면 기존처럼 바로 결과 씬으로 이동
+                // 패널이 연결되어 있지 않다면 바로 결과를 표시한다
                 if (GameManager.Instance != null)
                 {
                     GameManager.Instance.FinishRun(RunOutcome.Defeat);
                 }
                 else
                 {
-                    SceneManager.LoadScene("ResultScene");
+                    Debug.LogError("[BossFightDirector] GameManager.Instance가 없어 결과를 표시할 수 없습니다.");
                 }
             }
         }
