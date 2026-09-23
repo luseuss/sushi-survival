@@ -99,15 +99,19 @@ namespace SushiSurvival.UI
             }
         }
 
+        // 누르는 순간(wasPressedThisFrame)이 아니라 떼는 순간을 본다. 마지막 줄에서
+        // 넘기면 그 자리에서 다음 씬(주로 GameScene)이 로드되는데, 누르는 순간에
+        // 반응하면 그 시점엔 버튼이 아직 물리적으로 눌린 상태라 새로 생긴
+        // EventSystem이 그 위치의 UI(캐릭터 선택 버튼 등)에 유령 클릭을 일으킨다.
         private bool AdvancePressed()
         {
             Mouse mouse = Mouse.current;
-            if (mouse != null && mouse.leftButton.wasPressedThisFrame && !IsPointerOnSkipButton(mouse))
+            if (mouse != null && mouse.leftButton.wasReleasedThisFrame && !IsPointerOnSkipButton(mouse))
                 return true;
 
             Keyboard keyboard = Keyboard.current;
             return keyboard != null
-                && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame);
+                && (keyboard.spaceKey.wasReleasedThisFrame || keyboard.enterKey.wasReleasedThisFrame);
         }
 
         // 건너뛰기 버튼을 누른 클릭이 "다음 줄" 입력으로도 세어지지 않게 한다.
