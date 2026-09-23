@@ -157,6 +157,8 @@ namespace SushiSurvival.Core
             // 버튼 연타로 플레이어가 두 번 생성되는 것을 막는다.
             if (CurrentState != RunState.CharacterSelect) return;
 
+            Debug.Log($"[GameManager] 런 시작 - 캐릭터: {characterData.characterName}");
+
             _selectedCharacterData = characterData;
 
             GameObject player = playerSpawner.Spawn(characterData);
