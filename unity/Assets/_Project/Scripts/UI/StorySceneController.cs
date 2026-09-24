@@ -65,8 +65,16 @@ namespace SushiSurvival.UI
         {
             if (_leaving || _hasBackground == null) return;
 
-            if (AdvancePressed())
-                Advance();
+            if (!AdvancePressed()) return;
+
+            // 아직 찍히는 중이면 다음 줄로 넘기지 않고 전체 문장부터 보여준다.
+            if (panel.IsTyping)
+            {
+                panel.CompleteTyping();
+                return;
+            }
+
+            Advance();
         }
 
         private void Advance()

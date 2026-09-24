@@ -70,6 +70,12 @@ namespace SushiSurvival.Core
 
                 if (!AdvancePressed()) continue;
 
+                if (introPanel.IsTyping)
+                {
+                    introPanel.CompleteTyping();
+                    continue;
+                }
+
                 index = StoryDialogueLogic.NextIndex(index, lines.Length);
                 if (StoryDialogueLogic.IsFinished(index, lines.Length)) break;
 

@@ -13,10 +13,14 @@ namespace SushiSurvival.UI
         [Tooltip("대화창 안 작은 초상화 창. 비워두면 표시하지 않는다.")]
         [SerializeField] private Image miniPortraitImage;
         [SerializeField] private Text questionText;
+        [Tooltip("질문이 한 글자씩 찍히는 속도(초당 글자 수). 0 이하면 한 번에 보인다.")]
+        [SerializeField] private float charsPerSecond = 40f;
         [Tooltip("선택지 버튼 최대 3개.")]
         [SerializeField] private AffinityChoiceButton[] choiceButtons;
 
         private GameObject Root => root != null ? root : gameObject;
+        private TypewriterText _typewriter;
+        private StandingAnimator _standingAnimator;
 
         private void Awake() => Hide();
 
@@ -28,13 +32,23 @@ namespace SushiSurvival.UI
             Root.SetActive(true);
 
             if (portraitImage != null)
-                portraitImage.sprite = standing != null ? standing : portrait;
+            {
+                if (_standingAnimator == null)
+                    _standingAnimator = GetOrAdd<StandingAnimator>(portraitImage.gameObject);
+
+                _standingAnimator.Show(standing != null ? standing : portrait);
+            }
 
             if (miniPortraitImage != null)
                 miniPortraitImage.sprite = portrait;
 
             if (questionText != null)
-                questionText.text = question.questionText;
+            {
+                if (_typewriter == null)
+                    _typewriter = GetOrAdd<TypewriterText>(questionText.gameObject);
+
+                _typewriter.Play(question.questionText, charsPerSecond);
+            }
 
             for (int i = 0; i < choiceButtons.Length; i++)
             {
@@ -46,5 +60,11 @@ namespace SushiSurvival.UI
         }
 
         public void Hide() => Root.SetActive(false);
+
+        // 연출 컴포넌트는 씬에 따로 배선하지 않고 필요할 때 붙인다.
+        private static T GetOrAdd<T>(GameObject target) where T : Component
+        {
+            return target.TryGetComponent<T>(out var existing) ? existing : target.AddComponent<T>();
+        }
     }
 }

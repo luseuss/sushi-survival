@@ -24,9 +24,21 @@ namespace SushiSurvival.UI
         [Tooltip("화면에 크게 서 있는 입상. 비워두면 입상을 표시하지 않는다.")]
         [SerializeField] private Image standingImage;
         [SerializeField] private Text bodyText;
+        [Tooltip("대사가 한 글자씩 찍히는 속도(초당 글자 수). 0 이하면 한 번에 보인다.")]
+        [SerializeField] private float charsPerSecond = 40f;
 
         private Coroutine _fade;
         private Sprite _pending;
+        private TypewriterText _typewriter;
+        private StandingAnimator _standingAnimator;
+
+        /// <summary>대사가 아직 찍히는 중인지. 이때 클릭하면 다음 줄 대신 전체 문장을 먼저 보여준다.</summary>
+        public bool IsTyping => _typewriter != null && _typewriter.IsPlaying;
+
+        public void CompleteTyping()
+        {
+            if (_typewriter != null) _typewriter.Complete();
+        }
 
         public void ShowLine(StoryLine line)
         {
@@ -46,12 +58,25 @@ namespace SushiSurvival.UI
 
             if (standingImage != null)
             {
-                standingImage.sprite = line.standing;
-                standingImage.gameObject.SetActive(line.standing != null);
+                if (_standingAnimator == null)
+                    _standingAnimator = GetOrAdd<StandingAnimator>(standingImage.gameObject);
+
+                _standingAnimator.Show(line.standing);
             }
 
             if (bodyText != null)
-                bodyText.text = line.text;
+            {
+                if (_typewriter == null)
+                    _typewriter = GetOrAdd<TypewriterText>(bodyText.gameObject);
+
+                _typewriter.Play(line.text, charsPerSecond);
+            }
+        }
+
+        // 연출 컴포넌트는 씬에 따로 배선하지 않고 필요할 때 붙인다.
+        private static T GetOrAdd<T>(GameObject target) where T : Component
+        {
+            return target.TryGetComponent<T>(out var existing) ? existing : target.AddComponent<T>();
         }
 
         /// <summary>페이드 없이 즉시 배경을 바꾼다. null이면 배경을 끈다(카메라 배경색이 보인다).</summary>
