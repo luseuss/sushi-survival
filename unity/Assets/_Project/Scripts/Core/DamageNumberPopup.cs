@@ -77,7 +77,10 @@ namespace SushiSurvival.Core
         private static void ConfigureText(TextMesh text, Font font, float characterSize)
         {
             text.font = font;
-            text.fontSize = DynamicFontSize;
+            // 정적 폰트에 fontSize를 지정하면 유니티가 매번 경고를 찍는다(색을 바꿀 때마다 반복).
+            if (font.dynamic)
+                text.fontSize = DynamicFontSize;
+
             text.anchor = TextAnchor.MiddleCenter;
             text.alignment = TextAlignment.Center;
             text.characterSize = characterSize;
