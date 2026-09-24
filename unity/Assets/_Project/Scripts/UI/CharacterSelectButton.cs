@@ -37,6 +37,13 @@ namespace SushiSurvival.UI
 
             if (locked && portraitImage != null)
                 portraitImage.color = Color.gray;
+
+            // 영상이 있는 캐릭터만 호버 재생을 붙인다. 없으면 지금처럼 그림만 보인다.
+            if (characterData != null && characterData.hoverVideo != null && portraitImage != null
+                && !TryGetComponent<HoverVideoPreview>(out _))
+            {
+                gameObject.AddComponent<HoverVideoPreview>().Init(portraitImage, characterData.hoverVideo);
+            }
         }
 
         private void OnDestroy()
