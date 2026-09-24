@@ -338,7 +338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientMode: 1
   baseOffset: {x: 0.5, y: 0}
-  orbitDistance: 0.5
+  orbitDistance: 0.3
   spriteAngleOffset: 180
   facing: {fileID: 3596138435572102197}
   spriteRenderer: {fileID: 4102852640409364864}
