@@ -3781,7 +3781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16dad81f68216f428bad4018790f27a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelSystem: {fileID: 0}
+  levelSystem: {fileID: 1240316978}
   fillImage: {fileID: 1907028320}
   fillSpeed: 3
 --- !u!1 &1064299817
