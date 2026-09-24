@@ -79,6 +79,9 @@ namespace SushiSurvival.Enemies
 
             CurrentHealth = HealthLogic.ApplyDamage(CurrentHealth, damage);
 
+            if (JuiceDirector.Instance != null)
+                JuiceDirector.Instance.EnemyHit(transform.position, damage, HealthLogic.IsDead(CurrentHealth));
+
             if (HealthLogic.IsDead(CurrentHealth))
                 Die();
         }
