@@ -11,6 +11,8 @@ namespace SushiSurvival.Data
         public string speakerName;
         [Tooltip("대사창 안 작은 초상화. 비우면 초상화 창을 숨긴다.")]
         public Sprite portrait;
+        [Tooltip("화면에 크게 서 있는 입상 일러스트. 비우면 입상을 숨긴다.")]
+        public Sprite standing;
         [TextArea]
         public string text;
         [Tooltip("이 줄에서 바뀔 배경. 비우면 직전 배경을 유지한다.")]

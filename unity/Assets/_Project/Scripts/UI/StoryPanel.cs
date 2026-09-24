@@ -21,6 +21,8 @@ namespace SushiSurvival.UI
         [SerializeField] private GameObject nameplateRoot;
         [SerializeField] private Text nameText;
         [SerializeField] private Image miniPortrait;
+        [Tooltip("화면에 크게 서 있는 입상. 비워두면 입상을 표시하지 않는다.")]
+        [SerializeField] private Image standingImage;
         [SerializeField] private Text bodyText;
 
         private Coroutine _fade;
@@ -40,6 +42,12 @@ namespace SushiSurvival.UI
             {
                 miniPortrait.sprite = line.portrait;
                 miniPortrait.gameObject.SetActive(line.portrait != null);
+            }
+
+            if (standingImage != null)
+            {
+                standingImage.sprite = line.standing;
+                standingImage.gameObject.SetActive(line.standing != null);
             }
 
             if (bodyText != null)
