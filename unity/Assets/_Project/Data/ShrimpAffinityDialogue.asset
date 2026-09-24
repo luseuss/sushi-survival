@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   introLines:
   - speakerName: "\uCE74\uB9C8\uB9AC\uC628"
-    portrait: {fileID: 21300000, guid: 34c8a59fb576e2943b03f20d9221f163, type: 3}
+    portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
     text: "\uB09C \uC2A4\uC2DC\uC655\uAD6D \uCD5C\uACE0\uC758 \uB300\uC7A5\uC7A5\uC774
       \uAC00\uBB38\uC758 7\uB300 \uD6C4\uACC4\uC790, \uCE74\uB9C8\uB9AC\uC628\uC774\uB77C\uACE0
       \uD55C\uB2E4. \uC2A4\uC2DC\uC655\uAD6D\uC758 \uBAA8\uB4E0 \uBB34\uAE30\uB4E4\uC740
@@ -26,7 +26,7 @@ MonoBehaviour:
     text: "...\uB2F9\uC2E0\uC774 \uB4E4\uACE0 \uC788\uB294 \uAC83\uC740 \uBB34\uC5C7\uC774\uC8E0?"
     background: {fileID: 0}
   - speakerName: "\uCE74\uB9C8\uB9AC\uC628"
-    portrait: {fileID: 21300000, guid: 34c8a59fb576e2943b03f20d9221f163, type: 3}
+    portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
     text: "\uC774\uAC74 \uB098\uC758 \uBB34\uAE30 \uAC04\uC7A5 \uAD8C\uCD1D\uC774\uC9C0,
       \uC694\uBC88\uC5D0 \uB0B4\uAC00 \uBC1C\uBA85\uD55C \uC544\uC8FC \uAC15\uB825\uD55C
       \uBB34\uAE30\uC9C0. \uD558\uD558."
@@ -36,7 +36,7 @@ MonoBehaviour:
     text: "...\uBA4B\uC788\uB124\uC694."
     background: {fileID: 0}
   - speakerName: "\uCE74\uB9C8\uB9AC\uC628"
-    portrait: {fileID: 21300000, guid: 34c8a59fb576e2943b03f20d9221f163, type: 3}
+    portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
     text: "\uADF8\uB807\uAC8C \uC5B8\uC81C\uAE4C\uC9C0 \uAC81\uC7C1\uC774\uCC98\uB7FC
       \uC9C8\uBB38\uB9CC \uD558\uACE0 \uC788\uC744 \uAC70\uC9C0? \uC790, \uC120\uD0DD\uD574."
     background: {fileID: 0}
@@ -52,12 +52,12 @@ MonoBehaviour:
       augment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
   bossIntroLines:
   - speakerName: "\uCE74\uB9C8\uB9AC\uC628"
-    portrait: {fileID: 21300000, guid: 34c8a59fb576e2943b03f20d9221f163, type: 3}
+    portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
     text: "\uC9C0\uAE08 \uC774 \uC18C\uB9AC \uB4E4\uB9AC\uC9C0? \uCFE0\uCFF5\uCFE0\uCFF5
       \uCFE0\uCFF5."
     background: {fileID: 0}
   - speakerName: "\uCE74\uB9C8\uB9AC\uC628"
-    portrait: {fileID: 21300000, guid: 34c8a59fb576e2943b03f20d9221f163, type: 3}
+    portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
     text: "\uB4DC\uB514\uC5B4 \uB098\uC624\uB294\uAD70, \uC800 \uC790\uC2DD. \uB4DC\uB514\uC5B4
       \uB098\uC758 \uBB34\uAE30\uB85C \uC800 \uB140\uC11D\uC744 \uC5C6\uC560\uBC84\uB9B4
       \uC2DC\uAC04\uC774\uAD70. \uC800 \uB140\uC11D\uC740 \uC544\uAE4C \uB140\uC11D\uB4E4\uC774\uB791

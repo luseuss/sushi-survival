@@ -20,12 +20,15 @@ namespace SushiSurvival.UI
 
         private void Awake() => Hide();
 
-        public void Show(Sprite portrait, AffinityDialogueQuestion question, Action<AffinityDialogueChoice> onChosen)
+        /// <param name="portrait">대화창 안 미니 초상화(정사각).</param>
+        /// <param name="standing">화면에 크게 서 있는 입상. null이면 portrait로 대신한다.</param>
+        public void Show(Sprite portrait, Sprite standing, AffinityDialogueQuestion question,
+                         Action<AffinityDialogueChoice> onChosen)
         {
             Root.SetActive(true);
 
             if (portraitImage != null)
-                portraitImage.sprite = portrait;
+                portraitImage.sprite = standing != null ? standing : portrait;
 
             if (miniPortraitImage != null)
                 miniPortraitImage.sprite = portrait;
