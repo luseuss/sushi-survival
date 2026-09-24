@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   introLines:
   - speakerName: "\uC544\uB378\uB9B0"
-    portrait: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
     text: "\uB9CC\uB098\uC11C \uBC18\uAC11\uC2B5\uB2C8\uB2E4. \uC800\uB294 \uC2A4\uC2DC\uC655\uAD6D\uC758
       9\uBC88\uC9F8 \uC655\uB140, \uC544\uB378\uB9B0\uC774\uB77C\uACE0 \uD569\uB2C8\uB2E4."
     background: {fileID: 0}
@@ -23,7 +23,7 @@ MonoBehaviour:
     text: "\uC9C0\uAE08 \uBB34\uC2A8 \uC77C\uC774 \uBC8C\uC5B4\uC9C0\uACE0 \uC788\uB294\uAC70\uC8E0?"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
-    portrait: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
     text: "\uC9C0\uAE08 \uB864\uC655\uAD6D\uC758 \uAD70\uB300\uAC00 \uC6B0\uB9AC
       \uC655\uAD6D\uC5D0 \uB4E4\uC774\uB2E5\uCE58\uACE0 \uC788\uC2B5\uB2C8\uB2E4."
     background: {fileID: 0}
@@ -32,11 +32,11 @@ MonoBehaviour:
     text: "\uACF5\uC8FC\uB2D8\uC758 \uBB34\uAE30\uB294 \uBB34\uC5C7\uC774\uC8E0?"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
-    portrait: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
     text: "\uC81C \uBB34\uAE30\uB294 \uACC4\uB780 \uC591\uC0B0\uC785\uB2C8\uB2E4."
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
-    portrait: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
     text: "\uC790, \uC774\uC81C \uC120\uD0DD\uD574\uC8FC\uC138\uC694."
     background: {fileID: 0}
   question1:
@@ -54,12 +54,12 @@ MonoBehaviour:
       augment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
   bossIntroLines:
   - speakerName: "\uC544\uB378\uB9B0"
-    portrait: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
     text: "\uC9C0\uAE08 \uC774 \uC18C\uB9AC \uB4E4\uB9AC\uC2DC\uB098\uC694? \uCFE0\uCFF5!!
       \uCFE0\uCFF5!! \uCFE0\uCFF5!!"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
-    portrait: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
     text: "\uC800 \uC874\uC7AC\uB294 \uB864\uC655\uAD6D\uC774 \uAE38\uB7EC\uC628
       \uC804\uD22C \uBCD1\uAE30\uC785\uB2C8\uB2E4. \uC9C0\uAE08\uAE4C\uC9C0 \uB9C8\uC8FC\uD588\uB358
       \uC801\uB4E4\uACFC \uCC28\uC6D0\uC774 \uB2E4\uB974\uB2C8 \uC870\uC2EC\uD558\uC154\uC57C

@@ -31,11 +31,11 @@ namespace SushiSurvival.Core
         /// 이 버프를 다시 적용할 수 있도록 LevelSystem.RecordExternalBuff를 넘겨받는다 —
         /// 안 넘기면 GameScene→BossScene 전환 시 대화로 받은 버프가 사라진다.
         /// </param>
-        public void Show(AffinityDialogueData data, Sprite portrait, PlayerStats stats, PlayerHealth health,
+        public void Show(AffinityDialogueData data, Sprite portrait, Sprite standing, PlayerStats stats, PlayerHealth health,
                          Action<AugmentData, float> recordBuff, Action onComplete)
         {
             PlayLines(data?.introLines,
-                () => ShowQuestion(data?.question1, portrait, stats, health, recordBuff, onComplete));
+                () => ShowQuestion(data?.question1, portrait, standing, stats, health, recordBuff, onComplete));
         }
 
         /// <summary>보스전 직전 나레이션만 재생한다. 증강 선택은 없다.</summary>
@@ -90,7 +90,7 @@ namespace SushiSurvival.Core
             return keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame);
         }
 
-        private void ShowQuestion(AffinityDialogueQuestion question, Sprite portrait, PlayerStats stats,
+        private void ShowQuestion(AffinityDialogueQuestion question, Sprite portrait, Sprite standing, PlayerStats stats,
                          PlayerHealth health, Action<AugmentData, float> recordBuff, Action onComplete)
         {
             if (question == null || question.choices == null || question.choices.Length == 0)
@@ -106,7 +106,7 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            panel.Show(portrait, question, choice =>
+            panel.Show(portrait, standing, question, choice =>
             {
                 if (choice.augment != null)
                 {

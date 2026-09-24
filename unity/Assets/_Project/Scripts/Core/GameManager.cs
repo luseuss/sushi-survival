@@ -190,7 +190,7 @@ namespace SushiSurvival.Core
             {
                 CurrentState = RunState.Intro;
                 affinityDialogueController.Show(
-                    characterData.affinityDialogue, characterData.portraitSprite,
+                    characterData.affinityDialogue, characterData.portraitSprite, characterData.standingSprite,
                     _playerStats, _playerHealth, levelSystem.RecordExternalBuff, BeginCombat);
             }
             else
