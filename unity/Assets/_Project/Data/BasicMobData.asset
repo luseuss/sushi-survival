@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BasicMobData
   m_EditorClassIdentifier: 
   monsterName: "\"\uB864 \uBAAC\uC2A4\uD130\""
-  maxHealth: 6
+  maxHealth: 10
   contactDamage: 5
   moveSpeed: 2
   knockbackResistance: 0
