@@ -35,5 +35,7 @@ namespace SushiSurvival.Data
         public AffinityDialogueQuestion question1;
         [Tooltip("보스전 진입 직전 재생되는 나레이션(선택지 없음). 비우면 인터럽트 없이 바로 보스전.")]
         public StoryLine[] bossIntroLines;
+        [Tooltip("BossScene에서 보스가 떨어져 등장한 직후 보스와 캐릭터가 주고받는 대사. 비우면 대화 없이 바로 전투.")]
+        public StoryLine[] bossEncounterLines;
     }
 }

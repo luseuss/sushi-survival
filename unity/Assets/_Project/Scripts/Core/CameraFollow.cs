@@ -18,8 +18,24 @@ namespace SushiSurvival.Core
         // 오프셋을 얹은 값이라, 흔들림이 다음 프레임의 추적 기준을 오염시키지 않는다.
         private Vector3 _basePosition;
         private Vector2 _shakeOffset;
+        private bool _hasFocus;
+        private Vector3 _focus;
+        private float _focusSpeed;
 
         public void SetTarget(Transform newTarget) => target = newTarget;
+
+        /// <summary>
+        /// 연출용: 대상 대신 이 지점을 비춘다. 정지(timeScale 0) 중에도 움직이도록 실시간으로 따라간다.
+        /// ClearFocus를 부르면 다시 대상을 따라간다.
+        /// </summary>
+        public void FocusOn(Vector3 worldPosition, float speed)
+        {
+            _hasFocus = true;
+            _focus = worldPosition;
+            _focusSpeed = speed;
+        }
+
+        public void ClearFocus() => _hasFocus = false;
 
         /// <summary>JuiceDirector가 매 프레임 흔들림 오프셋을 여기로 밀어넣는다.</summary>
         public void SetShakeOffset(Vector2 offset) => _shakeOffset = offset;
@@ -42,6 +58,14 @@ namespace SushiSurvival.Core
 
         private void LateUpdate()
         {
+            if (_hasFocus)
+            {
+                float focusFactor = Mathf.Clamp01(_focusSpeed * Time.unscaledDeltaTime);
+                _basePosition = CameraFollowLogic.ComputeFollowPosition(_basePosition, _focus, focusFactor);
+                transform.position = _basePosition + (Vector3)_shakeOffset;
+                return;
+            }
+
             if (target == null) return;
 
             float factor = followSpeed * Time.deltaTime;
