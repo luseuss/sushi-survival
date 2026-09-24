@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using SushiSurvival.Core;
 using SushiSurvival.Data;
 using SushiSurvival.Pickups;
@@ -56,6 +58,12 @@ namespace SushiSurvival.Enemies.Boss
         [Tooltip("착지 충격으로 화면이 흔들리는 세기(월드 단위)와 시간(초, 실시간).")]
         [SerializeField] private float impactShakeMagnitude = 0.5f;
         [SerializeField] private float impactShakeSeconds = 0.6f;
+        [Tooltip("착지 순간 걷혀 나갈 초록 땅(사막 땅 위에 덮여 있다). 비우면 이 연출 없이 처음부터 사막이다.")]
+        [SerializeField] private Tilemap groundGrass;
+        [Tooltip("초록 땅을 채우는 스트리머. 걷힘이 시작되면 꺼서, 지운 땅이 다시 채워지지 않게 한다.")]
+        [SerializeField] private MonoBehaviour groundGrassStreamer;
+        [Tooltip("초록 땅이 착지점에서 끝까지 걷히는 시간(초, 실시간).")]
+        [SerializeField] private float groundTransitionSeconds = 1.2f;
         [Tooltip("플레이어로부터 이 거리 위쪽에 보스가 등장한다.")]
         [SerializeField] private float bossSpawnDistance = 8f;
         [Tooltip("격파 폭발을 이 배율로 키운다.")]
@@ -175,6 +183,9 @@ namespace SushiSurvival.Enemies.Boss
 
             boss.transform.position = landing;
 
+            if (groundGrass != null)
+                StartCoroutine(GroundTransition(landing));
+
             if (bossIntroBanner != null)
                 bossIntroBanner.SetActive(true);
 
@@ -207,6 +218,57 @@ namespace SushiSurvival.Enemies.Boss
             Time.timeScale = 1f;
 
             ActivateBoss(playerTransform);
+        }
+
+        /// <summary>착지점에서부터 초록 땅 타일을 물결처럼 걷어 아래의 사막 땅을 드러낸다.</summary>
+        private IEnumerator GroundTransition(Vector3 center)
+        {
+            if (groundGrassStreamer != null)
+                groundGrassStreamer.enabled = false;
+
+            var positions = new List<Vector3Int>();
+            var distances = new List<float>();
+
+            foreach (Vector3Int cell in groundGrass.cellBounds.allPositionsWithin)
+            {
+                if (!groundGrass.HasTile(cell)) continue;
+
+                positions.Add(cell);
+                distances.Add(Vector3.Distance(groundGrass.GetCellCenterWorld(cell), center));
+            }
+
+            var order = new Vector3Int[positions.Count];
+            var sortedDistances = new float[positions.Count];
+            var keys = distances.ToArray();
+            var indices = new int[positions.Count];
+            for (int i = 0; i < indices.Length; i++) indices[i] = i;
+            System.Array.Sort(keys, indices);
+            for (int i = 0; i < indices.Length; i++)
+            {
+                order[i] = positions[indices[i]];
+                sortedDistances[i] = keys[i];
+            }
+
+            float maxDistance = sortedDistances.Length > 0 ? sortedDistances[sortedDistances.Length - 1] : 0f;
+            int next = 0;
+            float elapsed = 0f;
+
+            while (next < order.Length)
+            {
+                elapsed += Time.unscaledDeltaTime;
+
+                float radius = GroundTransitionLogic.RadiusAt(elapsed, groundTransitionSeconds, maxDistance);
+                int end = GroundTransitionLogic.AdvanceIndex(sortedDistances, next, radius);
+
+                for (; next < end; next++)
+                    groundGrass.SetTile(order[next], null);
+
+                if (elapsed >= groundTransitionSeconds) end = order.Length;
+                for (; next < end; next++)
+                    groundGrass.SetTile(order[next], null);
+
+                yield return null;
+            }
         }
 
         private void PlaceBoss(Vector3 position)

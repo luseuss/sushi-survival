@@ -141,6 +141,8 @@ namespace SushiSurvival.Core
             if (_selectedCharacterData != null && _selectedCharacterData.affinityDialogue != null &&
                 affinityDialogueController != null)
             {
+                if (JuiceDirector.Instance != null) JuiceDirector.Instance.BeginRumble();
+
                 affinityDialogueController.ShowSecond(
                     _selectedCharacterData.affinityDialogue, _selectedCharacterData.portraitSprite,
                     _playerStats, _playerHealth, levelSystem.RecordExternalBuff, ResumeAndEnterBossFight);
@@ -153,6 +155,8 @@ namespace SushiSurvival.Core
 
         private void ResumeAndEnterBossFight()
         {
+            if (JuiceDirector.Instance != null) JuiceDirector.Instance.EndRumble();
+
             CurrentState = RunState.Playing;
             EnterBossFight();
         }
