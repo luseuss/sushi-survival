@@ -102,7 +102,7 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -121,9 +121,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_1"
       rect:
         serializedVersion: 2
-        x: 50
+        x: 150
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -142,9 +142,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_2"
       rect:
         serializedVersion: 2
-        x: 100
+        x: 300
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -163,9 +163,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_3"
       rect:
         serializedVersion: 2
-        x: 150
+        x: 450
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -184,9 +184,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_4"
       rect:
         serializedVersion: 2
-        x: 200
+        x: 600
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -205,9 +205,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_5"
       rect:
         serializedVersion: 2
-        x: 250
+        x: 750
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -226,9 +226,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_6"
       rect:
         serializedVersion: 2
-        x: 300
+        x: 900
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -247,9 +247,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_7"
       rect:
         serializedVersion: 2
-        x: 350
+        x: 1050
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -268,9 +268,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_8"
       rect:
         serializedVersion: 2
-        x: 400
+        x: 1200
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -289,9 +289,9 @@ TextureImporter:
       name: "\uBCF4\uC2A4\uACF5\uACA9 \uC774\uD399\uD2B8_9"
       rect:
         serializedVersion: 2
-        x: 450
+        x: 1350
         y: 0
-        width: 50
+        width: 150
         height: 150
       alignment: 0
       pivot: {x: 0, y: 0}
