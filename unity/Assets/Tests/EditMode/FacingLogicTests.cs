@@ -59,5 +59,38 @@ namespace SushiSurvival.EditModeTests
         {
             Assert.IsFalse(FacingLogic.IsFacingRight(Vector2.left));
         }
+
+        // ---- HorizontalFacing ----
+
+        [Test]
+        public void HorizontalFacing_RightSide_ReturnsRight()
+        {
+            Assert.AreEqual(Vector2.right, FacingLogic.HorizontalFacing(new Vector2(0.3f, 0.9f)));
+        }
+
+        [Test]
+        public void HorizontalFacing_LeftSide_ReturnsLeft()
+        {
+            Assert.AreEqual(Vector2.left, FacingLogic.HorizontalFacing(new Vector2(-0.3f, -0.9f)));
+        }
+
+        [Test]
+        public void HorizontalFacing_StraightUpOrDown_MatchesVisualWhichFacesRight()
+        {
+            // 그림(IsFacingRight)이 x가 0일 때 오른쪽을 보므로 판정도 오른쪽이어야 어긋나지 않는다.
+            Assert.AreEqual(Vector2.right, FacingLogic.HorizontalFacing(Vector2.up));
+            Assert.AreEqual(Vector2.right, FacingLogic.HorizontalFacing(Vector2.down));
+        }
+
+        [Test]
+        public void HorizontalFacing_AlwaysAgreesWithIsFacingRight()
+        {
+            for (float x = -1f; x <= 1f; x += 0.25f)
+            {
+                var facing = new Vector2(x, 0.5f);
+                bool right = FacingLogic.IsFacingRight(facing);
+                Assert.AreEqual(right ? Vector2.right : Vector2.left, FacingLogic.HorizontalFacing(facing));
+            }
+        }
     }
 }
