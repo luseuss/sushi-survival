@@ -15,12 +15,17 @@ namespace SushiSurvival.UI
         [Tooltip("카드 3장과 무관하게 항상 켜져 있는 4번째 선택지. 증강 풀이 " +
                  "고갈돼도 도박은 언제나 가능하다.")]
         [SerializeField] private UnityEngine.UI.Button royalWasabiButton;
-        [Tooltip("스케일인에 걸리는 실시간(초). Show() 직후 timeScale이 0이 되므로 " +
+        [Tooltip("팝업 페이드인에 걸리는 실시간(초). Show() 직후 timeScale이 0이 되므로 " +
                  "반드시 실시간으로 진행한다.")]
         [SerializeField] private float showDuration = 0.15f;
+        [Tooltip("카드 한 장이 커지며 등장하는 데 걸리는 실시간(초).")]
+        [SerializeField] private float cardDuration = 0.28f;
+        [Tooltip("카드 사이 등장 시차(초). 카드 → 왕궁 버튼 순으로 이만큼씩 늦게 나타난다.")]
+        [SerializeField] private float cardStagger = 0.07f;
 
         private Coroutine _showRoutine;
         private Action _onRoyalWasabi;
+        private CanvasGroup _canvasGroup;
 
         public static LevelUpPanel Instance { get; private set; }
 
@@ -71,27 +76,43 @@ namespace SushiSurvival.UI
             if (activeRoot == null) return;
 
             activeRoot.SetActive(true);
-            activeRoot.transform.localScale = Vector3.zero;
+            activeRoot.transform.localScale = Vector3.one;
+
+            // 페이드용 CanvasGroup은 씬에 따로 배선하지 않고 필요할 때 붙인다.
+            _canvasGroup = activeRoot.GetComponent<CanvasGroup>();
+            if (_canvasGroup == null)
+                _canvasGroup = activeRoot.AddComponent<CanvasGroup>();
+
+            // 등장 연출 중에 눌러서 의도치 않게 고르는 일이 없도록 잠근다.
+            _canvasGroup.alpha = 0f;
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
 
             for (int i = 0; i < optionButtons.Length; i++)
             {
                 if (optionButtons[i] == null) continue;
 
                 if (i < options.Count)
+                {
+                    optionButtons[i].AppearScale = 0f;
                     optionButtons[i].Bind(options[i], onChosen);
+                }
                 else
+                {
                     optionButtons[i].Clear();
+                }
             }
 
             _onRoyalWasabi = onRoyalWasabi;
             if (royalWasabiButton != null)
             {
+                royalWasabiButton.transform.localScale = Vector3.zero;
                 royalWasabiButton.onClick.RemoveAllListeners();
                 royalWasabiButton.onClick.AddListener(HandleRoyalWasabiClicked);
             }
 
             if (_showRoutine != null) StopCoroutine(_showRoutine);
-            _showRoutine = StartCoroutine(ScaleIn());
+            _showRoutine = StartCoroutine(PopIn());
         }
 
         public void Hide()
@@ -105,29 +126,54 @@ namespace SushiSurvival.UI
 
         private void HandleRoyalWasabiClicked() => _onRoyalWasabi?.Invoke();
 
-        private IEnumerator ScaleIn()
+        // 팝업이 페이드인하는 동안 카드 → 왕궁 버튼 순으로 시차를 두고 튀어나온다.
+        private IEnumerator PopIn()
         {
-            GameObject activeRoot = GetRoot();
-            if (activeRoot == null) yield break;
+            var cards = new List<LevelUpOptionButton>();
+            foreach (var button in optionButtons)
+            {
+                if (button != null && button.gameObject.activeSelf)
+                    cards.Add(button);
+            }
 
-            Transform t = activeRoot.transform;
+            Transform wasabi = royalWasabiButton != null ? royalWasabiButton.transform : null;
+            float wasabiDelay = cards.Count * cardStagger;
+            float total = Mathf.Max(showDuration, wasabiDelay + cardDuration);
             float elapsed = 0f;
 
-            while (elapsed < showDuration)
+            while (elapsed < total)
             {
-                if (this == null || t == null) yield break;
+                if (this == null || _canvasGroup == null) yield break;
 
                 elapsed += Time.unscaledDeltaTime;
-                float p = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / showDuration));
-                t.localScale = Vector3.one * p;
+                _canvasGroup.alpha = Mathf.Clamp01(elapsed / showDuration);
+
+                for (int i = 0; i < cards.Count; i++)
+                    cards[i].AppearScale = EaseOutBack(Mathf.Clamp01((elapsed - i * cardStagger) / cardDuration));
+
+                if (wasabi != null)
+                    wasabi.localScale = Vector3.one * EaseOutBack(Mathf.Clamp01((elapsed - wasabiDelay) / cardDuration));
+
                 yield return null;
             }
 
-            if (t != null)
-            {
-                t.localScale = Vector3.one;
-            }
+            foreach (var card in cards)
+                card.AppearScale = 1f;
+            if (wasabi != null)
+                wasabi.localScale = Vector3.one;
+
+            _canvasGroup.alpha = 1f;
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
             _showRoutine = null;
+        }
+
+        // 1을 살짝 넘겼다가 안착한다(오버슈트). 팝업이 통통 튀며 나오는 느낌.
+        private static float EaseOutBack(float t)
+        {
+            const float overshoot = 1.70158f;
+            float u = t - 1f;
+            return 1f + (overshoot + 1f) * u * u * u + overshoot * u * u;
         }
     }
 }
