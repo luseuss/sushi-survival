@@ -1913,6 +1913,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraFollow: {fileID: 674259427}
   deathBurstPool: {fileID: 1064299818}
+  damageFont: {fileID: 12800000, guid: 6d6381c43e8b41b993b983ddeb1a1daa, type: 3}
   playerHitStopDuration: 0.08
   enemyDeathStopDuration: 0.03
   playerHitShakeMagnitude: 0.15

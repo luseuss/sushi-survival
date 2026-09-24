@@ -17,6 +17,23 @@ namespace SushiSurvival.Core
         [Tooltip("사망 파티클 풀.")]
         [SerializeField] private GameObjectPool deathBurstPool;
 
+        [Header("데미지 숫자")]
+        [Tooltip("숫자에 쓸 폰트. 비워두면 유니티 기본 폰트를 쓴다.")]
+        [SerializeField] private Font damageFont;
+        [Tooltip("숫자 글자 한 칸의 높이(월드 단위). 실제 숫자는 이것의 70% 남짓이다. 잡몹 스프라이트가 대략 0.5 정도다.")]
+        [SerializeField] private float numberHeight = 0.6f;
+        [Tooltip("막타(적이 죽는 타격)일 때의 크기 배율.")]
+        [SerializeField] private float killNumberScale = 1.5f;
+        [SerializeField] private float numberLifetime = 0.6f;
+        [Tooltip("숫자가 떠오르는 높이(월드 단위).")]
+        [SerializeField] private float numberRiseHeight = 0.8f;
+        [Tooltip("겹쳐 뜨지 않도록 숫자를 좌우로 흩뿌리는 폭(월드 단위).")]
+        [SerializeField] private float numberJitter = 0.3f;
+        [Tooltip("동시에 띄울 수 있는 숫자 수. 광역 공격으로 한꺼번에 맞을 때 화면이 숫자로 덮이지 않게 한다.")]
+        [SerializeField] private int maxNumbers = 40;
+        [SerializeField] private Color numberColor = Color.white;
+        [SerializeField] private Color killNumberColor = new Color(1f, 0.85f, 0.3f);
+
         [Header("히트스톱")]
         [SerializeField] private float playerHitStopDuration = 0.08f;
         [SerializeField] private float enemyDeathStopDuration = 0.03f;
@@ -26,6 +43,9 @@ namespace SushiSurvival.Core
         [SerializeField] private float playerHitShakeDuration = 0.2f;
         [SerializeField] private float enemyDeathShakeMagnitude = 0.05f;
         [SerializeField] private float enemyDeathShakeDuration = 0.1f;
+
+        private ObjectPool<DamageNumberPopup> _numberPool;
+        private int _activeNumbers;
 
         private Coroutine _hitstopRoutine;
         private float _hitstopResumeScale = 1f;
@@ -41,6 +61,41 @@ namespace SushiSurvival.Core
         {
             TriggerHitstop(playerHitStopDuration);
             TriggerShake(playerHitShakeMagnitude, playerHitShakeDuration);
+        }
+
+        /// <summary>적이 맞을 때마다 머리 위에 데미지 숫자를 띄운다. 막타는 더 크고 노랗게 보여준다.</summary>
+        public void EnemyHit(Vector3 position, float damage, bool killed)
+        {
+            if (_activeNumbers >= maxNumbers) return;
+
+            if (_numberPool == null)
+            {
+                Font font = damageFont != null
+                    ? damageFont
+                    : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                if (font == null) return;
+
+                _numberPool = new ObjectPool<DamageNumberPopup>(
+                    factory: () => DamageNumberPopup.Create(transform, font, numberHeight, ReleaseNumber),
+                    onGet: popup => popup.gameObject.SetActive(true),
+                    onRelease: popup => popup.gameObject.SetActive(false));
+            }
+
+            _activeNumbers++;
+            Vector3 jittered = position + new Vector3(Random.Range(-numberJitter, numberJitter), 0.3f, 0f);
+            _numberPool.Get().Play(
+                jittered,
+                DamageNumberLogic.Format(damage),
+                killed ? killNumberColor : numberColor,
+                killed ? killNumberScale : 1f,
+                numberLifetime,
+                numberRiseHeight);
+        }
+
+        private void ReleaseNumber(DamageNumberPopup popup)
+        {
+            _activeNumbers = Mathf.Max(0, _activeNumbers - 1);
+            _numberPool.Release(popup);
         }
 
         public void EnemyDied(Vector3 position)
