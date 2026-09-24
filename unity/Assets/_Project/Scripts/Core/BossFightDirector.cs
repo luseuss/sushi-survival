@@ -123,7 +123,7 @@ namespace SushiSurvival.Enemies.Boss
             if (bossIntroBanner != null)
                 bossIntroBanner.SetActive(false);
 
-            SpawnBoss(playerTransform);
+            StartCoroutine(IntroSequence(playerTransform));
         }
         private IEnumerator IntroSequence(Transform playerTransform)
         {
