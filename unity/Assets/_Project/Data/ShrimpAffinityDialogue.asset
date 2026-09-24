@@ -72,7 +72,7 @@ MonoBehaviour:
     background: {fileID: 0}
   bossEncounterLines:
   - speakerName: "\uB864\uBC95\uC0AC"
-    portrait: {fileID: 21300000, guid: 4a12c5f85bd8f994a97dc974138a8098, type: 3}
+    portrait: {fileID: 21300000, guid: 023537795fdc4d1cbbeeb1214b6650ac, type: 3}
     standing: {fileID: 0}
     text: "\uC2A4\uC2DC\uC655\uAD6D\uC758 \uBCD1\uC0AC\uAC00 \uC5EC\uAE30\uAE4C\uC9C0
       \uC624\uB2E4\uB2C8... \uB864\uC655\uAD6D\uC758 \uC774\uB984\uC73C\uB85C, \uC804\uBD80
@@ -85,7 +85,7 @@ MonoBehaviour:
       \uB124 \uBC25\uC0C1\uC740 \uB0B4\uAC00 \uC5CE\uC5B4 \uC8FC\uC9C0."
     background: {fileID: 0}
   - speakerName: "\uB864\uBC95\uC0AC"
-    portrait: {fileID: 21300000, guid: 4a12c5f85bd8f994a97dc974138a8098, type: 3}
+    portrait: {fileID: 21300000, guid: 023537795fdc4d1cbbeeb1214b6650ac, type: 3}
     standing: {fileID: 0}
     text: "\uADF8 \uAC04\uC7A5 \uCD1D\uC73C\uB85C? \uB0B4 \uB864\uC740 \uCD1D\uC54C\uB85C
       \uB6AB\uB9AC\uC9C0 \uC54A\uB294\uB2E4!"
