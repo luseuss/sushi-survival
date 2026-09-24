@@ -33,6 +33,9 @@ namespace SushiSurvival.Enemies.Boss
         private EnemyBase _enemy;
         private EnemyAI _ai;
 
+        private PlayerHealth _player;
+        private bool _firstCast;
+
         private BossPatternType _previousPattern;
         private int _phase = BossPhaseLogic.PhaseOne;
         private float _patternTimer;
@@ -67,8 +70,11 @@ namespace SushiSurvival.Enemies.Boss
                 summonPattern.SetDependencies(
                     player != null ? player.transform : null, mobPool, summonEffectPool, gemPools);
 
+            _player = player;
             _phase = BossPhaseLogic.PhaseOne;
             _previousPattern = BossPatternType.Summon;
+            // 등장하자마자 잡몹을 뿌리거나 돌진하면 등장 연출이 묻히므로 첫 패턴은 항상 메테오다.
+            _firstCast = true;
 
             BossPhaseValues values = bossData.GetPhaseValues(_phase);
             _patternTimer = values.patternInterval;
@@ -92,7 +98,12 @@ namespace SushiSurvival.Enemies.Boss
             _patternTimer -= Time.deltaTime;
             if (_patternTimer > 0f) return;
 
-            StartCoroutine(Cast(BossPatternScheduler.SelectNext(_previousPattern)));
+            BossPatternType next = _firstCast
+                ? BossPatternType.Meteor
+                : BossPatternScheduler.SelectNext(_previousPattern, _phase, Random.value);
+            _firstCast = false;
+
+            StartCoroutine(Cast(next));
         }
 
         private void UpdatePhase()
@@ -117,27 +128,64 @@ namespace SushiSurvival.Enemies.Boss
             _ai.MoveScale = 0f;
 
             if (animator != null)
-            {
                 animator.SetBool(IsMovingHash, false);
-                animator.SetTrigger(pattern == BossPatternType.Meteor ? CastMeteorHash : CastSummonHash);
-            }
 
-            yield return new WaitForSeconds(castDuration);
-
-            BossPhaseValues values = bossData.GetPhaseValues(_phase);
-
-            if (pattern == BossPatternType.Meteor)
+            if (pattern == BossPatternType.Charge)
             {
-                if (meteorPattern != null) meteorPattern.Fire(values);
+                yield return ChargeRoutine();
             }
             else
             {
-                if (summonPattern != null) summonPattern.Fire(values);
+                if (animator != null)
+                    animator.SetTrigger(pattern == BossPatternType.Meteor ? CastMeteorHash : CastSummonHash);
+
+                yield return new WaitForSeconds(castDuration);
+
+                BossPhaseValues fired = bossData.GetPhaseValues(_phase);
+
+                if (pattern == BossPatternType.Meteor)
+                {
+                    if (meteorPattern != null) meteorPattern.Fire(fired);
+                }
+                else
+                {
+                    if (summonPattern != null) summonPattern.Fire(fired);
+                }
             }
 
+            BossPhaseValues values = bossData.GetPhaseValues(_phase);
+
+            _ai.LockedDirection = Vector2.zero;
             _ai.MoveScale = values.moveScale;
             _patternTimer = values.patternInterval;
             _casting = false;
+        }
+
+        /// <summary>
+        /// 돌진: ① 멈춰서 붉게 번쩍이며 예고 → ② 그 순간의 플레이어 방향으로 고정해서 돌진 →
+        /// ③ 멈춰서 무방비로 서 있는다(반격 기회). 방향을 예고가 끝나는 순간에 잡으므로,
+        /// 예고 동안 움직여서 각을 만들어 두면 피할 수 있다. 피해는 보스의 접촉 데미지가 그대로 준다.
+        /// </summary>
+        private IEnumerator ChargeRoutine()
+        {
+            BossPhaseValues values = bossData.GetPhaseValues(_phase);
+
+            if (spriteFlasher != null)
+                spriteFlasher.Flash(Color.red, values.chargeWindup);
+
+            yield return new WaitForSeconds(values.chargeWindup);
+
+            Vector2 from = transform.position;
+            Vector2 to = _player != null ? (Vector2)_player.transform.position : from;
+            _ai.LockedDirection = BossAimLogic.ChargeDirection(from, to, Vector2.right);
+            _ai.MoveScale = values.chargeSpeedScale;
+
+            yield return new WaitForSeconds(values.chargeDuration);
+
+            _ai.LockedDirection = Vector2.zero;
+            _ai.MoveScale = 0f;
+
+            yield return new WaitForSeconds(values.chargeRecovery);
         }
     }
 }

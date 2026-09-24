@@ -27,6 +27,11 @@ MonoBehaviour:
     meteorWarningTime: 0.7
     meteorDamage: 20
     meteorRadius: 1.2
+    chargeWindup: 0.8
+    chargeDuration: 0.55
+    chargeSpeedScale: 4.5
+    chargeRecovery: 0.9
+    meteorLead: 0
     summonCount: 4
     summonRadius: 4
   phaseTwo:
@@ -37,6 +42,11 @@ MonoBehaviour:
     meteorWarningTime: 0.6
     meteorDamage: 25
     meteorRadius: 1.2
+    chargeWindup: 0.6
+    chargeDuration: 0.6
+    chargeSpeedScale: 5.5
+    chargeRecovery: 0.7
+    meteorLead: 0.6
     summonCount: 6
     summonRadius: 4
   phaseTwoThreshold: 0.5

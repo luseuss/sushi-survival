@@ -15,6 +15,8 @@ namespace SushiSurvival.Enemies.Boss
     public class MeteorPattern : MonoBehaviour
     {
         private PlayerHealth _player;
+        private Vector2 _lastPlayerPosition;
+        private Vector2 _playerVelocity;
         private GameObjectPool _meteorPool;
 
         /// <summary>
@@ -25,6 +27,10 @@ namespace SushiSurvival.Enemies.Boss
         {
             _player = player;
             _meteorPool = meteorPool;
+
+            // 첫 프레임에 (현재 위치 - 0)/dt로 속도가 튀지 않게 기준 위치를 맞춘다.
+            _playerVelocity = Vector2.zero;
+            if (player != null) _lastPlayerPosition = player.transform.position;
         }
 
         public void Fire(BossPhaseValues values)
@@ -62,9 +68,28 @@ namespace SushiSurvival.Enemies.Boss
             }
         }
 
+        // 플레이어는 MovePosition으로 움직여 Rigidbody 속도가 0이므로, 위치 변화로 이동 속도를 추정한다.
+        private void Update()
+        {
+            if (_player == null) return;
+
+            float dt = Time.deltaTime;
+            Vector2 position = _player.transform.position;
+
+            if (dt > 0.0001f)
+            {
+                Vector2 raw = (position - _lastPlayerPosition) / dt;
+                _playerVelocity = Vector2.Lerp(_playerVelocity, raw, 0.3f);
+            }
+
+            _lastPlayerPosition = position;
+        }
+
         private void LaunchOne(BossPhaseValues values)
         {
-            Vector2 target = _player.transform.position;
+            // meteorLead가 0이면 발사 순간의 위치 그대로다. 0보다 크면 이동 방향을 앞서 조준한다.
+            Vector2 target = BossAimLogic.PredictTarget(
+                _player.transform.position, _playerVelocity, values.meteorWarningTime, values.meteorLead);
             GameObject obj = _meteorPool.Get(target, Quaternion.identity);
 
             if (!obj.TryGetComponent<Meteor>(out var meteor))

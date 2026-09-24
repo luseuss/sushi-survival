@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using SushiSurvival.Enemies.Boss;
 
@@ -5,41 +6,78 @@ namespace SushiSurvival.EditModeTests
 {
     public class BossPatternSchedulerTests
     {
-        [Test]
-        public void SelectNext_AfterMeteor_ReturnsSummon()
+        private static readonly BossPatternType[] All =
         {
-            Assert.AreEqual(BossPatternType.Summon,
-                BossPatternScheduler.SelectNext(BossPatternType.Meteor));
-        }
+            BossPatternType.Meteor, BossPatternType.Summon, BossPatternType.Charge
+        };
 
         [Test]
-        public void SelectNext_AfterSummon_ReturnsMeteor()
+        public void SelectNext_NeverRepeatsThePreviousPattern()
         {
-            Assert.AreEqual(BossPatternType.Meteor,
-                BossPatternScheduler.SelectNext(BossPatternType.Summon));
-        }
-
-        [Test]
-        public void SelectNext_AlternatesOverManyCalls()
-        {
-            // 무작위로 뽑으면 소환이 연달아 나와 화면이 잡몹으로 덮인다.
-            var current = BossPatternType.Summon;
-
-            for (int i = 0; i < 10; i++)
+            foreach (var previous in All)
             {
-                var next = BossPatternScheduler.SelectNext(current);
-                Assert.AreNotEqual(current, next);
-                current = next;
+                for (int phase = 1; phase <= 2; phase++)
+                {
+                    for (float roll = 0f; roll < 1f; roll += 0.05f)
+                        Assert.AreNotEqual(previous, BossPatternScheduler.SelectNext(previous, phase, roll));
+                }
             }
         }
 
         [Test]
-        public void SelectNext_FromSummonSeed_StartsWithMeteor()
+        public void SelectNext_FromSummon_PhaseOne_SplitsMeteorAndCharge()
         {
-            // BossController는 직전 패턴 초기값을 Summon으로 두어 첫 패턴이
-            // 메테오가 되게 한다 — 등장하자마자 잡몹을 뿌리면 등장 연출이 묻힌다.
+            // 소환 직후 후보는 메테오(5)와 돌진(2). 5:2 가중치라 roll 5/7 미만이 메테오다.
             Assert.AreEqual(BossPatternType.Meteor,
-                BossPatternScheduler.SelectNext(BossPatternType.Summon));
+                BossPatternScheduler.SelectNext(BossPatternType.Summon, 1, 0.0f));
+            Assert.AreEqual(BossPatternType.Meteor,
+                BossPatternScheduler.SelectNext(BossPatternType.Summon, 1, 0.7f));
+            Assert.AreEqual(BossPatternType.Charge,
+                BossPatternScheduler.SelectNext(BossPatternType.Summon, 1, 0.75f));
+            Assert.AreEqual(BossPatternType.Charge,
+                BossPatternScheduler.SelectNext(BossPatternType.Summon, 1, 0.999f));
+        }
+
+        [Test]
+        public void SelectNext_PhaseTwo_FavorsCharge()
+        {
+            // 메테오 직후 후보는 소환(2)과 돌진(5). 돌진이 더 넓은 구간을 차지한다.
+            int charge = 0;
+            int summon = 0;
+            for (int i = 0; i < 100; i++)
+            {
+                var next = BossPatternScheduler.SelectNext(BossPatternType.Meteor, 2, i / 100f);
+                if (next == BossPatternType.Charge) charge++;
+                if (next == BossPatternType.Summon) summon++;
+            }
+
+            Assert.AreEqual(100, charge + summon);
+            Assert.Greater(charge, summon);
+        }
+
+        [Test]
+        public void SelectNext_OutOfRangeRoll_StillReturnsAValidPattern()
+        {
+            Assert.AreNotEqual(BossPatternType.Meteor,
+                BossPatternScheduler.SelectNext(BossPatternType.Meteor, 1, -1f));
+            Assert.AreNotEqual(BossPatternType.Meteor,
+                BossPatternScheduler.SelectNext(BossPatternType.Meteor, 1, 5f));
+        }
+
+        [Test]
+        public void SelectNext_EveryPatternIsReachable()
+        {
+            foreach (int phase in new[] { 1, 2 })
+            {
+                var seen = new HashSet<BossPatternType>();
+                foreach (var previous in All)
+                {
+                    for (float roll = 0f; roll < 1f; roll += 0.01f)
+                        seen.Add(BossPatternScheduler.SelectNext(previous, phase, roll));
+                }
+
+                Assert.AreEqual(3, seen.Count);
+            }
         }
     }
 }
