@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orientMode: 0
-  baseOffset: {x: 0.5, y: 0}
+  baseOffset: {x: 0.3, y: 0}
   orbitDistance: 0.5
   spriteAngleOffset: 0
   facing: {fileID: 4542973571035354992}
