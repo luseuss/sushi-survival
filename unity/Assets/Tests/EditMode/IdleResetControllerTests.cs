@@ -134,5 +134,53 @@ namespace SushiSurvival.EditModeTests
             Assert.AreEqual(0, _resets);
             Assert.AreEqual(0f, _controller.IdleSeconds, 0.0001f);
         }
+
+        // ---- RemainingSeconds ----
+
+        [Test]
+        public void RemainingSeconds_CountsDownWithIdleTime()
+        {
+            _controller.Tick(1f, false);
+            Assert.AreEqual(59f, _controller.RemainingSeconds, 0.0001f);
+
+            Idle(9f);
+            Assert.AreEqual(50f, _controller.RemainingSeconds, 0.0001f);
+        }
+
+        [Test]
+        public void RemainingSeconds_JumpsBackToTheFullTimeoutOnInput()
+        {
+            Idle(45f);
+            _controller.Tick(1f, true);
+
+            Assert.AreEqual(60f, _controller.RemainingSeconds, 0.0001f);
+        }
+
+        [Test]
+        public void RemainingSeconds_IsNegativeOnIgnoredScreens()
+        {
+            _context = IdleContext.Ignore;
+            _controller.Tick(1f, false);
+
+            Assert.Less(_controller.RemainingSeconds, 0f);
+        }
+
+        [Test]
+        public void RemainingSeconds_ResetsToFullTimeoutAfterTheReset()
+        {
+            Idle(60f);
+
+            Assert.AreEqual(1, _resets);
+            Assert.AreEqual(60f, _controller.RemainingSeconds, 0.0001f);
+        }
+
+        [Test]
+        public void RemainingSeconds_FollowsTheNewContextTimeout()
+        {
+            _context = IdleContext.Result;
+            _controller.Tick(1f, false);
+
+            Assert.AreEqual(29f, _controller.RemainingSeconds, 0.0001f);
+        }
     }
 }

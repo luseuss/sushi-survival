@@ -80,5 +80,13 @@ namespace SushiSurvival.Core
         /// <summary>리셋까지 남은 시간(초). 리셋하지 않는 화면이면 음수.</summary>
         public static float RemainingSeconds(float idleSeconds, float timeoutSeconds)
             => timeoutSeconds > 0f ? timeoutSeconds - idleSeconds : -1f;
+
+        /// <summary>리셋이 임박해 "곧 돌아갑니다" 안내를 띄울 때인지. warnSeconds가 0 이하면 안내하지 않는다.</summary>
+        public static bool ShouldWarn(float remainingSeconds, float warnSeconds)
+            => warnSeconds > 0f && remainingSeconds >= 0f && remainingSeconds <= warnSeconds;
+
+        /// <summary>안내에 보여줄 숫자. 0.3초 남았어도 "0"이 아니라 "1"로 보이게 올림한다.</summary>
+        public static int CountdownNumber(float remainingSeconds)
+            => remainingSeconds <= 0f ? 0 : (int)System.Math.Ceiling(remainingSeconds);
     }
 }

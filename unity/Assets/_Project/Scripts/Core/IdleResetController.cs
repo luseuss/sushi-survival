@@ -15,6 +15,9 @@ namespace SushiSurvival.Core
 
         public float IdleSeconds { get; private set; }
 
+        /// <summary>마지막 Tick 기준 리셋까지 남은 시간(초). 리셋하지 않는 화면이면 음수.</summary>
+        public float RemainingSeconds { get; private set; } = -1f;
+
         public IdleResetController(Func<IdleContext> contextProvider, Func<IdleTimeouts> timeoutsProvider, Action reset)
         {
             _contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
@@ -38,26 +41,26 @@ namespace SushiSurvival.Core
                 IdleSeconds = 0f;
             }
 
-            if (hadInput || dt < 0f)
-            {
-                IdleSeconds = 0f;
-                return;
-            }
+            float timeout = IdleResetLogic.TimeoutFor(context, _timeoutsProvider());
 
-            if (context == IdleContext.Ignore)
+            if (hadInput || dt < 0f || context == IdleContext.Ignore)
             {
                 IdleSeconds = 0f;
+                RemainingSeconds = IdleResetLogic.RemainingSeconds(0f, timeout);
                 return;
             }
 
             IdleSeconds += dt;
 
-            float timeout = IdleResetLogic.TimeoutFor(context, _timeoutsProvider());
             if (IdleResetLogic.IsExpired(IdleSeconds, timeout))
             {
                 IdleSeconds = 0f;
+                RemainingSeconds = IdleResetLogic.RemainingSeconds(0f, timeout);
                 _reset();
+                return;
             }
+
+            RemainingSeconds = IdleResetLogic.RemainingSeconds(IdleSeconds, timeout);
         }
     }
 }
