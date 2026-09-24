@@ -79,7 +79,12 @@ namespace SushiSurvival.Core
                 CurrentState = RunState.CharacterSelect;
 
                 if (characterSelectPanel != null)
+                {
                     characterSelectPanel.SetActive(true);
+
+                    // 스토리를 연타하다 넘어온 클릭이 카드에 꽂히지 않도록 등장 동안 클릭을 막는다.
+                    SushiSurvival.UI.CharacterSelectEntrance.Attach(characterSelectPanel).Play();
+                }
             }
         }
 
