@@ -34,6 +34,22 @@ namespace SushiSurvival.Weapons
         /// <summary>증강 배율이 적용된 최종 사거리/반경.</summary>
         protected float Range => BaseStats.range * StatMultiplier(StatType.AttackRange);
 
+        /// <summary>
+        /// 다음 레벨과의 수치 비교용. 이미 최대 레벨이면 false. 강화 카드가 "공격력 8 → 10"처럼 무엇이 얼마나
+        /// 바뀌는지 적는 데 쓴다.
+        /// </summary>
+        public bool TryGetNextLevelStats(out WeaponLevelStats current, out WeaponLevelStats next)
+        {
+            current = default;
+            next = default;
+
+            if (weaponData == null || !CanLevelUp) return false;
+
+            current = weaponData.levels[currentLevel - 1];
+            next = weaponData.levels[currentLevel];
+            return true;
+        }
+
         public void LevelUp()
         {
             if (!CanLevelUp) return;

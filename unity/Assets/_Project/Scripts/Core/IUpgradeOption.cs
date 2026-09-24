@@ -9,6 +9,8 @@ namespace SushiSurvival.Core
     public interface IUpgradeOption
     {
         string DisplayName { get; }
+        /// <summary>카드 제목 아래에 적는 설명. 비어 있으면 카드에는 제목만 보인다.</summary>
+        string Description { get; }
         Sprite Icon { get; }
         void Apply();
     }

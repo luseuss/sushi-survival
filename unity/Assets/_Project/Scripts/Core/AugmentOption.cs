@@ -12,6 +12,11 @@ namespace SushiSurvival.Core
         public AugmentData Data { get; }
 
         public string DisplayName => Data.augmentName;
+
+        // 직접 적은 설명이 있으면 그것을, 없으면 스탯과 값으로 자동 생성한다.
+        public string Description => string.IsNullOrEmpty(Data.description)
+            ? UpgradeDescriptionLogic.DescribeAugment(Data.statType, Data.valuePerPick)
+            : Data.description;
         public Sprite Icon => Data.icon;
 
         public AugmentOption(AugmentData data, PlayerStats stats, PlayerHealth health)
