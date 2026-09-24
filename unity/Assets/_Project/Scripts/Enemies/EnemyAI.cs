@@ -41,6 +41,12 @@ namespace SushiSurvival.Enemies
         /// </summary>
         public float MoveScale { get; set; } = 1f;
 
+        /// <summary>
+        /// 0이 아니면 플레이어를 쫓지 않고 이 방향(단위 벡터)으로만 간다. 보스 돌진이 방향을 고정할 때
+        /// 쓴다 — 돌진 중에도 매 프레임 플레이어를 향하면 돌진이 아니라 그냥 빠른 추격이 된다.
+        /// </summary>
+        public Vector2 LockedDirection { get; set; }
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
@@ -56,6 +62,7 @@ namespace SushiSurvival.Enemies
             _separation = Vector2.zero;
             _separationTimer = 0f;
             MoveScale = 1f;
+            LockedDirection = Vector2.zero;
         }
 
         private void FixedUpdate()
@@ -64,7 +71,10 @@ namespace SushiSurvival.Enemies
 
             UpdateSeparation();
 
-            Vector2 chase = ((Vector2)_target.position - _rigidbody.position).normalized
+            Vector2 chaseDirection = LockedDirection != Vector2.zero
+                ? LockedDirection
+                : ((Vector2)_target.position - _rigidbody.position).normalized;
+            Vector2 chase = chaseDirection
                             * (monsterData.moveSpeed * MoveScale);
             Vector2 separation = _separation * (monsterData.moveSpeed * separationStrength);
             Vector2 knockback = _enemy != null ? _enemy.KnockbackVelocity : Vector2.zero;

@@ -20,6 +20,21 @@ namespace SushiSurvival.Data
         public float meteorDamage;
         public float meteorRadius;
 
+        [Header("돌진")]
+        [Tooltip("돌진 전에 멈춰서 붉게 번쩍이는 예고 시간(초).")]
+        public float chargeWindup;
+        [Tooltip("돌진하는 시간(초).")]
+        public float chargeDuration;
+        [Tooltip("돌진 중 EnemyAI.MoveScale. 이 값 × 보스 이동속도가 돌진 속도다.")]
+        public float chargeSpeedScale;
+        [Tooltip("돌진이 끝난 뒤 멈춰 있는 시간(초). 이때가 반격 기회다.")]
+        public float chargeRecovery;
+
+        [Header("메테오 조준")]
+        [Range(0f, 1f)]
+        [Tooltip("예고 시간 동안 플레이어가 이동할 거리를 얼마나 앞서 조준할지. 0이면 발사 순간의 위치.")]
+        public float meteorLead;
+
         [Header("소환")]
         public int summonCount;
         [Tooltip("플레이어로부터의 소환 링 반경.")]
