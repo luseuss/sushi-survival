@@ -44,6 +44,12 @@ namespace SushiSurvival.Core
         [SerializeField] private float enemyDeathShakeMagnitude = 0.05f;
         [SerializeField] private float enemyDeathShakeDuration = 0.1f;
 
+        [Header("보스 진입 진동")]
+        [Tooltip("보스전 진입 대화 동안 화면이 떨리는 세기(월드 단위).")]
+        [SerializeField] private float rumbleMagnitude = 0.12f;
+        [Tooltip("떨림이 최대 세기에 이르기까지 걸리는 시간(초).")]
+        [SerializeField] private float rumbleRampSeconds = 1.2f;
+
         private ObjectPool<DamageNumberPopup> _numberPool;
         private int _activeNumbers;
 
@@ -51,11 +57,48 @@ namespace SushiSurvival.Core
         private float _hitstopResumeScale = 1f;
         private float _hitstopRemaining;
 
+        private Coroutine _rumbleRoutine;
         private Coroutine _shakeRoutine;
         private float _shakeRemaining;
         private float _shakeMagnitude;
 
         private void Awake() => Instance = this;
+
+        /// <summary>
+        /// 보스 진입 대화처럼 정지(timeScale 0) 중인 화면을 "쿠쿵" 하고 계속 떨리게 한다. 처음에는 약하게
+        /// 시작해 점점 세진다. EndRumble을 부를 때까지 이어진다. 실시간(unscaled)으로 진행한다.
+        /// </summary>
+        public void BeginRumble()
+        {
+            if (_rumbleRoutine != null) return;
+            _rumbleRoutine = StartCoroutine(RumbleRoutine());
+        }
+
+        public void EndRumble()
+        {
+            if (_rumbleRoutine == null) return;
+
+            StopCoroutine(_rumbleRoutine);
+            _rumbleRoutine = null;
+
+            if (cameraFollow != null)
+                cameraFollow.SetShakeOffset(Vector2.zero);
+        }
+
+        private IEnumerator RumbleRoutine()
+        {
+            float elapsed = 0f;
+            while (true)
+            {
+                elapsed += Time.unscaledDeltaTime;
+
+                float ramp = Mathf.Clamp01(elapsed / rumbleRampSeconds);
+                if (cameraFollow != null)
+                    cameraFollow.SetShakeOffset(Random.insideUnitCircle * (rumbleMagnitude * ramp));
+
+                yield return null;
+            }
+        }
 
         public void PlayerHit()
         {
