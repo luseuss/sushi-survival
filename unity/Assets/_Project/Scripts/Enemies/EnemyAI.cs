@@ -28,6 +28,11 @@ namespace SushiSurvival.Enemies
 
         private readonly List<Vector2> _neighborPositions = new List<Vector2>(MaxNeighbors);
 
+        [Tooltip("플레이어와 겹치는 정도(월드 단위). 살짝 겹쳐 있어야 접촉 데미지가 계속 들어온다.")]
+        [SerializeField] private float contactOverlap = 0.02f;
+
+        private Collider2D _ownCollider;
+        private Collider2D _targetCollider;
         private Rigidbody2D _rigidbody;
         private EnemyBase _enemy;
         private Transform _target;
@@ -51,12 +56,14 @@ namespace SushiSurvival.Enemies
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _enemy = GetComponent<EnemyBase>();
+            _ownCollider = GetComponent<Collider2D>();
         }
 
         private void OnEnable()
         {
             var playerObj = GameObject.FindGameObjectWithTag("Player");
             _target = playerObj != null ? playerObj.transform : null;
+            _targetCollider = playerObj != null ? playerObj.GetComponent<Collider2D>() : null;
 
             // 풀에서 재사용되므로 이전 판의 상태를 지운다.
             _separation = Vector2.zero;
@@ -80,7 +87,21 @@ namespace SushiSurvival.Enemies
             Vector2 knockback = _enemy != null ? _enemy.KnockbackVelocity : Vector2.zero;
 
             Vector2 move = (chase + separation + knockback) * Time.fixedDeltaTime;
-            _rigidbody.MovePosition(_rigidbody.position + move);
+            _rigidbody.MovePosition(BlockAgainstPlayer(_rigidbody.position + move));
+        }
+
+        /// <summary>
+        /// 플레이어 몸 안으로 파고들지 못하게 보정한다(EnemyBlockLogic 참고). 두 콜라이더가 살짝 겹친 채로 멈춰서
+        /// 접촉 데미지는 계속 들어오고, 플레이어가 밀고 들어오면 다음 프레임에 적이 경계 밖으로 밀려난다.
+        /// </summary>
+        private Vector2 BlockAgainstPlayer(Vector2 next)
+        {
+            if (_ownCollider == null || _targetCollider == null) return next;
+
+            float minDistance = _ownCollider.bounds.extents.x + _targetCollider.bounds.extents.x - contactOverlap;
+            Vector2 playerCenter = _targetCollider.bounds.center;
+
+            return EnemyBlockLogic.Resolve(next, playerCenter, minDistance, _rigidbody.position - playerCenter);
         }
 
         private void UpdateSeparation()

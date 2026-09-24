@@ -21,7 +21,7 @@ namespace SushiSurvival.Core
         [Tooltip("숫자에 쓸 폰트. 비워두면 유니티 기본 폰트를 쓴다.")]
         [SerializeField] private Font damageFont;
         [Tooltip("숫자 글자 한 칸의 높이(월드 단위). 실제 숫자는 이것의 70% 남짓이다. 잡몹 스프라이트가 대략 0.5 정도다.")]
-        [SerializeField] private float numberHeight = 0.6f;
+        [SerializeField] private float numberHeight = 0.45f;
         [Tooltip("막타(적이 죽는 타격)일 때의 크기 배율.")]
         [SerializeField] private float killNumberScale = 1.5f;
         [SerializeField] private float numberLifetime = 0.6f;
