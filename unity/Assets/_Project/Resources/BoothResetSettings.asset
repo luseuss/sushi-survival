@@ -17,3 +17,5 @@ MonoBehaviour:
   menuIdleSeconds: 60
   playingIdleSeconds: 60
   resultIdleSeconds: 30
+  warningSeconds: 10
+  warningFont: {fileID: 12800000, guid: 6d6381c43e8b41b993b983ddeb1a1daa, type: 3}

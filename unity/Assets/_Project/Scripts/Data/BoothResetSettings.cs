@@ -25,6 +25,12 @@ namespace SushiSurvival.Data
         [Tooltip("결과 화면에서 입력이 없을 때 기다리는 시간(초). 볼 것을 다 본 뒤라 짧게 잡는다.")]
         public float resultIdleSeconds = 30f;
 
+        [Tooltip("리셋 몇 초 전부터 \"곧 처음 화면으로 돌아갑니다\" 안내를 띄울지. 0 이하면 안내 없이 바로 리셋한다. 입력하면 안내가 사라진다.")]
+        public float warningSeconds = 10f;
+
+        [Tooltip("안내 글자에 쓸 폰트. 비우면 유니티 기본 폰트를 쓴다.")]
+        public Font warningFont;
+
         public IdleTimeouts ToTimeouts() => new IdleTimeouts(menuIdleSeconds, playingIdleSeconds, resultIdleSeconds);
     }
 }

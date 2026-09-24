@@ -84,5 +84,35 @@ namespace SushiSurvival.EditModeTests
             Assert.AreEqual(20f, IdleResetLogic.RemainingSeconds(10f, 30f), 0.0001f);
             Assert.Less(IdleResetLogic.RemainingSeconds(10f, 0f), 0f);
         }
+
+        // ---- ShouldWarn / CountdownNumber ----
+
+        [Test]
+        public void ShouldWarn_OnlyInsideTheWarningWindow()
+        {
+            Assert.IsFalse(IdleResetLogic.ShouldWarn(30f, 10f));
+            Assert.IsFalse(IdleResetLogic.ShouldWarn(10.01f, 10f));
+            Assert.IsTrue(IdleResetLogic.ShouldWarn(10f, 10f));
+            Assert.IsTrue(IdleResetLogic.ShouldWarn(3f, 10f));
+            Assert.IsTrue(IdleResetLogic.ShouldWarn(0f, 10f));
+        }
+
+        [Test]
+        public void ShouldWarn_NeverForDisabledScreensOrDisabledWarning()
+        {
+            Assert.IsFalse(IdleResetLogic.ShouldWarn(-1f, 10f));   // 리셋하지 않는 화면
+            Assert.IsFalse(IdleResetLogic.ShouldWarn(3f, 0f));     // 안내 끔
+            Assert.IsFalse(IdleResetLogic.ShouldWarn(3f, -5f));
+        }
+
+        [Test]
+        public void CountdownNumber_RoundsUpSoItNeverShowsZeroWhileWaiting()
+        {
+            Assert.AreEqual(10, IdleResetLogic.CountdownNumber(10f));
+            Assert.AreEqual(10, IdleResetLogic.CountdownNumber(9.2f));
+            Assert.AreEqual(1, IdleResetLogic.CountdownNumber(0.3f));
+            Assert.AreEqual(0, IdleResetLogic.CountdownNumber(0f));
+            Assert.AreEqual(0, IdleResetLogic.CountdownNumber(-1f));
+        }
     }
 }
