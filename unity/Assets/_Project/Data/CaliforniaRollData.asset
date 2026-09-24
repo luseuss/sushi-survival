@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CaliforniaRollData
   m_EditorClassIdentifier: 
   monsterName: 
-  maxHealth: 8
+  maxHealth: 14
   contactDamage: 5
   moveSpeed: 1.5
   knockbackResistance: 0

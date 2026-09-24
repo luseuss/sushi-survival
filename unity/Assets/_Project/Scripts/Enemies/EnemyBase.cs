@@ -23,6 +23,9 @@ namespace SushiSurvival.Enemies
         private XPGemPoolSet _xpGemPools;
         private GameObjectPool _selfPool;
 
+        /// <summary>지금 살아 있는(활성화된) 적의 수. 스폰러가 상한을 지키는 데 쓴다.</summary>
+        public static int AliveCount { get; private set; }
+
         public float CurrentHealth { get; private set; }
 
         /// <summary>EnemyAI가 이동에 더한다. 여기서 직접 위치를 옮기지 않는다.</summary>
@@ -43,10 +46,13 @@ namespace SushiSurvival.Enemies
             // 스폰되는 순간의 배율로 체력이 정해지고, 살아 있는 동안에는 바뀌지
             // 않는다. 이미 나와 있는 적이 시간이 지났다고 갑자기 단단해지면
             // 때리던 사람 입장에서 이유를 알 수 없다.
+            AliveCount++;
             CurrentHealth = monsterData.maxHealth * GetHealthScale();
             _contactTimer = 0f;
             KnockbackVelocity = Vector2.zero;
         }
+
+        private void OnDisable() => AliveCount = Mathf.Max(0, AliveCount - 1);
 
         private float GetHealthScale()
         {

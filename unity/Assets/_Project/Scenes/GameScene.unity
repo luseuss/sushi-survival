@@ -6434,6 +6434,18 @@ MonoBehaviour:
   - timeSeconds: 240
     pool: {fileID: 1111319406}
     count: 1
+  - timeSeconds: 60
+    pool: {fileID: 45706925}
+    count: 12
+  - timeSeconds: 150
+    pool: {fileID: 1201815021}
+    count: 16
+  - timeSeconds: 200
+    pool: {fileID: 45706925}
+    count: 20
+  - timeSeconds: 270
+    pool: {fileID: 1201815021}
+    count: 24
   xpGemPools: {fileID: 779189570}
   spawnRadius: 8
 --- !u!4 &1177309422
