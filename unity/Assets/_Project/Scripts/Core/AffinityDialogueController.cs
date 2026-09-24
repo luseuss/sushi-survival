@@ -45,6 +45,9 @@ namespace SushiSurvival.Core
             PlayLines(data?.bossIntroLines, onComplete);
         }
 
+        /// <summary>선택지 없이 대사 줄만 재생한다. 보스 등장 직후 대화처럼 다른 씬에서도 같은 패널을 쓴다.</summary>
+        public void PlayNarration(StoryLine[] lines, Action onDone) => PlayLines(lines, onDone);
+
         private void PlayLines(StoryLine[] lines, Action onDone)
         {
             if (lines == null || lines.Length == 0 || introPanel == null)

@@ -15,28 +15,34 @@ MonoBehaviour:
   introLines:
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 0}
     text: "\uB9CC\uB098\uC11C \uBC18\uAC11\uC2B5\uB2C8\uB2E4. \uC800\uB294 \uC2A4\uC2DC\uC655\uAD6D\uC758
       9\uBC88\uC9F8 \uC655\uB140, \uC544\uB378\uB9B0\uC774\uB77C\uACE0 \uD569\uB2C8\uB2E4."
     background: {fileID: 0}
   - speakerName: "\uD50C\uB808\uC774\uC5B4"
     portrait: {fileID: 0}
+    standing: {fileID: 0}
     text: "\uC9C0\uAE08 \uBB34\uC2A8 \uC77C\uC774 \uBC8C\uC5B4\uC9C0\uACE0 \uC788\uB294\uAC70\uC8E0?"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 0}
     text: "\uC9C0\uAE08 \uB864\uC655\uAD6D\uC758 \uAD70\uB300\uAC00 \uC6B0\uB9AC
       \uC655\uAD6D\uC5D0 \uB4E4\uC774\uB2E5\uCE58\uACE0 \uC788\uC2B5\uB2C8\uB2E4."
     background: {fileID: 0}
   - speakerName: "\uD50C\uB808\uC774\uC5B4"
     portrait: {fileID: 0}
+    standing: {fileID: 0}
     text: "\uACF5\uC8FC\uB2D8\uC758 \uBB34\uAE30\uB294 \uBB34\uC5C7\uC774\uC8E0?"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 0}
     text: "\uC81C \uBB34\uAE30\uB294 \uACC4\uB780 \uC591\uC0B0\uC785\uB2C8\uB2E4."
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 0}
     text: "\uC790, \uC774\uC81C \uC120\uD0DD\uD574\uC8FC\uC138\uC694."
     background: {fileID: 0}
   question1:
@@ -55,13 +61,41 @@ MonoBehaviour:
   bossIntroLines:
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 0}
     text: "\uC9C0\uAE08 \uC774 \uC18C\uB9AC \uB4E4\uB9AC\uC2DC\uB098\uC694? \uCFE0\uCFF5!!
       \uCFE0\uCFF5!! \uCFE0\uCFF5!!"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 0}
     text: "\uC800 \uC874\uC7AC\uB294 \uB864\uC655\uAD6D\uC774 \uAE38\uB7EC\uC628
       \uC804\uD22C \uBCD1\uAE30\uC785\uB2C8\uB2E4. \uC9C0\uAE08\uAE4C\uC9C0 \uB9C8\uC8FC\uD588\uB358
       \uC801\uB4E4\uACFC \uCC28\uC6D0\uC774 \uB2E4\uB974\uB2C8 \uC870\uC2EC\uD558\uC154\uC57C
       \uD569\uB2C8\uB2E4."
+    background: {fileID: 0}
+  bossEncounterLines:
+  - speakerName: "\uB864\uBC95\uC0AC"
+    portrait: {fileID: 21300000, guid: 4a12c5f85bd8f994a97dc974138a8098, type: 3}
+    standing: {fileID: 0}
+    text: "\uC2A4\uC2DC\uC655\uAD6D\uC758 \uBCD1\uC0AC\uAC00 \uC5EC\uAE30\uAE4C\uC9C0
+      \uC624\uB2E4\uB2C8... \uB864\uC655\uAD6D\uC758 \uC774\uB984\uC73C\uB85C, \uC804\uBD80
+      \uB3CC\uB3CC \uB9D0\uC544 \uC8FC\uB9C8!"
+    background: {fileID: 0}
+  - speakerName: "\uC544\uB378\uB9B0"
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
+    text: "\uC800 \uB9C8\uB825... \uC544\uAE4C \uB9D0\uC500\uB4DC\uB9B0 \uADF8 \uBCD1\uAE30\uAC00
+      \uB9DE\uC2B5\uB2C8\uB2E4. \uBB3C\uB7EC\uC11C\uC9C0 \uB9C8\uC138\uC694."
+    background: {fileID: 0}
+  - speakerName: "\uB864\uBC95\uC0AC"
+    portrait: {fileID: 21300000, guid: 4a12c5f85bd8f994a97dc974138a8098, type: 3}
+    standing: {fileID: 0}
+    text: "\uC6B0\uC0B0 \uD558\uB098\uB85C \uC774 \uB9C8\uBC95 \uC8FC\uBC29\uC744
+      \uACAC\uB51C \uC218 \uC788\uC744\uAE4C?"
+    background: {fileID: 0}
+  - speakerName: "\uC544\uB378\uB9B0"
+    portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+    standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
+    text: "\uD574 \uBCF4\uC8E0. \uACC4\uB780\uC740 \uAE68\uC838\uB3C4 \uAD73\uC5B4\uC9C0\uB294
+      \uBC95\uC774\uB2C8\uAE4C\uC694."
     background: {fileID: 0}

@@ -20,6 +20,8 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private BossController boss;
         [Tooltip("레벨업 팝업이 이 씬에서도 뜨려면 스폰된 플레이어를 여기 넘겨야 한다.")]
         [SerializeField] private LevelSystem levelSystem;
+        [Tooltip("보스 등장 직후 보스·캐릭터 대화를 재생할 대사창. 비우면 대화 없이 바로 전투.")]
+        [SerializeField] private AffinityDialogueController encounterDialogue;
 
         [Header("보스 패턴 및 연출용 풀")]
         [SerializeField] private XPGemPoolSet gemPools;
@@ -44,6 +46,16 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private float deathSeconds = 1.2f;
         [Tooltip("연출 중 느려지는 정도. 0.3이면 30% 속도.")]
         [SerializeField] private float slowMotionScale = 0.3f;
+        [Tooltip("낙하 시작 위치가 화면 위 끝보다 이만큼 더 위에 있다(월드 단위).")]
+        [SerializeField] private float dropStartMargin = 2f;
+        [Tooltip("카메라가 보스 착지점으로 움직이는 속도(클수록 빠름)와 기다리는 시간(초, 실시간).")]
+        [SerializeField] private float cameraPanSpeed = 4f;
+        [SerializeField] private float cameraPanSeconds = 1f;
+        [Tooltip("보스가 떨어지는 시간(초, 실시간).")]
+        [SerializeField] private float dropSeconds = 0.5f;
+        [Tooltip("착지 충격으로 화면이 흔들리는 세기(월드 단위)와 시간(초, 실시간).")]
+        [SerializeField] private float impactShakeMagnitude = 0.5f;
+        [SerializeField] private float impactShakeSeconds = 0.6f;
         [Tooltip("플레이어로부터 이 거리 위쪽에 보스가 등장한다.")]
         [SerializeField] private float bossSpawnDistance = 8f;
         [Tooltip("격파 폭발을 이 배율로 키운다.")]
@@ -123,29 +135,81 @@ namespace SushiSurvival.Enemies.Boss
             if (bossIntroBanner != null)
                 bossIntroBanner.SetActive(false);
 
-            SpawnBoss(playerTransform);
+            StartCoroutine(IntroSequence(playerTransform, selectedCharacter.affinityDialogue?.bossEncounterLines));
         }
-        private IEnumerator IntroSequence(Transform playerTransform)
+
+        /// <summary>
+        /// 등장 연출: 카메라가 보스 착지점으로 이동 → 보스가 하늘에서 낙하 → 착지 충격(화면 흔들림)과
+        /// 배너 → 보스·캐릭터 대화 → 카메라가 플레이어로 돌아오며 전투 시작.
+        /// 연출 내내 게임은 정지(timeScale 0)이고 모든 시간은 실시간으로 잰다.
+        /// </summary>
+        private IEnumerator IntroSequence(Transform playerTransform, StoryLine[] encounterLines)
         {
-            // 연출 전 잠시 대기
+            // 다른 컴포넌트의 Start가 끝나길 한 프레임 기다린다.
             yield return null;
 
-            Time.timeScale = slowMotionScale;
+            Time.timeScale = 0f;
+
+            Vector3 landing = playerTransform != null
+                ? playerTransform.position + Vector3.up * bossSpawnDistance
+                : Vector3.zero;
+
+            Camera cam = cameraFollow != null ? cameraFollow.GetComponent<Camera>() : Camera.main;
+            float startHeight = BossEntranceLogic.DropStartHeight(cam != null ? cam.orthographicSize : 5f, dropStartMargin);
+
+            PlaceBoss(landing + Vector3.up * startHeight);
+
+            if (cameraFollow != null)
+                cameraFollow.FocusOn(landing, cameraPanSpeed);
+
+            yield return new WaitForSecondsRealtime(cameraPanSeconds);
+
+            float elapsed = 0f;
+            while (elapsed < dropSeconds)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                boss.transform.position = BossEntranceLogic.DropPosition(
+                    landing, startHeight, BossEntranceLogic.Progress(elapsed, dropSeconds));
+                yield return null;
+            }
+
+            boss.transform.position = landing;
 
             if (bossIntroBanner != null)
                 bossIntroBanner.SetActive(true);
 
-            yield return new WaitForSecondsRealtime(introBannerSeconds);
+            elapsed = 0f;
+            while (elapsed < introBannerSeconds)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                if (cameraFollow != null)
+                    cameraFollow.SetShakeOffset(BossEntranceLogic.ShakeOffset(
+                        elapsed, impactShakeSeconds, impactShakeMagnitude, Random.insideUnitCircle));
+                yield return null;
+            }
+
+            if (cameraFollow != null)
+                cameraFollow.SetShakeOffset(Vector2.zero);
 
             if (bossIntroBanner != null)
                 bossIntroBanner.SetActive(false);
 
-            SpawnBoss(playerTransform);
+            if (encounterDialogue != null && encounterLines != null && encounterLines.Length > 0)
+            {
+                bool done = false;
+                encounterDialogue.PlayNarration(encounterLines, () => done = true);
+                while (!done) yield return null;
+            }
+
+            if (cameraFollow != null)
+                cameraFollow.ClearFocus();
 
             Time.timeScale = 1f;
+
+            ActivateBoss(playerTransform);
         }
 
-        private void SpawnBoss(Transform playerTransform)
+        private void PlaceBoss(Vector3 position)
         {
             if (boss == null)
             {
@@ -153,19 +217,20 @@ namespace SushiSurvival.Enemies.Boss
                 return;
             }
 
-            Vector3 spawnPoint = playerTransform != null
-                ? playerTransform.position + Vector3.up * bossSpawnDistance
-                : Vector3.zero;
-
-            boss.transform.position = spawnPoint;
+            boss.transform.position = position;
             boss.gameObject.SetActive(true);
 
             _bossEnemy = boss.GetComponent<EnemyBase>();
             if (_bossEnemy != null)
-            {
-                _bossEnemy.SetXpGemPools(gemPools);
                 _bossEnemy.OnDeath += HandleBossDeath;
-            }
+        }
+
+        private void ActivateBoss(Transform playerTransform)
+        {
+            if (boss == null) return;
+
+            if (_bossEnemy != null)
+                _bossEnemy.SetXpGemPools(gemPools);
 
             // 보스 AI 및 패턴 활성화
             var playerHealthComp = playerTransform != null ? playerTransform.GetComponent<PlayerHealth>() : null;
