@@ -11,6 +11,8 @@ namespace SushiSurvival.UI
     {
         [SerializeField] private Image iconImage;
         [SerializeField] private Text nameText;
+        [Tooltip("제목 아래 설명 텍스트. 비워두면 설명을 표시하지 않는다.")]
+        [SerializeField] private Text descriptionText;
         [Tooltip("마우스를 올렸을 때의 확대 배율.")]
         [SerializeField] private float hoverScale = 1.08f;
         [Tooltip("호버 확대/복귀 속도. 클수록 빠르다.")]
@@ -67,6 +69,9 @@ namespace SushiSurvival.UI
 
             if (nameText != null)
                 nameText.text = option.DisplayName;
+
+            if (descriptionText != null)
+                descriptionText.text = option.Description;
 
             if (iconImage != null)
             {
