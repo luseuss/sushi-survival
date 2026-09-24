@@ -26,7 +26,7 @@ MonoBehaviour:
     meteorSpacing: 0.35
     meteorWarningTime: 0.7
     meteorDamage: 20
-    meteorRadius: 1.6
+    meteorRadius: 1.2
     chargeWindup: 0.8
     chargeDuration: 0.55
     chargeSpeedScale: 4.5
@@ -41,7 +41,7 @@ MonoBehaviour:
     meteorSpacing: 0.3
     meteorWarningTime: 0.6
     meteorDamage: 25
-    meteorRadius: 1.6
+    meteorRadius: 1.2
     chargeWindup: 0.6
     chargeDuration: 0.6
     chargeSpeedScale: 5.5
