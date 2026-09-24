@@ -20,7 +20,7 @@ MonoBehaviour:
     background: {fileID: 21300000, guid: 7d6d771bfc41ae14a9f9f61a592defbb, type: 3}
   - speakerName: "\uc544\ub378\ub9b0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
-    standing: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
     text: "....\uc5ed\uc2dc \uc18c\ubb38\ub300\ub85c\uad70\uc694"
     background: {fileID: 0}
   - speakerName: "\uce74\ub9c8\ub9ac\uc628"
@@ -35,7 +35,7 @@ MonoBehaviour:
     background: {fileID: 0}
   - speakerName: "\uc544\ub378\ub9b0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
-    standing: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
     text: "\ub864\uc655\uad6d\uc774 \uc815\ub9d0 \uc791\uc815\uc744 \ud588\uad70\uc694"
     background: {fileID: 0}
   - speakerName: "\uce74\ub9c8\ub9ac\uc628"
@@ -45,7 +45,7 @@ MonoBehaviour:
     background: {fileID: 0}
   - speakerName: "\uc544\ub378\ub9b0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
-    standing: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
     text: "\uadf8\ub7fc\uc694 \uc54c\uace0\uc788\uc2b5\ub2c8\ub2e4. \uce74\ub9c8\ub9ac\uc628\ub2d8\uc774 \ub9cc\ub4e4\uc5b4\uc900 \uc81c \ubb34\uae30\ub3c4 \ud6cc\ub96d\ud558\ub2c8\uae4c\uc694.. \ud558\uc9c0\ub9cc \uc800 \ub9ce\uc740 \ubcd1\ub825\uc744 \uc6b0\ub9ac\uac00 \uac10\ub2f9\ud560 \uc218 \uc788\uc744\uae4c \uac71\uc815\uc785\ub2c8\ub2e4"
     background: {fileID: 0}
   - speakerName: "\uc774\ub098\ub9ac"
@@ -65,6 +65,6 @@ MonoBehaviour:
     background: {fileID: 0}
   - speakerName: "\uc544\ub378\ub9b0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
-    standing: {fileID: 21300000, guid: b100fb8bffdece446a6415dc441b02c9, type: 3}
+    standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
     text: "\uc88b\uc2b5\ub2c8\ub2e4. \ub4e0\ub4e0\ud55c \uc9c0\uc6d0\uad70\uc774 \uc788\uc73c\ub2c8 \uc548\uc2ec\uc774 \ub418\ub294\uad70\uc694. \uc2a4\uc2dc\uc655\uad6d\uc744 \uc9c0\ud0a4\ub7ec \ub2e4\ud568\uaed8 \uc804\uc7a5\uc73c\ub85c \ud5a5\ud560 \ub54c\uac00 \ub418\uc5c8\uad70\uc694"
     background: {fileID: 0}
