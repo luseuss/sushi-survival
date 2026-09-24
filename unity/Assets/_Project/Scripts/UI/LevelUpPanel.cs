@@ -106,7 +106,7 @@ namespace SushiSurvival.UI
             _onRoyalWasabi = onRoyalWasabi;
             if (royalWasabiButton != null)
             {
-                royalWasabiButton.transform.localScale = Vector3.zero;
+                SetWasabiScale(0f);
                 royalWasabiButton.onClick.RemoveAllListeners();
                 royalWasabiButton.onClick.AddListener(HandleRoyalWasabiClicked);
             }
@@ -136,7 +136,6 @@ namespace SushiSurvival.UI
                     cards.Add(button);
             }
 
-            Transform wasabi = royalWasabiButton != null ? royalWasabiButton.transform : null;
             float wasabiDelay = cards.Count * cardStagger;
             float total = Mathf.Max(showDuration, wasabiDelay + cardDuration);
             float elapsed = 0f;
@@ -151,21 +150,30 @@ namespace SushiSurvival.UI
                 for (int i = 0; i < cards.Count; i++)
                     cards[i].AppearScale = EaseOutBack(Mathf.Clamp01((elapsed - i * cardStagger) / cardDuration));
 
-                if (wasabi != null)
-                    wasabi.localScale = Vector3.one * EaseOutBack(Mathf.Clamp01((elapsed - wasabiDelay) / cardDuration));
+                SetWasabiScale(EaseOutBack(Mathf.Clamp01((elapsed - wasabiDelay) / cardDuration)));
 
                 yield return null;
             }
 
             foreach (var card in cards)
                 card.AppearScale = 1f;
-            if (wasabi != null)
-                wasabi.localScale = Vector3.one;
+            SetWasabiScale(1f);
 
             _canvasGroup.alpha = 1f;
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
             _showRoutine = null;
+        }
+
+        // 왕궁 버튼에는 ButtonJuice가 붙어 있어 호버 배율과 곱해서 써야 서로 덮어쓰지 않는다.
+        private void SetWasabiScale(float scale)
+        {
+            if (royalWasabiButton == null) return;
+
+            if (royalWasabiButton.TryGetComponent<ButtonJuice>(out var juice))
+                juice.AppearScale = scale;
+            else
+                royalWasabiButton.transform.localScale = Vector3.one * scale;
         }
 
         // 1을 살짝 넘겼다가 안착한다(오버슈트). 팝업이 통통 튀며 나오는 느낌.
