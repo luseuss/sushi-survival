@@ -324,7 +324,10 @@ namespace SushiSurvival.Core
             {
                 var weapon = PlayerWeaponResolver.GetActive(_playerTransform.gameObject);
                 if (weapon != null)
+                {
                     RunResultCarrier.WeaponLevel = weapon.CurrentLevel;
+                    RunResultCarrier.WasabiWeaponConverted = weapon is SushiSurvival.Weapons.RotatingUmbrellaWeapon;
+                }
             }
 
             Time.timeScale = 1f;

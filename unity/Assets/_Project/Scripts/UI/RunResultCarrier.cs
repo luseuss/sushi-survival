@@ -19,5 +19,7 @@ namespace SushiSurvival.Core
         public static List<AugmentBuff> ExternalBuffs;
         public static float PlayerCurrentHealth;
         public static int WeaponLevel;
+        // 와사비 알현 성공으로 아델린 무기가 회전 우산으로 바뀐 상태인지.
+        public static bool WasabiWeaponConverted;
     }
 }
