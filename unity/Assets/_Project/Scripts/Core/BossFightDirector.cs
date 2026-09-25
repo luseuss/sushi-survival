@@ -124,9 +124,25 @@ namespace SushiSurvival.Enemies.Boss
             if (_playerHealth != null && RunResultCarrier.PlayerCurrentHealth > 0f)
                 _playerHealth.SetHealth(RunResultCarrier.PlayerCurrentHealth);
 
-            // 무기 강화 레벨도 같은 이유로 복원한다.
+            // 무기 강화 레벨도 같은 이유로 복원한다. 와사비로 우산으로 바뀐
+            // 상태였다면 먼저 우산을 켜야 레벨 복원 대상이 우산이 된다.
             if (weapon != null)
             {
+                if (RunResultCarrier.WasabiWeaponConverted && weapon is EggFanWeapon eggWeapon)
+                {
+                    var umbrella = eggWeapon.GetComponent<RotatingUmbrellaWeapon>();
+                    if (umbrella != null)
+                    {
+                        eggWeapon.enabled = false;
+                        umbrella.enabled = true;
+                        weapon = umbrella;
+                    }
+                    else
+                    {
+                        Debug.LogError($"{eggWeapon.name}: RotatingUmbrellaWeapon 컴포넌트가 없어 우산 상태를 복원할 수 없습니다.");
+                    }
+                }
+
                 while (weapon.CurrentLevel < RunResultCarrier.WeaponLevel && weapon.CanLevelUp)
                     weapon.LevelUp();
             }
