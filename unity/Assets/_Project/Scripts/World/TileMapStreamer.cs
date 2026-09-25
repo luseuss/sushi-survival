@@ -26,6 +26,11 @@ namespace SushiSurvival.World
         [Tooltip("따라갈 대상. 비워두면 메인 카메라를 따라간다.")]
         [SerializeField] private Transform followTarget;
 
+        [Header("직접 칠한 패턴")]
+        [Tooltip("손으로 칠한 타일맵. 지정하면 칠한 영역이 바둑판처럼 끝없이 반복된다. " +
+                 "칠하지 않은 빈칸은 아래 스프라이트로 자동 채운다. 비워두면 전부 자동 생성.")]
+        [SerializeField] private Tilemap paintedPattern;
+
         [Header("스프라이트")]
         [Tooltip("테두리 없는 잔디 16종.")]
         [SerializeField] private Sprite[] grassSprites;
@@ -68,6 +73,9 @@ namespace SushiSurvival.World
         private Tile[] _sandTiles;
         private Tile[][] _ruinTileSets;
 
+        private TileBase[] _patternTiles;
+        private BoundsInt _patternBounds;
+
         private TileMixConfig _config;
         private int _activeSeed;
         private Vector2Int _lastCenterChunk;
@@ -82,9 +90,11 @@ namespace SushiSurvival.World
                 return;
             }
 
-            if (grassSprites == null || grassSprites.Length == 0)
+            LoadPaintedPattern();
+
+            if (_patternTiles == null && (grassSprites == null || grassSprites.Length == 0))
             {
-                Debug.LogError($"{name}: grassSprites가 비어 있어 바닥을 그릴 수 없습니다.");
+                Debug.LogError($"{name}: paintedPattern과 grassSprites가 모두 비어 있어 바닥을 그릴 수 없습니다.");
                 enabled = false;
                 return;
             }
@@ -173,8 +183,16 @@ namespace SushiSurvival.World
             {
                 for (int x = 0; x < chunkSize; x++)
                 {
-                    TileChoice choice = TilePicker.Pick(originX + x, originY + y, _activeSeed, _config);
-                    tiles[y * chunkSize + x] = ResolveTile(choice);
+                    int cellX = originX + x;
+                    int cellY = originY + y;
+
+                    TileBase painted = _patternTiles != null
+                        ? _patternTiles[TilePattern.IndexOf(cellX, cellY, _patternBounds)]
+                        : null;
+
+                    tiles[y * chunkSize + x] = painted != null
+                        ? painted
+                        : ResolveTile(TilePicker.Pick(cellX, cellY, _activeSeed, _config));
                 }
             }
 
@@ -212,6 +230,30 @@ namespace SushiSurvival.World
             if (tiles == null || tiles.Length == 0) return null;
 
             return tiles[Mathf.Clamp(index, 0, tiles.Length - 1)];
+        }
+
+        /// <summary>
+        /// 칠한 영역을 한 번 읽어 두고 원본 타일맵은 숨긴다. 원본을 그대로 두면
+        /// 스트리밍된 바닥과 같은 자리에 두 번 그려진다.
+        /// </summary>
+        private void LoadPaintedPattern()
+        {
+            if (paintedPattern == null) return;
+
+            paintedPattern.CompressBounds();
+            BoundsInt bounds = paintedPattern.cellBounds;
+
+            if (bounds.size.x <= 0 || bounds.size.y <= 0)
+            {
+                Debug.LogWarning($"{name}: paintedPattern에 칠한 타일이 없어 자동 생성으로 대신합니다.");
+                return;
+            }
+
+            _patternBounds = new BoundsInt(bounds.xMin, bounds.yMin, 0, bounds.size.x, bounds.size.y, 1);
+            _patternTiles = paintedPattern.GetTilesBlock(_patternBounds);
+
+            var patternRenderer = paintedPattern.GetComponent<TilemapRenderer>();
+            if (patternRenderer != null) patternRenderer.enabled = false;
         }
 
         /// <summary>9장이 다 채워진 세트만 쓴다. 모자란 세트는 구조물이 깨져 보인다.</summary>
