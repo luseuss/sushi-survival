@@ -86,5 +86,14 @@ namespace SushiSurvival.EditModeTests
 
             Assert.AreEqual(string.Empty, UpgradeDescriptionLogic.DescribeWeaponUpgrade(same, same));
         }
+
+        [Test]
+        public void DescribeWeaponUpgrade_Umbrella_UsesUmbrellaLabels()
+        {
+            var text = UpgradeDescriptionLogic.DescribeWeaponUpgrade(
+                Stats(8, 0.3f, 1.6f, 0, 0), Stats(10, 0.28f, 1.7f, 0, 0), isUmbrella: true);
+
+            Assert.AreEqual("우산 피해 8 → 10\n재타격 간격 0.3 → 0.28초\n궤도 반경 1.6 → 1.7", text);
+        }
     }
 }

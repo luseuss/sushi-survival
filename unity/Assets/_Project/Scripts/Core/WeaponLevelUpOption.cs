@@ -12,7 +12,7 @@ namespace SushiSurvival.Core
 
         public string Description =>
             _weapon.TryGetNextLevelStats(out var current, out var next)
-                ? UpgradeDescriptionLogic.DescribeWeaponUpgrade(current, next)
+                ? UpgradeDescriptionLogic.DescribeWeaponUpgrade(current, next, _weapon is RotatingUmbrellaWeapon)
                 : string.Empty;
 
         public WeaponLevelUpOption(WeaponBase weapon, Sprite icon)
