@@ -56,10 +56,17 @@ namespace SushiSurvival.Weapons
             currentLevel++;
         }
 
-        private float StatMultiplier(StatType stat)
+        /// <summary>레벨을 직접 지정한다(승계용). 1~weaponData.levels.Length로 클램프한다.</summary>
+        public void SetLevel(int level)
+        {
+            if (weaponData == null) return;
+            currentLevel = Mathf.Clamp(level, 1, weaponData.levels.Length);
+        }
+
+        protected float StatMultiplier(StatType stat)
             => playerStats != null ? playerStats.GetValue(stat) : 1f;
 
-        private void Update()
+        protected virtual void Update()
         {
             _cooldown.Tick(Time.deltaTime);
             if (!_cooldown.IsReady) return;
