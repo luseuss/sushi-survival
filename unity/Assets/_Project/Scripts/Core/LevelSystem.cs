@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SushiSurvival.Data;
@@ -34,6 +35,14 @@ namespace SushiSurvival.Core
 
         [SerializeField] private LevelUpPanel panel;
         [SerializeField] private RoyalWasabiController royalWasabiController;
+        [Tooltip("아델린이 아닌 캐릭터의 와사비 성공 보상(스탯 버프) 대상 증강 4종.")]
+        [SerializeField] private AugmentData attackDamageAugment;
+        [SerializeField] private AugmentData attackSpeedAugment;
+        [SerializeField] private AugmentData moveSpeedAugment;
+        [SerializeField] private AugmentData maxHealthAugment;
+        [Range(0f, 1f)]
+        [Tooltip("성공 시 각 증강 maxCap의 이 비율만큼 강화한다(스탯 버프 보상 캐릭터 전용).")]
+        [SerializeField] private float royalWasabiBuffRatio = 0.5f;
         [SerializeField] private AugmentData[] augments;
         [Tooltip("무기 강화 선택지에 쓸 아이콘. 비워도 동작한다.")]
         [SerializeField] private Sprite weaponUpgradeIcon;
@@ -196,7 +205,51 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            royalWasabiController.Show(_playerStats, _playerHealth, _portrait, RecordExternalBuff, ShowNext);
+            Action onSuccess = _weapon is EggFanWeapon
+                ? (Action)ConvertToUmbrella
+                : ApplyRoyalWasabiStatBuffs;
+
+            royalWasabiController.Show(_portrait, onSuccess, ShowNext);
+        }
+
+        /// <summary>아델린 전용 보상 — 계란 양산을 회전 우산으로 바꾼다.</summary>
+        private void ConvertToUmbrella()
+        {
+            if (_weapon is not EggFanWeapon eggWeapon) return;
+
+            var umbrella = eggWeapon.GetComponent<RotatingUmbrellaWeapon>();
+            if (umbrella == null)
+            {
+                Debug.LogError($"{eggWeapon.name}: RotatingUmbrellaWeapon 컴포넌트가 없어 우산으로 전환할 수 없습니다.");
+                return;
+            }
+
+            umbrella.SetLevel(eggWeapon.CurrentLevel);
+            eggWeapon.enabled = false;
+            umbrella.enabled = true;
+            _weapon = umbrella;
+        }
+
+        /// <summary>아델린 외 캐릭터의 기존 보상 — 스탯 4종 강화.</summary>
+        private void ApplyRoyalWasabiStatBuffs()
+        {
+            ApplyRoyalWasabiAugment(attackDamageAugment);
+            ApplyRoyalWasabiAugment(attackSpeedAugment);
+            ApplyRoyalWasabiAugment(moveSpeedAugment);
+            ApplyRoyalWasabiAugment(maxHealthAugment);
+        }
+
+        private void ApplyRoyalWasabiAugment(AugmentData augment)
+        {
+            if (augment == null)
+            {
+                Debug.LogError($"{name}: 왕궁 와사비 증강 필드 하나가 비어 있어 그 스탯은 강화되지 않습니다.");
+                return;
+            }
+
+            float amount = AffinityBuffLogic.GetBuffAmount(augment.maxCap, royalWasabiBuffRatio);
+            AffinityBuffApplier.Apply(augment, amount, _playerStats, _playerHealth);
+            RecordExternalBuff(augment, amount);
         }
 
         private void OnOptionChosen(IUpgradeOption option)
