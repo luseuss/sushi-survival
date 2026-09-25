@@ -183,7 +183,7 @@ namespace SushiSurvival.Core
             _playerTransform = player.transform;
             _activeCharacterName = characterData.characterName;
 
-            var weapon = player.GetComponent<WeaponBase>();
+            var weapon = PlayerWeaponResolver.GetActive(player);
             levelSystem.SetPlayer(_playerStats, _playerHealth, weapon, characterData.portraitSprite);
 
             cameraFollow.SetTarget(_playerTransform);
@@ -322,7 +322,7 @@ namespace SushiSurvival.Core
 
             if (_playerTransform != null)
             {
-                var weapon = _playerTransform.GetComponent<WeaponBase>();
+                var weapon = PlayerWeaponResolver.GetActive(_playerTransform.gameObject);
                 if (weapon != null)
                     RunResultCarrier.WeaponLevel = weapon.CurrentLevel;
             }

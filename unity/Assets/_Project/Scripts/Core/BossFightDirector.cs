@@ -93,7 +93,7 @@ namespace SushiSurvival.Enemies.Boss
             Transform playerTransform = playerObj.transform;
             _playerHealth = playerObj.GetComponent<PlayerHealth>();
             var playerStats = playerObj.GetComponent<PlayerStats>();
-            var weapon = playerObj.GetComponent<WeaponBase>();
+            var weapon = PlayerWeaponResolver.GetActive(playerObj);
 
             if (cameraFollow != null)
                 cameraFollow.SetTarget(playerTransform);
