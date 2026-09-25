@@ -36,18 +36,22 @@ namespace SushiSurvival.Core
         /// 무기 강화 카드 설명. 바뀌는 수치만 "현재 → 다음"으로 적는다. 데미지, 쿨타임 순으로 먼저 보여주고
         /// 범위·각도·관통은 그 뒤에 둔다. 줄이 넘치면 뒤쪽을 뺀다.
         /// </summary>
-        public static string DescribeWeaponUpgrade(WeaponLevelStats current, WeaponLevelStats next)
+        public static string DescribeWeaponUpgrade(WeaponLevelStats current, WeaponLevelStats next, bool isUmbrella = false)
         {
             var lines = new List<string>();
 
+            string damageLabel = isUmbrella ? "우산 피해" : "공격력";
+            string cooldownLabel = isUmbrella ? "재타격 간격" : "쿨타임";
+            string rangeLabel = isUmbrella ? "궤도 반경" : "범위";
+
             if (Changed(current.damage, next.damage))
-                lines.Add($"공격력 {Number(current.damage)} → {Number(next.damage)}");
+                lines.Add($"{damageLabel} {Number(current.damage)} → {Number(next.damage)}");
 
             if (Changed(current.cooldown, next.cooldown))
-                lines.Add($"쿨타임 {Number(current.cooldown)} → {Number(next.cooldown)}초");
+                lines.Add($"{cooldownLabel} {Number(current.cooldown)} → {Number(next.cooldown)}초");
 
             if (Changed(current.range, next.range) && next.range > 0f)
-                lines.Add($"범위 {Number(current.range)} → {Number(next.range)}");
+                lines.Add($"{rangeLabel} {Number(current.range)} → {Number(next.range)}");
 
             if (Changed(current.angleDegrees, next.angleDegrees) && next.angleDegrees > 0f)
                 lines.Add($"각도 {Number(current.angleDegrees)}° → {Number(next.angleDegrees)}°");
