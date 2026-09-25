@@ -23,12 +23,14 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
-        public void Level1_MatchesSpecStartingValues()
+        public void Level1_MatchesDamageAndCooldownStartingValues()
         {
+            // range(궤도 반경)는 플레이테스트로 계속 바뀌는 값이라 여기서 고정값으로
+            // 검증하지 않는다 — 대신 DamageCooldownRange_ImproveEachLevel이 레벨별
+            // 증가 추이를 검증한다.
             var lv1 = Load().levels[0];
             Assert.AreEqual(8f, lv1.damage, 0.01f);
             Assert.AreEqual(0.3f, lv1.cooldown, 0.01f);
-            Assert.AreEqual(1.6f, lv1.range, 0.01f);
         }
 
         [Test]

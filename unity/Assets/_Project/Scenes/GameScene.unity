@@ -3952,6 +3952,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panel: {fileID: 760529370}
   royalWasabiController: {fileID: 1952699064}
+  attackDamageAugment: {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
+  attackSpeedAugment: {fileID: 11400000, guid: 4a11df250143f904ab55a4c91725671f, type: 2}
+  moveSpeedAugment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
+  maxHealthAugment: {fileID: 11400000, guid: f1184b778388d584c97b9c56339b2ce4, type: 2}
+  royalWasabiBuffRatio: 0.5
   augments:
   - {fileID: 11400000, guid: 38c7d0896b5bf0841a10b1b5866d413f, type: 2}
   - {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
@@ -9201,11 +9206,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rpsPanel: {fileID: 1985112194}
   panel: {fileID: 1257074654}
-  buffRatio: 0.5
-  attackDamageAugment: {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
-  attackSpeedAugment: {fileID: 11400000, guid: 4a11df250143f904ab55a4c91725671f, type: 2}
-  moveSpeedAugment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
-  maxHealthAugment: {fileID: 11400000, guid: f1184b778388d584c97b9c56339b2ce4, type: 2}
 --- !u!4 &1952699065
 Transform:
   m_ObjectHideFlags: 0
