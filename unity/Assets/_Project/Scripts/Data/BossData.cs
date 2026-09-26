@@ -50,7 +50,6 @@ namespace SushiSurvival.Data
         public float meteorLead;
 
         [Header("소환")]
-        public int summonCount;
         [Tooltip("플레이어로부터의 소환 링 반경.")]
         public float summonRadius;
     }

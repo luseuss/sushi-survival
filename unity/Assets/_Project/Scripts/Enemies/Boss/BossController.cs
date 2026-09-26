@@ -37,6 +37,9 @@ namespace SushiSurvival.Enemies.Boss
         private bool _firstCast;
 
         private BossPatternType _previousPattern;
+        private int _consecutiveCount;
+        private int _nextSummonStage;
+        private readonly Queue<int> _summonQueue = new Queue<int>();
         private int _phase = BossPhaseLogic.PhaseOne;
         private float _patternTimer;
         private bool _casting;
@@ -76,8 +79,11 @@ namespace SushiSurvival.Enemies.Boss
 
             _player = player;
             _phase = BossPhaseLogic.PhaseOne;
-            _previousPattern = BossPatternType.Summon;
-            // 등장하자마자 잡몹을 뿌리거나 돌진하면 등장 연출이 묻히므로 첫 패턴은 항상 메테오다.
+            _previousPattern = BossPatternType.Charge;
+            _consecutiveCount = 0;
+            _nextSummonStage = 0;
+            _summonQueue.Clear();
+            // 등장하자마자 돌진하면 등장 연출이 묻히므로 첫 패턴은 항상 메테오다.
             _firstCast = true;
 
             BossPhaseValues values = bossData.GetPhaseValues(_phase);
@@ -95,16 +101,25 @@ namespace SushiSurvival.Enemies.Boss
             if (!_active || _casting) return;
 
             UpdatePhase();
+            QueueCrossedSummons();
 
             if (animator != null)
                 animator.SetBool(IsMovingHash, true);
+
+            // 소환은 체력 임계로 발동하는 사건이라 패턴 타이머보다 먼저 처리한다.
+            // 시전 중이었다면 위의 _casting 가드 덕에 그 시전이 끝난 뒤에야 여기까지 온다.
+            if (_summonQueue.Count > 0)
+            {
+                StartCoroutine(CastSummonStage(_summonQueue.Dequeue()));
+                return;
+            }
 
             _patternTimer -= Time.deltaTime;
             if (_patternTimer > 0f) return;
 
             BossPatternType next = _firstCast
                 ? BossPatternType.Meteor
-                : BossPatternScheduler.SelectNext(_previousPattern, _phase, Random.value);
+                : BossPatternScheduler.SelectNext(_previousPattern, _consecutiveCount, _phase, Random.value);
             _firstCast = false;
 
             StartCoroutine(Cast(next));
@@ -124,9 +139,25 @@ namespace SushiSurvival.Enemies.Boss
                 spriteFlasher.Flash(Color.red, phaseFlashDuration);
         }
 
+        /// <summary>한 번의 큰 피해로 임계를 여러 개 넘어도 단계를 건너뛰지 않고 전부 큐에 쌓는다.</summary>
+        private void QueueCrossedSummons()
+        {
+            var stages = bossData.summonStages;
+            if (stages == null) return;
+
+            int crossed = BossSummonLogic.CrossedStageCount(
+                _enemy.CurrentHealth, bossData.maxHealth, stages, _nextSummonStage);
+
+            for (int i = 0; i < crossed; i++)
+                _summonQueue.Enqueue(_nextSummonStage + i);
+
+            _nextSummonStage += crossed;
+        }
+
         private IEnumerator Cast(BossPatternType pattern)
         {
             _casting = true;
+            _consecutiveCount = pattern == _previousPattern ? _consecutiveCount + 1 : 1;
             _previousPattern = pattern;
 
             _ai.MoveScale = 0f;
@@ -141,20 +172,12 @@ namespace SushiSurvival.Enemies.Boss
             else
             {
                 if (animator != null)
-                    animator.SetTrigger(pattern == BossPatternType.Meteor ? CastMeteorHash : CastSummonHash);
+                    animator.SetTrigger(CastMeteorHash);
 
                 yield return new WaitForSeconds(castDuration);
 
-                BossPhaseValues fired = bossData.GetPhaseValues(_phase);
-
-                if (pattern == BossPatternType.Meteor)
-                {
-                    if (meteorPattern != null) meteorPattern.Fire(fired);
-                }
-                else
-                {
-                    if (summonPattern != null) summonPattern.Fire(fired);
-                }
+                if (meteorPattern != null)
+                    meteorPattern.Fire(bossData.GetPhaseValues(_phase));
             }
 
             BossPhaseValues values = bossData.GetPhaseValues(_phase);
@@ -162,6 +185,33 @@ namespace SushiSurvival.Enemies.Boss
             _ai.LockedDirection = Vector2.zero;
             _ai.MoveScale = values.moveScale;
             _patternTimer = values.patternInterval;
+            _casting = false;
+        }
+
+        /// <summary>
+        /// 체력 임계 소환 한 단계. 무작위 패턴 순서(_previousPattern·연속 횟수)와 패턴 타이머는
+        /// 건드리지 않는다 — 소환은 그 순서의 일부가 아니다. 시전 중엔 Update가 멈춰 있어서 타이머도 흐르지 않는다.
+        /// </summary>
+        private IEnumerator CastSummonStage(int stageIndex)
+        {
+            _casting = true;
+            _ai.MoveScale = 0f;
+
+            if (animator != null)
+            {
+                animator.SetBool(IsMovingHash, false);
+                animator.SetTrigger(CastSummonHash);
+            }
+
+            yield return new WaitForSeconds(castDuration);
+
+            BossPhaseValues values = bossData.GetPhaseValues(_phase);
+
+            if (summonPattern != null)
+                summonPattern.FireStage(bossData.summonStages[stageIndex], values.summonRadius);
+
+            _ai.LockedDirection = Vector2.zero;
+            _ai.MoveScale = values.moveScale;
             _casting = false;
         }
 
