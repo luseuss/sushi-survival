@@ -12634,6 +12634,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   followSpeed: 5
+--- !u!1 &705465258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 705465260}
+  - component: {fileID: 705465259}
+  m_Layer: 0
+  m_Name: CaliforniaRollPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &705465259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705465258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea48f82176864245bf63358b74d9dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1159080399903384064, guid: ec01848928873f548b448778de3e6190, type: 3}
+  prewarmCount: 16
+--- !u!4 &705465260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705465258}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 898.16925, y: 454.53278, z: 0.7648921}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &736956144
 GameObject:
   m_ObjectHideFlags: 0
@@ -14763,7 +14809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 1159080399903384064, guid: 75fbc066937e41c458bbf25de5923ed3, type: 3}
-  prewarmCount: 20
+  prewarmCount: 16
 --- !u!4 &1225927815
 Transform:
   m_ObjectHideFlags: 0
@@ -14932,6 +14978,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panel: {fileID: 1240316977}
   royalWasabiController: {fileID: 1952699064}
+  attackDamageAugment: {fileID: 0}
+  attackSpeedAugment: {fileID: 0}
+  moveSpeedAugment: {fileID: 0}
+  maxHealthAugment: {fileID: 0}
+  royalWasabiBuffRatio: 0.5
   augments:
   - {fileID: 11400000, guid: 38c7d0896b5bf0841a10b1b5866d413f, type: 2}
   - {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
@@ -16689,11 +16740,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rpsPanel: {fileID: 1985112194}
   panel: {fileID: 428371845}
-  buffRatio: 0.5
-  attackDamageAugment: {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
-  attackSpeedAugment: {fileID: 11400000, guid: 4a11df250143f904ab55a4c91725671f, type: 2}
-  moveSpeedAugment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
-  maxHealthAugment: {fileID: 11400000, guid: f1184b778388d584c97b9c56339b2ce4, type: 2}
 --- !u!4 &1952699065
 Transform:
   m_ObjectHideFlags: 0
@@ -16704,6 +16750,52 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 748.3471, y: 542.8459, z: -7.8399997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1963375575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1963375577}
+  - component: {fileID: 1963375576}
+  m_Layer: 0
+  m_Name: MidBossPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1963375576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963375575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea48f82176864245bf63358b74d9dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1159080399903384064, guid: b3538ca2802d9d649904d499a17dabc8, type: 3}
+  prewarmCount: 16
+--- !u!4 &1963375577
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963375575}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 898.16925, y: 454.53278, z: 0.7648921}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17175,6 +17267,8 @@ MonoBehaviour:
   gemPools: {fileID: 779189570}
   meteorPool: {fileID: 366318377}
   summonMobPool: {fileID: 1225927814}
+  summonCaliforniaPool: {fileID: 705465259}
+  summonMidMobPool: {fileID: 1963375576}
   summonEffectPool: {fileID: 254092133}
   deathExplosionPool: {fileID: 869679795}
   bossIntroBanner: {fileID: 804251859}
@@ -18144,6 +18238,8 @@ SceneRoots:
   - {fileID: 1952699065}
   - {fileID: 2048700680}
   - {fileID: 1225927815}
+  - {fileID: 705465260}
+  - {fileID: 1963375577}
   - {fileID: 841588578}
   - {fileID: 1254244097}
   - {fileID: 1526232574}
