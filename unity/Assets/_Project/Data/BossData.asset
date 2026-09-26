@@ -50,3 +50,28 @@ MonoBehaviour:
     summonCount: 6
     summonRadius: 4
   phaseTwoThreshold: 0.5
+  summonStages:
+  - healthThreshold: 0.85
+    basicCount: 4
+    californiaCount: 0
+    midCount: 0
+  - healthThreshold: 0.7
+    basicCount: 0
+    californiaCount: 4
+    midCount: 0
+  - healthThreshold: 0.55
+    basicCount: 3
+    californiaCount: 3
+    midCount: 0
+  - healthThreshold: 0.4
+    basicCount: 0
+    californiaCount: 6
+    midCount: 0
+  - healthThreshold: 0.25
+    basicCount: 8
+    californiaCount: 8
+    midCount: 0
+  - healthThreshold: 0.1
+    basicCount: 0
+    californiaCount: 0
+    midCount: 2
