@@ -50,7 +50,8 @@ namespace SushiSurvival.Enemies.Boss
 
         public void Activate(PlayerHealth player, GameObjectPool meteorPool,
                              GameObjectPool mobPool, GameObjectPool summonEffectPool,
-                             XPGemPoolSet gemPools)
+                             XPGemPoolSet gemPools,
+                             GameObjectPool californiaMobPool = null, GameObjectPool midMobPool = null)
         {
             if (bossData == null)
             {
@@ -67,8 +68,11 @@ namespace SushiSurvival.Enemies.Boss
                 meteorPattern.SetDependencies(player, meteorPool);
 
             if (summonPattern != null && mobPool != null && summonEffectPool != null)
+            {
                 summonPattern.SetDependencies(
                     player != null ? player.transform : null, mobPool, summonEffectPool, gemPools);
+                summonPattern.SetStagePools(californiaMobPool, midMobPool);
+            }
 
             _player = player;
             _phase = BossPhaseLogic.PhaseOne;
