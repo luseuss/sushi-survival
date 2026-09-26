@@ -35,22 +35,6 @@ namespace SushiSurvival.Enemies.Boss
             _midPool = midPool;
         }
 
-        public void Fire(BossPhaseValues values)
-        {
-            if (_mobPool == null || _player == null)
-            {
-                Debug.LogError($"{name}: mobPool 또는 player가 주입되지 않아 소환할 수 없습니다.");
-                return;
-            }
-
-            float startAngle = Random.Range(0f, Mathf.PI * 2f);
-            List<Vector2> positions = SummonPlacement.GetPositions(
-                _player.position, values.summonCount, values.summonRadius, startAngle);
-
-            foreach (Vector2 position in positions)
-                StartCoroutine(SummonAt(position, _mobPool));
-        }
-
         /// <summary>
         /// 소환 한 단계를 발동한다. 일반·캘리·중형몹을 섞어서 플레이어를 둘러싼 링 위에 균등하게 놓는다
         /// (종류별로 묶어 두면 한쪽에 같은 몹이 몰린다). 풀이 비어 있는 종류는 그 몹만 건너뛴다.
