@@ -29,6 +29,10 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private XPGemPoolSet gemPools;
         [SerializeField] private GameObjectPool meteorPool;
         [SerializeField] private GameObjectPool summonMobPool;
+        [Tooltip("소환 단계에서 나올 캘리포니아롤 풀.")]
+        [SerializeField] private GameObjectPool summonCaliforniaPool;
+        [Tooltip("소환 단계에서 나올 중형몹 풀.")]
+        [SerializeField] private GameObjectPool summonMidMobPool;
         [SerializeField] private GameObjectPool summonEffectPool;
         [SerializeField] private GameObjectPool deathExplosionPool;
 
@@ -312,7 +316,8 @@ namespace SushiSurvival.Enemies.Boss
 
             // 보스 AI 및 패턴 활성화
             var playerHealthComp = playerTransform != null ? playerTransform.GetComponent<PlayerHealth>() : null;
-            boss.Activate(playerHealthComp, meteorPool, summonMobPool, summonEffectPool, gemPools);
+            boss.Activate(playerHealthComp, meteorPool, summonMobPool, summonEffectPool, gemPools,
+                          summonCaliforniaPool, summonMidMobPool);
 
             if (bossHealthBar != null)
                 bossHealthBar.Show(boss);

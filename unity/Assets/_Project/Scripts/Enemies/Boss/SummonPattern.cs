@@ -14,6 +14,8 @@ namespace SushiSurvival.Enemies.Boss
 
         private Transform _player;
         private GameObjectPool _mobPool;
+        private GameObjectPool _californiaPool;
+        private GameObjectPool _midPool;
         private GameObjectPool _effectPool;
         private XPGemPoolSet _gemPools;
 
@@ -24,6 +26,13 @@ namespace SushiSurvival.Enemies.Boss
             _mobPool = mobPool;
             _effectPool = effectPool;
             _gemPools = gemPools;
+        }
+
+        /// <summary>체력 임계 소환 단계에서 쓸 캘리포니아롤·중형몹 풀. 일반 몹 풀은 SetDependencies의 mobPool을 쓴다.</summary>
+        public void SetStagePools(GameObjectPool californiaPool, GameObjectPool midPool)
+        {
+            _californiaPool = californiaPool;
+            _midPool = midPool;
         }
 
         public void Fire(BossPhaseValues values)
@@ -39,10 +48,54 @@ namespace SushiSurvival.Enemies.Boss
                 _player.position, values.summonCount, values.summonRadius, startAngle);
 
             foreach (Vector2 position in positions)
-                StartCoroutine(SummonAt(position));
+                StartCoroutine(SummonAt(position, _mobPool));
         }
 
-        private IEnumerator SummonAt(Vector2 position)
+        /// <summary>
+        /// 소환 한 단계를 발동한다. 일반·캘리·중형몹을 섞어서 플레이어를 둘러싼 링 위에 균등하게 놓는다
+        /// (종류별로 묶어 두면 한쪽에 같은 몹이 몰린다). 풀이 비어 있는 종류는 그 몹만 건너뛴다.
+        /// </summary>
+        public void FireStage(BossSummonStage stage, float radius)
+        {
+            if (_mobPool == null || _player == null)
+            {
+                Debug.LogError($"{name}: mobPool 또는 player가 주입되지 않아 소환할 수 없습니다.");
+                return;
+            }
+
+            var pools = new List<GameObjectPool>();
+            AddPools(pools, _mobPool, stage.basicCount, "일반");
+            AddPools(pools, _californiaPool, stage.californiaCount, "캘리포니아");
+            AddPools(pools, _midPool, stage.midCount, "중형몹");
+
+            for (int i = pools.Count - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (pools[i], pools[j]) = (pools[j], pools[i]);
+            }
+
+            float startAngle = Random.Range(0f, Mathf.PI * 2f);
+            List<Vector2> positions = SummonPlacement.GetPositions(_player.position, pools.Count, radius, startAngle);
+
+            for (int i = 0; i < positions.Count; i++)
+                StartCoroutine(SummonAt(positions[i], pools[i]));
+        }
+
+        private void AddPools(List<GameObjectPool> list, GameObjectPool pool, int count, string label)
+        {
+            if (count <= 0) return;
+
+            if (pool == null)
+            {
+                Debug.LogError($"{name}: {label} 몹 풀이 비어 있어 {count}마리를 건너뜁니다.");
+                return;
+            }
+
+            for (int i = 0; i < count; i++)
+                list.Add(pool);
+        }
+
+        private IEnumerator SummonAt(Vector2 position, GameObjectPool pool)
         {
             float delay = summonDelayOverride;
 
@@ -57,9 +110,9 @@ namespace SushiSurvival.Enemies.Boss
             if (delay > 0f)
                 yield return new WaitForSeconds(delay);
 
-            if (_mobPool == null) yield break;
+            if (pool == null) yield break;
 
-            GameObject mob = _mobPool.Get(position, Quaternion.identity);
+            GameObject mob = pool.Get(position, Quaternion.identity);
             if (mob == null) yield break;
 
             if (mob.TryGetComponent<EnemyBase>(out var enemy))

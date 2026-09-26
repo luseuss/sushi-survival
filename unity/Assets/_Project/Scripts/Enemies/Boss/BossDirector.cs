@@ -21,6 +21,10 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private GameObjectPool meteorPool;
         [Tooltip("소환으로 나올 잡몹 풀. 기존 BasicMob 풀을 그대로 쓴다.")]
         [SerializeField] private GameObjectPool summonMobPool;
+        [Tooltip("소환 단계에서 나올 캘리포니아롤 풀.")]
+        [SerializeField] private GameObjectPool summonCaliforniaPool;
+        [Tooltip("소환 단계에서 나올 중형몹 풀.")]
+        [SerializeField] private GameObjectPool summonMidMobPool;
         [SerializeField] private GameObjectPool summonEffectPool;
         [SerializeField] private GameObjectPool deathExplosionPool;
 
@@ -125,7 +129,8 @@ namespace SushiSurvival.Enemies.Boss
             _bossEnemy.SetXpGemPools(gemPools);
             _bossEnemy.OnDeath += HandleBossDeath;
 
-            boss.Activate(player, meteorPool, summonMobPool, summonEffectPool, gemPools);
+            boss.Activate(player, meteorPool, summonMobPool, summonEffectPool, gemPools,
+                          summonCaliforniaPool, summonMidMobPool);
 
             if (bossHealthBar != null)
                 bossHealthBar.Show(boss);
