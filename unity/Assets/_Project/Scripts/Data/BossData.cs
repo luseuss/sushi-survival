@@ -2,6 +2,20 @@ using UnityEngine;
 
 namespace SushiSurvival.Data
 {
+    /// <summary>보스 체력이 임계에 닿으면 나오는 소환 한 차수.</summary>
+    [System.Serializable]
+    public struct BossSummonStage
+    {
+        [Range(0f, 1f)]
+        [Tooltip("보스 체력 비율이 이 값 이하로 내려가면 이 단계가 나온다. 단계 순서대로 내림차순으로 적는다.")]
+        public float healthThreshold;
+        public int basicCount;
+        public int californiaCount;
+        public int midCount;
+
+        public int Total => basicCount + californiaCount + midCount;
+    }
+
     /// <summary>페이즈별로 달라지는 패턴 수치 한 벌.</summary>
     [System.Serializable]
     public struct BossPhaseValues
@@ -55,6 +69,9 @@ namespace SushiSurvival.Data
         [Range(0f, 1f)]
         [Tooltip("현재 체력 비율이 이 값 아래로 내려가면 페이즈 2로 전환한다.")]
         public float phaseTwoThreshold = 0.5f;
+
+        [Tooltip("체력 임계별 소환 단계. 임계는 내림차순(높은 체력부터)으로 적는다.")]
+        public BossSummonStage[] summonStages;
 
         public BossPhaseValues GetPhaseValues(int phase)
             => phase >= 2 ? phaseTwo : phaseOne;
