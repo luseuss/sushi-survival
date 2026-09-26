@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 6247406205898824425}
   - component: {fileID: 1440815608935356904}
   - component: {fileID: 7980025061145666681}
+  - component: {fileID: 3431348253671206841}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Untagged
@@ -211,6 +212,7 @@ MonoBehaviour:
   separationRadius: 1.2
   separationStrength: 0
   separationInterval: 0.1
+  contactOverlap: 0.02
 --- !u!114 &405356964781061093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,3 +269,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3dc5fee2692bfb49bb962ecc9b26399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3431348253671206841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8929938124051220094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cfd809c8f0e5984991409d9b2a26df4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chargeLockSeconds: 0.15
+  lineWidth: 1.5
+  lineColor: {r: 1, g: 0.15, b: 0.15, a: 0.35}
+  lineLockedColor: {r: 1, g: 0.2, b: 0.2, a: 0.8}
+  lineLockedWidthScale: 1.5
+  ghostInterval: 0.05
+  ghostColor: {r: 1, g: 0.35, b: 0.35, a: 0.5}
+  ghostLifetime: 0.25
+  dustInterval: 0.04
+  dustColor: {r: 0.85, g: 0.75, b: 0.55, a: 0.6}
+  dustStartSize: 0.15
+  dustEndSize: 0.4
+  dustLifetime: 0.35
+  dustSpread: 0.25
+  dustFootOffset: 0.3
+  shockwaveColor: {r: 1, g: 0.85, b: 0.85, a: 0.8}
+  shockwaveStartRadius: 0.3
+  shockwaveEndRadius: 2.2
+  shockwaveLifetime: 0.35
+  shakeMagnitude: 0.25
+  shakeDuration: 0.25
