@@ -100,6 +100,12 @@ namespace SushiSurvival.Core
             }
         }
 
+        /// <summary>
+        /// 다른 연출(보스 돌진 정지 등)이 원하는 세기·시간으로 화면을 흔든다. 이미 흔들리는 중이면
+        /// 기존 규칙대로 합쳐진다(지속시간은 늘리고 진폭은 큰 쪽이 우선).
+        /// </summary>
+        public void Shake(float magnitude, float duration) => TriggerShake(magnitude, duration);
+
         public void PlayerHit()
         {
             TriggerHitstop(playerHitStopDuration);
