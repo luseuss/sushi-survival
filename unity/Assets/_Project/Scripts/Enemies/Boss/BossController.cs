@@ -32,6 +32,7 @@ namespace SushiSurvival.Enemies.Boss
 
         private EnemyBase _enemy;
         private EnemyAI _ai;
+        private BossChargeEffects _effects;
 
         private PlayerHealth _player;
         private bool _firstCast;
@@ -49,6 +50,7 @@ namespace SushiSurvival.Enemies.Boss
         {
             _enemy = GetComponent<EnemyBase>();
             _ai = GetComponent<EnemyAI>();
+            _effects = GetComponent<BossChargeEffects>();
         }
 
         public void Activate(PlayerHealth player, GameObjectPool meteorPool,
@@ -64,6 +66,7 @@ namespace SushiSurvival.Enemies.Boss
 
             if (_enemy == null) _enemy = GetComponent<EnemyBase>();
             if (_ai == null) _ai = GetComponent<EnemyAI>();
+            if (_effects == null) _effects = GetComponent<BossChargeEffects>();
             if (summonPattern == null) summonPattern = GetComponentInChildren<SummonPattern>();
             if (meteorPattern == null) meteorPattern = GetComponentInChildren<MeteorPattern>();
 
@@ -216,29 +219,72 @@ namespace SushiSurvival.Enemies.Boss
         }
 
         /// <summary>
-        /// 돌진: ① 멈춰서 붉게 번쩍이며 예고 → ② 그 순간의 플레이어 방향으로 고정해서 돌진 →
-        /// ③ 멈춰서 무방비로 서 있는다(반격 기회). 방향을 예고가 끝나는 순간에 잡으므로,
-        /// 예고 동안 움직여서 각을 만들어 두면 피할 수 있다. 피해는 보스의 접촉 데미지가 그대로 준다.
+        /// 돌진: ① 멈춰서 붉게 번쩍이며 예고(예고선이 플레이어를 따라간다) → ② 예고 종료 직전에 방향을
+        /// 확정하고 예고선을 고정 → ③ 그 방향으로 돌진(잔상·먼지) → ④ 멈춰서 충격파 → ⑤ 무방비로 서 있는다(반격 기회).
+        /// 방향을 확정하기 전까지 움직여서 각을 만들어 두면 피할 수 있다. 피해는 보스의 접촉 데미지가 그대로 준다.
+        /// 연출(_effects)이 없으면 방향을 예고 종료 순간에 확정하는 기존 동작과 같다.
         /// </summary>
         private IEnumerator ChargeRoutine()
         {
             BossPhaseValues values = bossData.GetPhaseValues(_phase);
 
+            float chargeDistance = ChargeEffectsLogic.ChargeDistance(
+                bossData.moveSpeed, values.chargeSpeedScale, values.chargeDuration);
+            float lockSeconds = _effects != null ? _effects.ChargeLockSeconds : 0f;
+            float lockDelay = ChargeEffectsLogic.LockDelay(values.chargeWindup, lockSeconds);
+
             if (spriteFlasher != null)
                 spriteFlasher.Flash(Color.red, values.chargeWindup);
 
-            yield return new WaitForSeconds(values.chargeWindup);
+            if (_effects != null)
+                _effects.BeginTelegraph(chargeDistance);
 
+            // ① 방향을 확정하기 전까지 예고선이 플레이어를 실시간으로 따라간다.
+            float elapsed = 0f;
+            while (elapsed < lockDelay)
+            {
+                if (_effects != null && _player != null)
+                    _effects.AimTelegraph(transform.position, _player.transform.position);
+
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+
+            // ② 방향 확정. 예고선 고정과 같은 시점이라 선이 곧 실제 돌진 방향이다.
             Vector2 from = transform.position;
             Vector2 to = _player != null ? (Vector2)_player.transform.position : from;
-            _ai.LockedDirection = BossAimLogic.ChargeDirection(from, to, Vector2.right);
+            Vector2 direction = BossAimLogic.ChargeDirection(from, to, Vector2.right);
+
+            if (_effects != null)
+            {
+                _effects.AimTelegraph(from, to);
+                _effects.LockTelegraph();
+            }
+
+            float remainingWindup = values.chargeWindup - lockDelay;
+            if (remainingWindup > 0f)
+                yield return new WaitForSeconds(remainingWindup);
+
+            // ③ 돌진
+            _ai.LockedDirection = direction;
             _ai.MoveScale = values.chargeSpeedScale;
+
+            if (_effects != null)
+                _effects.BeginTrail();
 
             yield return new WaitForSeconds(values.chargeDuration);
 
+            // ④ 정지
             _ai.LockedDirection = Vector2.zero;
             _ai.MoveScale = 0f;
 
+            if (_effects != null)
+            {
+                _effects.EndTrail();
+                _effects.PlayImpact(transform.position);
+            }
+
+            // ⑤ 반격 기회
             yield return new WaitForSeconds(values.chargeRecovery);
         }
     }
