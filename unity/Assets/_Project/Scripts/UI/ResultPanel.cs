@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using SushiSurvival.Core;
+using SushiSurvival.Data;
 using UnityEngine.UI;
 
 namespace SushiSurvival.UI
@@ -14,6 +15,8 @@ namespace SushiSurvival.UI
         [SerializeField] private Text survivalTimeText;
         [SerializeField] private Text levelText;
         [SerializeField] private Text killCountText;
+        [Tooltip("세계관 대화에서 쌓인 성향에 맞는 한마디를 보여줄 Text. 비워두면 표시하지 않는다.")]
+        [SerializeField] private Text traitText;
         [Tooltip("증강 항목이 생성될 부모. Horizontal Layout Group을 붙여두면 자동 정렬된다.")]
         [SerializeField] private Transform augmentListRoot;
         [SerializeField] private ResultAugmentEntry augmentEntryPrefab;
@@ -53,9 +56,28 @@ namespace SushiSurvival.UI
                 killCountText.text = $"처치 수  {kills}";
 
             BuildAugmentList(augments);
+            ShowTraitLine(outcome);
         }
 
         public void Hide() => Root.SetActive(false);
+
+        private void ShowTraitLine(RunOutcome outcome)
+        {
+            if (traitText == null) return;
+
+            PlayerTraitLines table = PlayerTraitLines.Load();
+            PlayerTraitEntry entry = table != null ? table.Find(PlayerTraitState.Dominant) : null;
+
+            string line = entry == null
+                ? null
+                : (outcome == RunOutcome.Victory ? entry.victoryLine : entry.defeatLine);
+
+            bool hasLine = !string.IsNullOrEmpty(line);
+            traitText.gameObject.SetActive(hasLine);
+
+            if (hasLine)
+                traitText.text = $"[{entry.displayName}] {line}";
+        }
 
         private void BuildAugmentList(IReadOnlyList<AugmentCount> augments)
         {
