@@ -10,6 +10,8 @@ namespace SushiSurvival.Data
         public string choiceText;
         [Tooltip("이 선택이 매핑되는 증강. 이름·아이콘·StatType·maxCap을 여기서 가져온다.")]
         public AugmentData augment;
+        [Tooltip("이 선택지에 대응하는 성향. 세계관 대화에서 쌓인 대표 성향과 같으면 맨 위로 올라가고 ★가 붙는다. None이면 영향 없음.")]
+        public PlayerTrait trait;
     }
 
     /// <summary>질문 하나 + 선택지 2~3개.</summary>
@@ -20,6 +22,14 @@ namespace SushiSurvival.Data
         public string questionText;
         [Tooltip("2~3개.")]
         public AffinityDialogueChoice[] choices;
+    }
+
+    /// <summary>성향별로 다르게 재생되는 대사 한 줄.</summary>
+    [System.Serializable]
+    public class TraitLine
+    {
+        public PlayerTrait trait;
+        public StoryLine line;
     }
 
     /// <summary>
@@ -37,5 +47,7 @@ namespace SushiSurvival.Data
         public StoryLine[] bossIntroLines;
         [Tooltip("BossScene에서 보스가 떨어져 등장한 직후 보스와 캐릭터가 주고받는 대사. 비우면 대화 없이 바로 전투.")]
         public StoryLine[] bossEncounterLines;
+        [Tooltip("bossEncounterLines 끝에 붙는, 세계관 대화에서 쌓인 대표 성향별 대사 한 줄. 해당 성향의 줄이 없으면 안 붙는다.")]
+        public TraitLine[] bossTraitLines;
     }
 }
