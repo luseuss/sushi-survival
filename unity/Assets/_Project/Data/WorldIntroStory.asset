@@ -82,3 +82,68 @@ MonoBehaviour:
       \uC9C0\uD0A4\uB7EC \uB2E4\uD568\uAED8 \uC804\uC7A5\uC73C\uB85C \uD5A5\uD560
       \uB54C\uAC00 \uB418\uC5C8\uAD70\uC694"
     background: {fileID: 0}
+  choicePoints:
+  - beforeLineIndex: 4
+    prompt:
+      speakerName: "\uC544\uB378\uB9B0"
+      portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+      standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
+      text: "\uCD1D\uBCD1\uB825\uC774 \uC804\uBD80 \uCD9C\uB3D9\uD588\uB2E4\uB2C8... \uB2F9\uC2E0\uC774\uB77C\uBA74 \uC774 \uC0C1\uD669\uC5D0\uC11C \uBB34\uC5C7\uC744 \uBA3C\uC800 \uD558\uACA0\uC5B4\uC694?"
+      background: {fileID: 0}
+    choices:
+    - choiceText: "\uC815\uBA74\uC73C\uB85C \uB9DE\uC11C \uC2F8\uC6B4\uB2E4."
+      trait: 1
+      reply:
+        speakerName: "\uCE74\uB9C8\uB9AC\uC628"
+        portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
+        standing: {fileID: 21300000, guid: 563fd5785a544cb4b74469a00d599e12, type: 3}
+        text: "\uD558\uD558, \uBC30\uC9F1 \uC88B\uAD70! \uADF8\uB7F0 \uB140\uC11D\uC774 \uC788\uC5B4\uC57C \uC804\uC7A5\uC774 \uC0B4\uC9C0."
+        background: {fileID: 0}
+    - choiceText: "\uBA3C\uC800 \uC0C1\uD669\uBD80\uD130 \uC0B4\uD540\uB2E4."
+      trait: 2
+      reply:
+        speakerName: "\uC774\uB098\uB9AC"
+        portrait: {fileID: 21300000, guid: 3ad0cb01ba4f48229f03a84cfc5a6c6d, type: 3}
+        standing: {fileID: 21300000, guid: 8938b1b9917c482493629b6f1a9048a8, type: 3}
+        text: "\uADF8\uB798 \uB9DE\uB2E4, \uC11C\uB450\uB974\uBA74 \uBC1C \uBE60\uC9C4\uB2E4 \uC544\uC774\uAC00. \uC798 \uBD24\uB2E4."
+        background: {fileID: 0}
+    - choiceText: "\uBC31\uC131\uB4E4\uBD80\uD130 \uC548\uC804\uD558\uAC8C \uD53C\uC2E0\uC2DC\uD0A8\uB2E4."
+      trait: 3
+      reply:
+        speakerName: "\uC544\uB378\uB9B0"
+        portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+        standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
+        text: "...\uB530\uB73B\uD55C \uBD84\uC774\uC2DC\uAD70\uC694. \uC800\uB3C4 \uAC19\uC740 \uB9C8\uC74C\uC785\uB2C8\uB2E4."
+        background: {fileID: 0}
+  - beforeLineIndex: 8
+    prompt:
+      speakerName: "\uC774\uB098\uB9AC"
+      portrait: {fileID: 21300000, guid: 3ad0cb01ba4f48229f03a84cfc5a6c6d, type: 3}
+      standing: {fileID: 21300000, guid: 8938b1b9917c482493629b6f1a9048a8, type: 3}
+      text: "\uB2C8\uB294 \uC6B0\uC9E4\uB07C\uACE0? \uB2E4 \uAC19\uC774 \uC2F8\uC6B8 \uB54C, \uB2C8\uB294 \uBB58 \uC81C\uC77C \uBA3C\uC800 \uCC59\uAE38 \uAE30\uACE0?"
+      background: {fileID: 0}
+    choices:
+    - choiceText: "\uC81C\uC77C \uC55E\uC5D0\uC11C \uAE38\uC744 \uC5F0\uB2E4."
+      trait: 1
+      reply:
+        speakerName: "\uC774\uB098\uB9AC"
+        portrait: {fileID: 21300000, guid: 3ad0cb01ba4f48229f03a84cfc5a6c6d, type: 3}
+        standing: {fileID: 21300000, guid: 8938b1b9917c482493629b6f1a9048a8, type: 3}
+        text: "\uC624\uC624, \uAC81\uB300\uAC00\uB9AC \uC5C6\uB294 \uAE30 \uB9C8\uC74C\uC5D0 \uB4E0\uB2E4\uCE74\uC774!"
+        background: {fileID: 0}
+    - choiceText: "\uB4A4\uC5D0\uC11C \uC804\uCCB4 \uD750\uB984\uC744 \uC9C0\uCF1C\uBCF8\uB2E4."
+      trait: 2
+      reply:
+        speakerName: "\uCE74\uB9C8\uB9AC\uC628"
+        portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
+        standing: {fileID: 21300000, guid: 563fd5785a544cb4b74469a00d599e12, type: 3}
+        text: "\uB4EC\uC9C1\uD558\uAD70. \uC804\uC7A5\uC5D4 \uADF8\uB7F0 \uB208\uC774 \uAF2D \uD544\uC694\uD558\uC9C0."
+        background: {fileID: 0}
+    - choiceText: "\uB2E4\uCE5C \uB3D9\uB8CC\uBD80\uD130 \uCC59\uAE34\uB2E4."
+      trait: 3
+      reply:
+        speakerName: "\uC544\uB378\uB9B0"
+        portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
+        standing: {fileID: 21300000, guid: 2a1db57f751b4c14a607567bc9365eeb, type: 3}
+        text: "\uADF8 \uB9C8\uC74C, \uC78A\uC9C0 \uC54A\uACA0\uC2B5\uB2C8\uB2E4. \uB2E4 \uAC19\uC774 \uC0B4\uC544\uC11C \uB3CC\uC544\uC640\uC694."
+        background: {fileID: 0}
