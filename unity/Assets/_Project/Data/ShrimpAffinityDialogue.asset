@@ -96,3 +96,25 @@ MonoBehaviour:
     text: "\uADF8\uB7FC \uB6AB\uB9B4 \uB54C\uAE4C\uC9C0 \uC3D8\uBA74 \uB418\uC9C0.
       \uC7A5\uC804 \uB05D\uB0AC\uC5B4!"
     background: {fileID: 0}
+  bossTraitLines:
+  - trait: 1
+    line:
+      speakerName: "\uCE74\uB9C8\uB9AC\uC628"
+      portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
+      standing: {fileID: 21300000, guid: 563fd5785a544cb4b74469a00d599e12, type: 3}
+      text: "\uD55C \uBC29\uC774\uBA74 \uB3FC. \uCC98\uC74C\uBD80\uD130 \uB05D\uAE4C\uC9C0 \uC815\uBA74\uC73C\uB85C \uAC04\uB2E4!"
+      background: {fileID: 0}
+  - trait: 2
+    line:
+      speakerName: "\uCE74\uB9C8\uB9AC\uC628"
+      portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
+      standing: {fileID: 21300000, guid: 563fd5785a544cb4b74469a00d599e12, type: 3}
+      text: "\uD0C4\uCC3D\uC740 \uB109\uB109\uD574. \uCE68\uCC29\uD558\uAC8C, \uD55C \uBC1C\uC529 \uD655\uC2E4\uD788 \uB9DE\uCD98\uB2E4."
+      background: {fileID: 0}
+  - trait: 3
+    line:
+      speakerName: "\uCE74\uB9C8\uB9AC\uC628"
+      portrait: {fileID: 21300000, guid: 5b84c9f527aa4e6899d968b44a37c7a9, type: 3}
+      standing: {fileID: 21300000, guid: 563fd5785a544cb4b74469a00d599e12, type: 3}
+      text: "\uB4A4\uC5D0 \uC788\uB294 \uB140\uC11D\uB4E4\uC740 \uC2E0\uACBD \uC4F0\uC9C0 \uB9C8. \uB0B4\uAC00 \uB2E4 \uB9C9\uC544 \uC904 \uD14C\uB2C8\uAE4C."
+      background: {fileID: 0}

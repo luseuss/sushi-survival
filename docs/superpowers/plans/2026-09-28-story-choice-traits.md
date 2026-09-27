@@ -1795,6 +1795,8 @@ namespace SushiSurvival.EditModeTests
 
 - [ ] **Step 3: 초안 생성 스크립트 작성·실행**
 
+> **실행 중 발견한 정정(2026-09-28):** 아래 스크립트는 줄바꿈을 `\n`(LF)으로 고정해 덧붙이는데, 세 기존 에셋(`WorldIntroStory`·`EggAffinityDialogue`·`ShrimpAffinityDialogue`)은 작업 트리에서 **전 줄이 CRLF**다(git은 저장할 때 LF로 정규화). 그대로 덧붙이면 한 파일 안에 두 가지 줄바꿈이 섞인다. 실제로 실행한 스크립트는 `appendTopLevelKey`가 **파일의 줄바꿈을 감지해서 그대로 맞춰** 덧붙이고(`y.includes('\r\n')`), 줄 배열을 만든 뒤 붙일 때 `join(nl)`한다. 새로 만드는 `PlayerTraitLines.asset`은 LF다(`BoothResetSettings.asset`과 같음). 실행 뒤 `wc -l`과 `grep -c $'\r'`가 같은 값이면 섞이지 않은 것이다. 스프라이트 GUID 세 쌍은 계획서 값이 기존 에셋과 정확히 일치함을 확인했다.
+
 일회용이라 저장소에 커밋하지 않고 스크래치패드 디렉터리에 둔다. 저장 경로: `C:\Users\wnsdn\AppData\Local\Temp\claude\C--Users-wnsdn-Desktop-----------------\f31f848d-0d53-46ab-875f-6943ac14e312\scratchpad\gen_trait_draft_data.js`
 
 ```javascript
