@@ -205,41 +205,45 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            Action onSuccess = _weapon is EggFanWeapon
-                ? (Action)ConvertToUmbrella
+            Func<string[]> onSuccess = _weapon is EggFanWeapon
+                ? (Func<string[]>)ConvertToUmbrella
                 : ApplyRoyalWasabiStatBuffs;
 
             royalWasabiController.Show(_portrait, onSuccess, ShowNext);
         }
 
         /// <summary>아델린 전용 보상 — 계란 양산을 회전 우산으로 바꾼다.</summary>
-        private void ConvertToUmbrella()
+        private string[] ConvertToUmbrella()
         {
-            if (_weapon is not EggFanWeapon eggWeapon) return;
+            if (_weapon is not EggFanWeapon eggWeapon) return Array.Empty<string>();
 
             var umbrella = eggWeapon.GetComponent<RotatingUmbrellaWeapon>();
             if (umbrella == null)
             {
                 Debug.LogError($"{eggWeapon.name}: RotatingUmbrellaWeapon 컴포넌트가 없어 우산으로 전환할 수 없습니다.");
-                return;
+                return Array.Empty<string>();
             }
 
             umbrella.SetLevel(eggWeapon.CurrentLevel);
             eggWeapon.enabled = false;
             umbrella.enabled = true;
             _weapon = umbrella;
+
+            return new[] { "계란 양산이 회전 우산으로 변했다!" };
         }
 
-        /// <summary>아델린 외 캐릭터의 기존 보상 — 스탯 4종 강화.</summary>
-        private void ApplyRoyalWasabiStatBuffs()
+        /// <summary>아델린 외 캐릭터의 기존 보상 — 스탯 4종 강화. 승리 연출이 한 줄씩 보여줄 설명을 돌려준다.</summary>
+        private string[] ApplyRoyalWasabiStatBuffs()
         {
-            ApplyRoyalWasabiAugment(attackDamageAugment);
-            ApplyRoyalWasabiAugment(attackSpeedAugment);
-            ApplyRoyalWasabiAugment(moveSpeedAugment);
-            ApplyRoyalWasabiAugment(maxHealthAugment);
+            var lines = new List<string>();
+            AppendRoyalWasabiAugment(attackDamageAugment, lines);
+            AppendRoyalWasabiAugment(attackSpeedAugment, lines);
+            AppendRoyalWasabiAugment(moveSpeedAugment, lines);
+            AppendRoyalWasabiAugment(maxHealthAugment, lines);
+            return lines.ToArray();
         }
 
-        private void ApplyRoyalWasabiAugment(AugmentData augment)
+        private void AppendRoyalWasabiAugment(AugmentData augment, List<string> lines)
         {
             if (augment == null)
             {
@@ -250,6 +254,7 @@ namespace SushiSurvival.Core
             float amount = AffinityBuffLogic.GetBuffAmount(augment.maxCap, royalWasabiBuffRatio);
             AffinityBuffApplier.Apply(augment, amount, _playerStats, _playerHealth);
             RecordExternalBuff(augment, amount);
+            lines.Add(UpgradeDescriptionLogic.DescribeAugment(augment.statType, amount));
         }
 
         private void OnOptionChosen(IUpgradeOption option)
