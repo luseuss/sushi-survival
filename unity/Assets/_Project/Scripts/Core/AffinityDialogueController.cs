@@ -115,7 +115,9 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            panel.Show(portrait, standing, question, choice =>
+            AffinityDialogueQuestion displayed = ApplyTraitRecommendation(question);
+
+            panel.Show(portrait, standing, displayed, choice =>
             {
                 if (choice.augment != null)
                 {
@@ -131,6 +133,43 @@ namespace SushiSurvival.Core
                 panel.Hide();
                 onComplete?.Invoke();
             });
+        }
+
+        /// <summary>
+        /// 세계관 대화에서 쌓인 대표 성향과 같은 선택지를 맨 위로 올리고 문구 앞에 ★를 붙인다. 원본 데이터(ScriptableObject)는
+        /// 건드리지 않고 표시용 복사본을 만든다 — 증강 참조는 그대로라 버프 적용은 변함이 없다.
+        /// 성향이 없거나 맞는 선택지가 없으면 원본을 그대로 돌려준다.
+        /// </summary>
+        private static AffinityDialogueQuestion ApplyTraitRecommendation(AffinityDialogueQuestion question)
+        {
+            PlayerTrait dominant = PlayerTraitState.Dominant;
+            if (dominant == PlayerTrait.None) return question;
+
+            var traits = new PlayerTrait[question.choices.Length];
+            for (int i = 0; i < traits.Length; i++)
+                traits[i] = question.choices[i] != null ? question.choices[i].trait : PlayerTrait.None;
+
+            int recommended = AffinityChoiceOrderLogic.RecommendedIndex(traits, dominant);
+            if (recommended < 0) return question;
+
+            int[] order = AffinityChoiceOrderLogic.DisplayOrder(question.choices.Length, recommended);
+            var reordered = new AffinityDialogueChoice[order.Length];
+
+            for (int i = 0; i < order.Length; i++)
+            {
+                AffinityDialogueChoice source = question.choices[order[i]];
+
+                reordered[i] = order[i] == recommended
+                    ? new AffinityDialogueChoice
+                    {
+                        choiceText = "★ " + source.choiceText,
+                        augment = source.augment,
+                        trait = source.trait,
+                    }
+                    : source;
+            }
+
+            return new AffinityDialogueQuestion { questionText = question.questionText, choices = reordered };
         }
     }
 }

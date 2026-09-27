@@ -163,7 +163,11 @@ namespace SushiSurvival.Enemies.Boss
             if (bossIntroBanner != null)
                 bossIntroBanner.SetActive(false);
 
-            StartCoroutine(IntroSequence(playerTransform, selectedCharacter.affinityDialogue?.bossEncounterLines));
+            AffinityDialogueData dialogue = selectedCharacter.affinityDialogue;
+            StoryLine[] encounterLines = TraitLineLogic.AppendTraitLine(
+                dialogue?.bossEncounterLines, dialogue?.bossTraitLines, PlayerTraitState.Dominant);
+
+            StartCoroutine(IntroSequence(playerTransform, encounterLines));
         }
 
         /// <summary>
