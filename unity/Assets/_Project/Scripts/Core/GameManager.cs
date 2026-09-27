@@ -326,7 +326,9 @@ namespace SushiSurvival.Core
                 if (weapon != null)
                 {
                     RunResultCarrier.WeaponLevel = weapon.CurrentLevel;
-                    RunResultCarrier.WasabiWeaponConverted = weapon is SushiSurvival.Weapons.RotatingUmbrellaWeapon;
+                    RunResultCarrier.WasabiWeaponConverted =
+                        weapon is SushiSurvival.Weapons.RotatingUmbrellaWeapon ||
+                        (weapon is SushiSurvival.Weapons.ShrimpRifleWeapon rifle && rifle.IsShotgun);
                 }
             }
 

@@ -205,9 +205,12 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            Action onSuccess = _weapon is EggFanWeapon
-                ? (Action)ConvertToUmbrella
-                : ApplyRoyalWasabiStatBuffs;
+            Action onSuccess = _weapon switch
+            {
+                EggFanWeapon => (Action)ConvertToUmbrella,
+                ShrimpRifleWeapon => (Action)ConvertToShotgun,
+                _ => (Action)ApplyRoyalWasabiStatBuffs
+            };
 
             royalWasabiController.Show(_portrait, onSuccess, ShowNext);
         }
@@ -230,7 +233,14 @@ namespace SushiSurvival.Core
             _weapon = umbrella;
         }
 
-        /// <summary>아델린 외 캐릭터의 기존 보상 — 스탯 4종 강화.</summary>
+        /// <summary>카마리온 전용 보상 — 간장 소총이 산탄을 부채꼴로 쏘는 샷건이 된다.</summary>
+        private void ConvertToShotgun()
+        {
+            if (_weapon is ShrimpRifleWeapon rifle)
+                rifle.EnableShotgun();
+        }
+
+        /// <summary>무기 교체 보상이 없는 캐릭터의 기존 보상 — 스탯 4종 강화.</summary>
         private void ApplyRoyalWasabiStatBuffs()
         {
             ApplyRoyalWasabiAugment(attackDamageAugment);
