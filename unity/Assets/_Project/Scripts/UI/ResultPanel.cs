@@ -20,6 +20,8 @@ namespace SushiSurvival.UI
         [Tooltip("증강 항목이 생성될 부모. Horizontal Layout Group을 붙여두면 자동 정렬된다.")]
         [SerializeField] private Transform augmentListRoot;
         [SerializeField] private ResultAugmentEntry augmentEntryPrefab;
+        [Tooltip("증강 아이콘 뒤에 깔리는 배경. 비워두면 크기 조정 없이 그대로 둔다.")]
+        [SerializeField] private RectTransform augmentListBackground;
         [SerializeField] private Button restartButton;
 
         private readonly List<ResultAugmentEntry> _spawnedEntries = new List<ResultAugmentEntry>();
@@ -96,6 +98,37 @@ namespace SushiSurvival.UI
                 entry.Bind(augment);
                 _spawnedEntries.Add(entry);
             }
+
+            ResizeAugmentListBackground(augments.Count);
+        }
+
+        /// <summary>
+        /// 배경을 AugmentListRoot에 실제로 나온 개수만큼만 늘린다 — HorizontalLayoutGroup이
+        /// 아이콘을 간격 없이(spacing 0) 나열하는 것과 같은 폭 계산을 그대로 따라 한다.
+        /// </summary>
+        private void ResizeAugmentListBackground(int count)
+        {
+            if (augmentListBackground == null || augmentEntryPrefab == null) return;
+
+            RectTransform entryRect = augmentEntryPrefab.GetComponent<RectTransform>();
+            float spacing = 0f;
+            RectOffset padding = null;
+
+            var layout = augmentListRoot != null ? augmentListRoot.GetComponent<HorizontalLayoutGroup>() : null;
+            if (layout != null)
+            {
+                spacing = layout.spacing;
+                padding = layout.padding;
+            }
+
+            float paddingH = padding != null ? padding.left + padding.right : 0f;
+            float paddingV = padding != null ? padding.top + padding.bottom : 0f;
+
+            float width = count <= 0 ? 0f : count * entryRect.sizeDelta.x + Mathf.Max(0, count - 1) * spacing;
+            width += paddingH;
+            float height = entryRect.sizeDelta.y + paddingV;
+
+            augmentListBackground.sizeDelta = new Vector2(width, height);
         }
 
         public void HandleRestart()
