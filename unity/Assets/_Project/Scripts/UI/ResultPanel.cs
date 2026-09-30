@@ -22,6 +22,8 @@ namespace SushiSurvival.UI
         [SerializeField] private ResultAugmentEntry augmentEntryPrefab;
         [Tooltip("증강 아이콘 뒤에 깔리는 배경. 비워두면 크기 조정 없이 그대로 둔다.")]
         [SerializeField] private RectTransform augmentListBackground;
+        [Tooltip("배경이 아이콘 묶음 테두리에 딱 붙지 않도록 상하좌우로 더 남기는 여백(px).")]
+        [SerializeField] private Vector2 augmentListBackgroundPadding = new Vector2(40f, 40f);
         [SerializeField] private Button restartButton;
 
         private readonly List<ResultAugmentEntry> _spawnedEntries = new List<ResultAugmentEntry>();
@@ -121,12 +123,12 @@ namespace SushiSurvival.UI
                 padding = layout.padding;
             }
 
-            float paddingH = padding != null ? padding.left + padding.right : 0f;
-            float paddingV = padding != null ? padding.top + padding.bottom : 0f;
+            float layoutPaddingH = padding != null ? padding.left + padding.right : 0f;
+            float layoutPaddingV = padding != null ? padding.top + padding.bottom : 0f;
 
             float width = count <= 0 ? 0f : count * entryRect.sizeDelta.x + Mathf.Max(0, count - 1) * spacing;
-            width += paddingH;
-            float height = entryRect.sizeDelta.y + paddingV;
+            width += layoutPaddingH + augmentListBackgroundPadding.x * 2f;
+            float height = entryRect.sizeDelta.y + layoutPaddingV + augmentListBackgroundPadding.y * 2f;
 
             augmentListBackground.sizeDelta = new Vector2(width, height);
         }
