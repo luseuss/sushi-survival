@@ -30,6 +30,10 @@ namespace SushiSurvival.UI
         [Tooltip("비겼을 때 재대결 전 실시간 대기(초).")]
         [SerializeField] private float drawRetryDelay = 0.8f;
 
+        [Range(0f, 1f)]
+        [Tooltip("플레이어가 최종적으로 이길 확률. 비기면 다시 하므로 가위바위보 자체의 승률이다. 0.4면 열 번 중 네 번.")]
+        [SerializeField] private float winChance = 0.4f;
+
         private readonly System.Random _random = new System.Random();
         private Action<bool> _onResolved;
         private Action _onReveal;
@@ -81,7 +85,7 @@ namespace SushiSurvival.UI
 
         private IEnumerator ResolveRound(RpsHand playerHand)
         {
-            RpsHand opponentHand = (RpsHand)_random.Next(3);
+            RpsHand opponentHand = RpsOpponentLogic.PickOpponentHand(playerHand, winChance, (float)_random.NextDouble());
 
             yield return new WaitForSecondsRealtime(revealDelay);
 
