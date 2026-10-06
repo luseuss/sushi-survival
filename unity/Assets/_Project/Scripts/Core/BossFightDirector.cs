@@ -117,7 +117,8 @@ namespace SushiSurvival.Enemies.Boss
                         RunResultCarrier.CurrentLevel,
                         RunResultCarrier.CurrentExperience,
                         RunResultCarrier.PickedAugments,
-                        RunResultCarrier.ExternalBuffs);
+                        RunResultCarrier.ExternalBuffs,
+                        RunResultCarrier.WasabiCount);
                 }
             }
 

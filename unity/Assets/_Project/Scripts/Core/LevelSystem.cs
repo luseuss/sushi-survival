@@ -66,6 +66,9 @@ namespace SushiSurvival.Core
         /// RunResultCarrier에 실어 보내고, RestoreProgress()가 새 씬에서 재적용한다.</summary>
         public IReadOnlyList<AugmentBuff> ExternalBuffs => _externalBuffs;
 
+        /// <summary>왕궁 와사비 가위바위보에서 이겨 와사비를 받은 횟수. 결과 화면에 증강과 함께 보여준다.</summary>
+        public int WasabiCount { get; private set; }
+
         /// <summary>
         /// 팝업이 열려 있거나 아직 못 띄운 레벨업이 남아 있으면 true.
         /// BossDirector가 등장 연출을 시작하기 전에 이걸로 기다린다 — 팝업은
@@ -102,10 +105,11 @@ namespace SushiSurvival.Core
         /// — 안 하면 최대체력 증강분이 상한에서 빠진다.
         /// </summary>
         public void RestoreProgress(int level, float xpTowardNext, IReadOnlyList<AugmentData> pickedAugments,
-                                     IReadOnlyList<AugmentBuff> externalBuffs = null)
+                                     IReadOnlyList<AugmentBuff> externalBuffs = null, int wasabiCount = 0)
         {
             CurrentLevel = level;
             _xpTowardNext = xpTowardNext;
+            WasabiCount = wasabiCount;
 
             if (_playerStats != null && pickedAugments != null)
             {
@@ -212,7 +216,11 @@ namespace SushiSurvival.Core
                 _ => (Action)ApplyRoyalWasabiStatBuffs
             };
 
-            royalWasabiController.Show(_portrait, onSuccess, ShowNext);
+            royalWasabiController.Show(_portrait, () =>
+            {
+                WasabiCount++;
+                onSuccess();
+            }, ShowNext);
         }
 
         /// <summary>아델린 전용 보상 — 계란 양산을 회전 우산으로 바꾼다.</summary>
