@@ -291,7 +291,8 @@ namespace SushiSurvival.Core
 
             if (resultPanel != null)
             {
-                resultPanel.Show(outcome, ElapsedTime, levelSystem.CurrentLevel, KillCount, RunResultCarrier.Augments);
+                resultPanel.Show(outcome, ElapsedTime, levelSystem.CurrentLevel, KillCount,
+                                 RunResultCarrier.Augments, levelSystem.WasabiCount);
             }
             else
             {
@@ -318,6 +319,7 @@ namespace SushiSurvival.Core
                 RunResultCarrier.CurrentExperience = levelSystem.CurrentExperience;
                 RunResultCarrier.PickedAugments = new List<AugmentData>(levelSystem.PickedAugments);
                 RunResultCarrier.ExternalBuffs = new List<AugmentBuff>(levelSystem.ExternalBuffs);
+                RunResultCarrier.WasabiCount = levelSystem.WasabiCount;
             }
 
             if (_playerTransform != null)
