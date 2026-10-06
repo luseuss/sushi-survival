@@ -35,6 +35,8 @@ namespace SushiSurvival.Core
 
         [SerializeField] private LevelUpPanel panel;
         [SerializeField] private RoyalWasabiController royalWasabiController;
+        [Tooltip("꺼두면 레벨업 팝업에서 와사비 버튼이 숨겨진다. 새 보상(요정) 작업이 끝날 때까지 꺼둔다.")]
+        [SerializeField] private bool royalWasabiEnabled = false;
         [Tooltip("아델린이 아닌 캐릭터의 와사비 성공 보상(스탯 버프) 대상 증강 4종.")]
         [SerializeField] private AugmentData attackDamageAugment;
         [SerializeField] private AugmentData attackSpeedAugment;
@@ -186,7 +188,8 @@ namespace SushiSurvival.Core
 
                 _panelOpen = true;
                 Time.timeScale = 0f;
-                panel.Show(options, OnOptionChosen, HandleRoyalWasabiRequested);
+                // 와사비를 막아 두면 null을 넘겨 패널이 버튼을 숨긴다.
+                panel.Show(options, OnOptionChosen, royalWasabiEnabled ? HandleRoyalWasabiRequested : null);
                 return;
             }
 
@@ -223,7 +226,7 @@ namespace SushiSurvival.Core
             }, ShowNext);
         }
 
-        /// <summary>아델린 전용 보상 — 계란 양산을 회전 우산으로 바꾼다.</summary>
+        /// <summary>아델린 전용 — 계란 양산을 회전 우산으로 바꾼다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>
         private string[] ConvertToUmbrella()
         {
             if (_weapon is not EggFanWeapon eggWeapon) return Array.Empty<string>();
@@ -283,6 +286,10 @@ namespace SushiSurvival.Core
         private void OnOptionChosen(IUpgradeOption option)
         {
             option.Apply();
+
+            // 아델린의 양산은 정해진 레벨에 닿으면 회전 우산으로 바뀐다(와사비와 무관한 성장 경로).
+            if (option is WeaponLevelUpOption && _weapon is EggFanWeapon egg && egg.ReadyToEvolve)
+                ConvertToUmbrella();
 
             if (option is AugmentOption augmentOption)
             {
