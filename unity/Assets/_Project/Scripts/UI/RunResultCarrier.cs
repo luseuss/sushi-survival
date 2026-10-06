@@ -23,5 +23,7 @@ namespace SushiSurvival.Core
         public static bool WasabiWeaponConverted;
         // 와사비를 받은 횟수. 보스 씬의 결과 화면에도 GameScene에서 받은 와사비가 이어져 보이도록 넘긴다.
         public static int WasabiCount;
+        // 요정 한 마리당 하나씩, 소환 순서대로의 레벨. 보스 씬에서 같은 요정을 되살린다.
+        public static int[] FairyLevels;
     }
 }
