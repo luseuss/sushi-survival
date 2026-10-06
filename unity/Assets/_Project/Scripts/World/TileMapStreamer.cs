@@ -66,16 +66,18 @@ namespace SushiSurvival.World
         [SerializeField] private RuinSet[] ruinSets;
 
         [Header("돌길")]
-        [Tooltip("돌길 조각 8종(각 9장). 하나라도 9장이 안 차면 길을 깔지 않는다. 비워두면 길 없음.")]
+        [Tooltip("돌길을 따로 그릴 타일맵. 길 조각은 32px(0.32유닛)이라 바닥과 칸 크기가 다르므로, 부모 Grid의 Cell Size를 0.32로 둔 별도 Grid 아래에 만들고 Order in Layer를 바닥·장식보다 크게 둔다. Grid는 원점(0,0,0)에 둔다. 비워두면 길 없음.")]
+        [SerializeField] private Tilemap roadTilemap;
+        [Tooltip("돌길 조각 8종(각 9장). 하나라도 9장이 안 차면 길을 깔지 않는다.")]
         [SerializeField] private RoadSprites roadSprites;
         [Tooltip("길 배치 규칙. 길은 블록(3×3 타일) 단위의 곧은 가로·세로 줄이다.")]
         [SerializeField] private RoadConfig roadConfig = new RoadConfig
         {
             blockSize = 3,
-            bandSize = 14,
-            bandChance = 0.6f,
+            bandSize = 15,
+            bandChance = 0.5f,
             segmentSize = 8,
-            segmentChance = 0.85f
+            segmentChance = 0.8f
         };
 
         [Header("바닥 장식")]
@@ -121,6 +123,7 @@ namespace SushiSurvival.World
         private Tile[] _decorTiles;
         private HashSet<Sprite> _grassSpriteSet;
         private Dictionary<RoadPiece, Tile[]> _roadTiles;
+        private readonly Dictionary<Vector2Int, BoundsInt> _roadBounds = new Dictionary<Vector2Int, BoundsInt>();
 
         private TileBase[] _patternTiles;
         private BoundsInt _patternBounds;
@@ -165,7 +168,7 @@ namespace SushiSurvival.World
             _grassDetailTiles = BuildTiles(grassDetailSprites);
             _sandTiles = BuildTiles(sandSprites);
             _ruinTileSets = BuildRuinSets();
-            _roadTiles = BuildRoadTiles();
+            _roadTiles = roadTilemap != null ? BuildRoadTiles() : null;
             _decorTiles = decorTilemap != null ? BuildTiles(decorSprites) : new Tile[0];
             _grassSpriteSet = new HashSet<Sprite>(grassSprites ?? new Sprite[0]);
 
@@ -247,9 +250,6 @@ namespace SushiSurvival.World
                         ? painted
                         : ResolveTile(TilePicker.Pick(cellX, cellY, _activeSeed, _config));
 
-                    TileBase road = ResolveRoadTile(cellX, cellY);
-                    if (road != null) ground = road;
-
                     tiles[y * chunkSize + x] = ground;
 
                     if (decors != null && IsBaseGround(ground))
@@ -265,6 +265,50 @@ namespace SushiSurvival.World
 
             if (decors != null)
                 decorTilemap.SetTilesBlock(bounds, decors);
+
+            FillRoadChunk(chunk);
+        }
+
+        /// <summary>
+        /// 청크가 덮는 월드 영역 안의 길 칸을 roadTilemap에 깐다. 길 칸의 중심이 청크 안에 있는 칸만
+        /// 맡으므로 이웃 청크와 겹치거나 비지 않는다. Grid가 원점에 있다고 가정한다.
+        /// </summary>
+        private void FillRoadChunk(Vector2Int chunk)
+        {
+            if (_roadTiles == null) return;
+
+            float cell = roadTilemap.layoutGrid.cellSize.x;
+            float worldMinX = chunk.x * chunkSize * tileSize;
+            float worldMinY = chunk.y * chunkSize * tileSize;
+            float worldSize = chunkSize * tileSize;
+
+            int minX = Mathf.CeilToInt(worldMinX / cell - 0.5f);
+            int minY = Mathf.CeilToInt(worldMinY / cell - 0.5f);
+            int countX = Mathf.CeilToInt((worldMinX + worldSize) / cell - 0.5f) - minX;
+            int countY = Mathf.CeilToInt((worldMinY + worldSize) / cell - 0.5f) - minY;
+
+            var bounds = new BoundsInt(minX, minY, 0, countX, countY, 1);
+            var tiles = new TileBase[countX * countY];
+            int block = roadConfig.blockSize;
+
+            for (int y = 0; y < countY; y++)
+            {
+                for (int x = 0; x < countX; x++)
+                {
+                    int cellX = minX + x;
+                    int cellY = minY + y;
+
+                    RoadPiece piece = RoadNetworkLogic.ChoosePiece(
+                        RoadNetworkLogic.ToBlock(cellX, block), RoadNetworkLogic.ToBlock(cellY, block),
+                        _activeSeed, roadConfig);
+
+                    if (piece != RoadPiece.None)
+                        tiles[y * countX + x] = _roadTiles[piece][RoadNetworkLogic.SpriteIndex(cellX, cellY, block)];
+                }
+            }
+
+            roadTilemap.SetTilesBlock(bounds, tiles);
+            _roadBounds[chunk] = bounds;
         }
 
         private void ClearChunk(Vector2Int chunk)
@@ -274,6 +318,12 @@ namespace SushiSurvival.World
 
             if (_decorTiles.Length > 0)
                 decorTilemap.SetTilesBlock(bounds, new TileBase[chunkSize * chunkSize]);
+
+            if (_roadBounds.TryGetValue(chunk, out BoundsInt roadBounds))
+            {
+                roadTilemap.SetTilesBlock(roadBounds, new TileBase[roadBounds.size.x * roadBounds.size.y]);
+                _roadBounds.Remove(chunk);
+            }
         }
 
         /// <summary>
@@ -300,21 +350,6 @@ namespace SushiSurvival.World
                 default:
                     return Pick(_grassTiles, choice.Index);
             }
-        }
-
-        /// <summary>이 칸이 길이면 해당 조각의 타일, 아니면 null. 길은 손칠 패턴·유적보다 우선한다.</summary>
-        private TileBase ResolveRoadTile(int cellX, int cellY)
-        {
-            if (_roadTiles == null) return null;
-
-            int size = roadConfig.blockSize;
-            RoadPiece piece = RoadNetworkLogic.ChoosePiece(
-                RoadNetworkLogic.ToBlock(cellX, size), RoadNetworkLogic.ToBlock(cellY, size),
-                _activeSeed, roadConfig);
-
-            if (piece == RoadPiece.None) return null;
-
-            return _roadTiles[piece][RoadNetworkLogic.SpriteIndex(cellX, cellY, size)];
         }
 
         /// <summary>8종이 모두 블록 칸 수(기본 9장)만큼 채워졌을 때만 만든다. 하나라도 모자라면 길을 포기한다.</summary>
