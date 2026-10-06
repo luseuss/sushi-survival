@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5143e40507e138144ab8faedd206b9b7, type: 3}
+  m_Name: FairyWeaponData
+  m_EditorClassIdentifier: 
+  weaponName: "\uC694\uC815"
+  isMelee: 0
+  projectilePrefab: {fileID: 0}
+  levels:
+  - damage: 4
+    cooldown: 1.2
+    range: 6
+    angleDegrees: 0
+    pierceCount: 0
+  - damage: 5
+    cooldown: 1.1
+    range: 6
+    angleDegrees: 0
+    pierceCount: 0
+  - damage: 6
+    cooldown: 1
+    range: 7
+    angleDegrees: 0
+    pierceCount: 1
+  - damage: 8
+    cooldown: 0.9
+    range: 7
+    angleDegrees: 0
+    pierceCount: 1
