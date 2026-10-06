@@ -74,10 +74,10 @@ namespace SushiSurvival.World
         [SerializeField] private RoadConfig roadConfig = new RoadConfig
         {
             blockSize = 3,
-            bandSize = 14,
-            bandChance = 0.6f,
+            bandSize = 15,
+            bandChance = 0.5f,
             segmentSize = 8,
-            segmentChance = 0.85f
+            segmentChance = 0.8f
         };
 
         [Header("바닥 장식")]

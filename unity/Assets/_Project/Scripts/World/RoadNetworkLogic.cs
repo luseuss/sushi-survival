@@ -52,10 +52,10 @@ namespace SushiSurvival.World
         public static RoadConfig DefaultConfig => new RoadConfig
         {
             blockSize = 3,
-            bandSize = 14,
-            bandChance = 0.6f,
+            bandSize = 15,
+            bandChance = 0.5f,
             segmentSize = 8,
-            segmentChance = 0.85f
+            segmentChance = 0.8f
         };
 
         public static int ToBlock(int cell, int blockSize) => FloorDiv(cell, AtLeastOne(blockSize));
