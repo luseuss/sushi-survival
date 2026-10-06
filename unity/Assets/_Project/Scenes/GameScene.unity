@@ -4486,6 +4486,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panel: {fileID: 760529370}
   royalWasabiController: {fileID: 1952699064}
+  royalWasabiEnabled: 1
+  fairyController: {fileID: 2066658777}
+  fairyIcon: {fileID: 0}
   attackDamageAugment: {fileID: 11400000, guid: bf6470ca0d7e6b94d88b6e4964f3f112, type: 2}
   attackSpeedAugment: {fileID: 11400000, guid: 4a11df250143f904ab55a4c91725671f, type: 2}
   moveSpeedAugment: {fileID: 11400000, guid: 842843cb27d17c44c8354040618e72fe, type: 2}
@@ -8048,6 +8051,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1389100837}
   m_CullTransparentMesh: 1
+--- !u!1 &1395359039
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1395359041}
+  - component: {fileID: 1395359040}
+  m_Layer: 0
+  m_Name: FairyProjectilePool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1395359040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395359039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea48f82176864245bf63358b74d9dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 4286611495950414034, guid: 97ff20f111858304abcb9a905993bc79, type: 3}
+  prewarmCount: 20
+--- !u!4 &1395359041
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395359039}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 871.6766, y: 664.612, z: -0.8185644}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1397185890
 GameObject:
   m_ObjectHideFlags: 0
@@ -10153,6 +10202,7 @@ MonoBehaviour:
   drawMessage: "\uBE44\uACBC\uB2E4! \uB2E4\uC2DC \uC2B9\uBD80!"
   revealDelay: 0.4
   drawRetryDelay: 0.8
+  winChance: 0.4
 --- !u!1 &1991309053
 GameObject:
   m_ObjectHideFlags: 0
@@ -10881,6 +10931,63 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -255}
   m_SizeDelta: {x: 1000, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2066658776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2066658778}
+  - component: {fileID: 2066658777}
+  m_Layer: 0
+  m_Name: FairySystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2066658777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066658776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c9c8992a024644699b17ade6cc1ff8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fairyData: {fileID: 11400000, guid: a10c7586920913848a895dc17153fa3d, type: 2}
+  projectilePool: {fileID: 1395359040}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  fairyPrefab: {fileID: 0}
+  maxFairies: 3
+  motion:
+    radius: 1.2
+    arcSpacingDegrees: 60
+    bobAmplitude: 0.12
+    bobSpeed: 3
+    followSharpness: 6
+--- !u!4 &2066658778
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066658776}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 871.6766, y: 664.612, z: -0.8185644}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2070778399
 GameObject:
   m_ObjectHideFlags: 0
@@ -21648,3 +21755,5 @@ SceneRoots:
   - {fileID: 841588578}
   - {fileID: 324441048}
   - {fileID: 1001428978}
+  - {fileID: 1395359041}
+  - {fileID: 2066658778}

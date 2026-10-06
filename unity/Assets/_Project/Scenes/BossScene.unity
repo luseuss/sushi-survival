@@ -668,6 +668,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 224804126}
   m_CullTransparentMesh: 1
+--- !u!1 &233530630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 233530632}
+  - component: {fileID: 233530631}
+  m_Layer: 0
+  m_Name: FairySystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &233530631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233530630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c9c8992a024644699b17ade6cc1ff8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fairyData: {fileID: 11400000, guid: a10c7586920913848a895dc17153fa3d, type: 2}
+  projectilePool: {fileID: 2133434364}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  fairyPrefab: {fileID: 0}
+  maxFairies: 3
+  motion:
+    radius: 1.2
+    arcSpacingDegrees: 60
+    bobAmplitude: 0.12
+    bobSpeed: 3
+    followSharpness: 6
+--- !u!4 &233530632
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233530630}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 871.6766, y: 664.612, z: -0.8185644}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &239794390
 GameObject:
   m_ObjectHideFlags: 0
@@ -1412,6 +1469,9 @@ MonoBehaviour:
   portraitImage: {fileID: 1328409158}
   flavorText: {fileID: 1511769690}
   resultText: {fileID: 1600495704}
+  buffListText: {fileID: 0}
+  dimOverlay: {fileID: 0}
+  haloImage: {fileID: 0}
   confirmButtonRoot: {fileID: 750886799}
   confirmButton: {fileID: 524373069}
   flavorDuration: 1.2
@@ -1419,6 +1479,18 @@ MonoBehaviour:
     \uC54C\uD604\uD569\uB2C8\uB2E4..."
   successMessage: "\uBE5B\uB098\uB294 \uC640\uC0AC\uBE44\uB97C \uD558\uC0AC\uBC1B\uC558\uB2E4!"
   failureMessage: "\uC624\uB298\uC740 \uBE48\uC190\uC73C\uB85C \uB3CC\uC544\uC654\uB2E4..."
+  dimColor: {r: 0.3, g: 0, b: 0, a: 0.45}
+  flashColor: {r: 1, g: 0.9, b: 0.7, a: 0.6}
+  flashSeconds: 0.15
+  desaturateColor: {r: 0.3, g: 0.3, b: 0.3, a: 0.55}
+  desaturateSeconds: 0.35
+  entranceShakeMagnitude: 0.12
+  entranceShakeSeconds: 0.15
+  defeatShakeMagnitude: 0.2
+  defeatShakeSeconds: 0.2
+  buffLineInterval: 0.35
+  haloPulseSeconds: 0.6
+  haloMaxScale: 1.6
 --- !u!1 &450978056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1951,6 +2023,22 @@ MonoBehaviour:
   grassDetailSprites: []
   sandSprites: []
   ruinSets: []
+  roadTilemap: {fileID: 0}
+  roadSprites:
+    full: []
+    horizontal: []
+    vertical: []
+    capLeft: []
+    capRight: []
+    capTop: []
+    capBottom: []
+    cross: []
+  roadConfig:
+    blockSize: 3
+    bandSize: 15
+    bandChance: 0.5
+    segmentSize: 8
+    segmentChance: 0.8
   decorTilemap: {fileID: 338681550}
   decorSprites:
   - {fileID: 21300000, guid: dade1157e158f2248a89444224ab1869, type: 3}
@@ -15257,6 +15345,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panel: {fileID: 1240316977}
   royalWasabiController: {fileID: 1952699064}
+  royalWasabiEnabled: 1
+  fairyController: {fileID: 233530631}
+  fairyIcon: {fileID: 0}
   attackDamageAugment: {fileID: 0}
   attackSpeedAugment: {fileID: 0}
   moveSpeedAugment: {fileID: 0}
@@ -16165,6 +16256,22 @@ MonoBehaviour:
   grassDetailSprites: []
   sandSprites: []
   ruinSets: []
+  roadTilemap: {fileID: 0}
+  roadSprites:
+    full: []
+    horizontal: []
+    vertical: []
+    capLeft: []
+    capRight: []
+    capTop: []
+    capBottom: []
+    cross: []
+  roadConfig:
+    blockSize: 3
+    bandSize: 15
+    bandChance: 0.5
+    segmentSize: 8
+    segmentChance: 0.8
   decorTilemap: {fileID: 0}
   decorSprites: []
   decorChance: 0.06
@@ -17102,6 +17209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rpsPanel: {fileID: 1985112194}
   panel: {fileID: 428371845}
+  revealHitstopDuration: 0.05
 --- !u!4 &1952699065
 Transform:
   m_ObjectHideFlags: 0
@@ -17346,6 +17454,7 @@ MonoBehaviour:
   drawMessage: "\uBE44\uACBC\uB2E4! \uB2E4\uC2DC \uC2B9\uBD80!"
   revealDelay: 0.4
   drawRetryDelay: 0.8
+  winChance: 0.4
 --- !u!1 &1991309053
 GameObject:
   m_ObjectHideFlags: 0
@@ -17791,6 +17900,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2070778399}
   m_CullTransparentMesh: 1
+--- !u!1 &2133434363
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2133434365}
+  - component: {fileID: 2133434364}
+  m_Layer: 0
+  m_Name: FairyProjectilePool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2133434364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133434363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea48f82176864245bf63358b74d9dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 4286611495950414034, guid: 97ff20f111858304abcb9a905993bc79, type: 3}
+  prewarmCount: 20
+--- !u!4 &2133434365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133434363}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 871.6766, y: 664.612, z: -0.8185644}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &61276380588453242
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18612,3 +18767,5 @@ SceneRoots:
   - {fileID: 841588578}
   - {fileID: 1254244097}
   - {fileID: 1526232574}
+  - {fileID: 2133434365}
+  - {fileID: 233530632}
