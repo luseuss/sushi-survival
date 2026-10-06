@@ -41,6 +41,15 @@ namespace SushiSurvival.World
         [Tooltip("유적 세트 목록. 세트마다 9장씩. 패치 단위로 세트를 골라 섞는다.")]
         [SerializeField] private RuinSet[] ruinSets;
 
+        [Header("바닥 장식")]
+        [Tooltip("바닥 위에 덧그릴 장식용 타일맵(꽃·사막 뼈 등). 바닥 타일맵보다 위에 그려지도록 Order in Layer를 더 크게 둔다. 비워두면 장식을 깔지 않는다.")]
+        [SerializeField] private Tilemap decorTilemap;
+        [Tooltip("장식 스프라이트. 확률에 걸린 바닥 칸마다 이 중 하나가 같은 확률로 뽑힌다. 바닥은 위의 잔디(기본 바닥) 스프라이트 칸에만 깐다.")]
+        [SerializeField] private Sprite[] decorSprites;
+        [Tooltip("기본 바닥 한 칸에 장식이 깔릴 확률. 0.06이면 열여섯 칸에 한 번쯤.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float decorChance = 0.06f;
+
         [Header("생성 규칙")]
         [Tooltip("타일 한 변의 월드 크기. Grid의 Cell Size와 반드시 같아야 한다.")]
         [SerializeField] private float tileSize = 0.32f;
@@ -72,6 +81,8 @@ namespace SushiSurvival.World
         private Tile[] _grassDetailTiles;
         private Tile[] _sandTiles;
         private Tile[][] _ruinTileSets;
+        private Tile[] _decorTiles;
+        private HashSet<Sprite> _grassSpriteSet;
 
         private TileBase[] _patternTiles;
         private BoundsInt _patternBounds;
@@ -116,6 +127,8 @@ namespace SushiSurvival.World
             _grassDetailTiles = BuildTiles(grassDetailSprites);
             _sandTiles = BuildTiles(sandSprites);
             _ruinTileSets = BuildRuinSets();
+            _decorTiles = decorTilemap != null ? BuildTiles(decorSprites) : new Tile[0];
+            _grassSpriteSet = new HashSet<Sprite>(grassSprites ?? new Sprite[0]);
 
             _config = new TileMixConfig
             {
@@ -178,6 +191,7 @@ namespace SushiSurvival.World
 
             var bounds = new BoundsInt(originX, originY, 0, chunkSize, chunkSize, 1);
             var tiles = new TileBase[chunkSize * chunkSize];
+            TileBase[] decors = _decorTiles.Length > 0 ? new TileBase[chunkSize * chunkSize] : null;
 
             for (int y = 0; y < chunkSize; y++)
             {
@@ -190,20 +204,41 @@ namespace SushiSurvival.World
                         ? _patternTiles[TilePattern.IndexOf(cellX, cellY, _patternBounds)]
                         : null;
 
-                    tiles[y * chunkSize + x] = painted != null
+                    TileBase ground = painted != null
                         ? painted
                         : ResolveTile(TilePicker.Pick(cellX, cellY, _activeSeed, _config));
+
+                    tiles[y * chunkSize + x] = ground;
+
+                    if (decors != null && IsBaseGround(ground))
+                    {
+                        int decor = TilePicker.PickDecor(cellX, cellY, _activeSeed, _decorTiles.Length, decorChance);
+                        if (decor >= 0)
+                            decors[y * chunkSize + x] = _decorTiles[decor];
+                    }
                 }
             }
 
             tilemap.SetTilesBlock(bounds, tiles);
+
+            if (decors != null)
+                decorTilemap.SetTilesBlock(bounds, decors);
         }
 
         private void ClearChunk(Vector2Int chunk)
         {
             var bounds = new BoundsInt(chunk.x * chunkSize, chunk.y * chunkSize, 0, chunkSize, chunkSize, 1);
             tilemap.SetTilesBlock(bounds, new TileBase[chunkSize * chunkSize]);
+
+            if (_decorTiles.Length > 0)
+                decorTilemap.SetTilesBlock(bounds, new TileBase[chunkSize * chunkSize]);
         }
+
+        /// <summary>
+        /// 장식은 기본 바닥(grassSprites) 위에만 깐다. 유적이나 이미 무늬가 그려진 손칠 타일 위에는 얹지 않는다.
+        /// </summary>
+        private bool IsBaseGround(TileBase tile)
+            => tile is Tile t && t.sprite != null && _grassSpriteSet.Contains(t.sprite);
 
         private TileBase ResolveTile(TileChoice choice)
         {
