@@ -50,6 +50,12 @@ namespace SushiSurvival.Weapons
             return true;
         }
 
+        /// <summary>
+        /// 강화 카드 설명을 무기별로 고쳐 쓸 기회. statText는 수치 비교로 자동 생성한 문구이고,
+        /// 기본은 그대로 돌려준다(연타·개수처럼 수치표에 없는 변화를 무기가 덧붙인다).
+        /// </summary>
+        public virtual string DescribeUpgrade(string statText) => statText;
+
         public void LevelUp()
         {
             if (!CanLevelUp) return;

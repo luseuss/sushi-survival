@@ -14,8 +14,8 @@ namespace SushiSurvival.Weapons
     {
         [Tooltip("궤도를 도는 우산 그림 오브젝트. 최대 5개, 레벨별로 앞에서부터 필요한 개수만 켠다.")]
         [SerializeField] private Transform[] umbrellas;
-        [Tooltip("레벨(1~4)별 우산 개수. 기획서 시작값: Lv1~2 4개, Lv3~4 5개.")]
-        [SerializeField] private int[] umbrellaCountByLevel = { 4, 4, 5, 5 };
+        [Tooltip("레벨(1~4)별 우산 개수. 아델린은 양산이 Lv3에서 우산으로 바뀌므로 Lv3 3개, Lv4 5개가 실제로 쓰인다(1~2번째 칸은 예비).")]
+        [SerializeField] private int[] umbrellaCountByLevel = { 3, 3, 3, 5 };
         [Tooltip("공격속도 배율 1.0 기준 회전 속도(초당 도).")]
         [SerializeField] private float rotationSpeedDegreesPerSecond = 360f;
         [Tooltip("우산 하나가 적을 스쳤다고 판정하는 반경.")]
@@ -58,12 +58,18 @@ namespace SushiSurvival.Weapons
         // (Update()를 통째로 오버라이드해서 base.Attack() 호출 경로 자체가 없다).
         protected override void Attack() { }
 
-        private int UmbrellaCountForLevel()
+        public override string DescribeUpgrade(string statText)
+            => UmbrellaProgressionLogic.DescribeUmbrellaCount(
+                statText, UmbrellaCountForLevel(currentLevel), UmbrellaCountForLevel(currentLevel + 1));
+
+        private int UmbrellaCountForLevel() => UmbrellaCountForLevel(currentLevel);
+
+        private int UmbrellaCountForLevel(int level)
         {
             if (umbrellaCountByLevel == null || umbrellaCountByLevel.Length == 0)
                 return umbrellas.Length;
 
-            int index = Mathf.Clamp(currentLevel - 1, 0, umbrellaCountByLevel.Length - 1);
+            int index = Mathf.Clamp(level - 1, 0, umbrellaCountByLevel.Length - 1);
             return Mathf.Min(umbrellaCountByLevel[index], umbrellas.Length);
         }
 

@@ -106,6 +106,8 @@ namespace SushiSurvival.UI
             _onRoyalWasabi = onRoyalWasabi;
             if (royalWasabiButton != null)
             {
+                // 콜백이 없으면(와사비 비활성) 버튼 자체를 숨긴다.
+                royalWasabiButton.gameObject.SetActive(onRoyalWasabi != null);
                 SetWasabiScale(0f);
                 royalWasabiButton.onClick.RemoveAllListeners();
                 royalWasabiButton.onClick.AddListener(HandleRoyalWasabiClicked);
