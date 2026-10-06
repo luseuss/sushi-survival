@@ -106,6 +106,9 @@ namespace SushiSurvival.Core
         /// </summary>
         public void Shake(float magnitude, float duration) => TriggerShake(magnitude, duration);
 
+        /// <summary>다른 연출(왕궁 와사비 가위바위보 공개 등)이 원하는 시간만큼 시간을 멈춘다.</summary>
+        public void Hitstop(float duration) => TriggerHitstop(duration);
+
         public void PlayerHit()
         {
             TriggerHitstop(playerHitStopDuration);

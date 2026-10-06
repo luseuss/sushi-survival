@@ -32,6 +32,7 @@ namespace SushiSurvival.UI
 
         private readonly System.Random _random = new System.Random();
         private Action<bool> _onResolved;
+        private Action _onReveal;
         private Coroutine _routine;
 
         private GameObject Root => root != null ? root : gameObject;
@@ -53,10 +54,13 @@ namespace SushiSurvival.UI
             if (_routine != null) StopCoroutine(_routine);
         }
 
-        /// <summary>승부가 확정되면(비김 제외) onResolved(true=승리)를 한 번 호출한다.</summary>
-        public void Show(Action<bool> onResolved)
+        /// <param name="onResolved">승부가 확정되면(비김 제외) true=승리로 한 번 호출된다.</param>
+        /// <param name="onReveal">상대 손을 밝히는 순간마다(비겨서 재대결해도 매번) 호출된다. 히트스톱·화면 번쩍임 같은
+        /// 연출을 걸 수 있게 알려주기만 하고, 이 패널 자신은 그 연출을 모른다.</param>
+        public void Show(Action<bool> onResolved, Action onReveal = null)
         {
             _onResolved = onResolved;
+            _onReveal = onReveal;
 
             Root.SetActive(true);
             SetButtonsInteractable(true);
@@ -80,6 +84,8 @@ namespace SushiSurvival.UI
             RpsHand opponentHand = (RpsHand)_random.Next(3);
 
             yield return new WaitForSecondsRealtime(revealDelay);
+
+            _onReveal?.Invoke();
 
             if (opponentHandText != null)
                 opponentHandText.text = ToDisplayName(opponentHand);

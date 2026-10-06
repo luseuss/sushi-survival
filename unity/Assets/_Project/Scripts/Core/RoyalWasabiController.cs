@@ -13,8 +13,14 @@ namespace SushiSurvival.Core
     {
         [SerializeField] private RockPaperScissorsPanel rpsPanel;
         [SerializeField] private RoyalWasabiPanel panel;
+        [Tooltip("가위바위보 손을 공개하는 순간 멈추는 시간(초).")]
+        [SerializeField] private float revealHitstopDuration = 0.05f;
 
-        public void Show(Sprite portrait, Action onSuccess, Action onComplete)
+        /// <param name="onSuccess">
+        /// 성공했을 때만 호출된다. 실제 보상을 적용하고, 결과 화면에 한 줄씩 보여줄 설명 목록을
+        /// 돌려준다(승리 연출용). 실패하면 아예 호출되지 않는다 — 위로 보상이 없기 때문이다.
+        /// </param>
+        public void Show(Sprite portrait, Func<string[]> onSuccess, Action onComplete)
         {
             if (panel == null || rpsPanel == null)
             {
@@ -35,16 +41,24 @@ namespace SushiSurvival.Core
                 {
                     rpsPanel.Hide();
 
-                    if (success)
-                        onSuccess?.Invoke();
+                    string[] appliedLines = success ? onSuccess?.Invoke() : null;
 
-                    panel.ShowResult(success, portrait, () =>
+                    panel.ShowResult(success, portrait, appliedLines, () =>
                     {
                         panel.Hide();
                         onComplete?.Invoke();
                     });
-                });
+                }, HandleReveal);
             });
+        }
+
+        /// <summary>가위바위보 손을 공개하는 순간마다 히트스톱+화면 번쩍임을 건다.</summary>
+        private void HandleReveal()
+        {
+            if (JuiceDirector.Instance != null)
+                JuiceDirector.Instance.Hitstop(revealHitstopDuration);
+
+            panel.FlashReveal();
         }
     }
 }
