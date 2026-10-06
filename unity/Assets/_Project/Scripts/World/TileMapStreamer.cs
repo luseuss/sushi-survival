@@ -15,6 +15,30 @@ namespace SushiSurvival.World
     }
 
     /// <summary>
+    /// 돌길 조각 묶음. 조각마다 3×3 = 9장이고 좌측 상단부터 오른쪽으로, 그다음 아랫줄 순서다.
+    /// 전부 9장이 채워져야 길을 깐다.
+    /// </summary>
+    [System.Serializable]
+    public class RoadSprites
+    {
+        public Sprite[] full;
+        [Tooltip("가로(좌우로 이어지는 길).")]
+        public Sprite[] horizontal;
+        [Tooltip("세로(위아래로 이어지는 길).")]
+        public Sprite[] vertical;
+        [Tooltip("길이 오른쪽으로만 이어지는 왼쪽 끝.")]
+        public Sprite[] capLeft;
+        [Tooltip("길이 왼쪽으로만 이어지는 오른쪽 끝.")]
+        public Sprite[] capRight;
+        [Tooltip("길이 아래로만 이어지는 위쪽 끝.")]
+        public Sprite[] capTop;
+        [Tooltip("길이 위로만 이어지는 아래쪽 끝.")]
+        public Sprite[] capBottom;
+        [Tooltip("사거리.")]
+        public Sprite[] cross;
+    }
+
+    /// <summary>
     /// 카메라 주변으로 타일을 채우고 멀어진 영역은 비운다. 타일은 좌표 해시로
     /// 결정론적으로 고르므로, 같은 자리로 돌아오면 같은 바닥이 나온다.
     /// </summary>
@@ -40,6 +64,19 @@ namespace SushiSurvival.World
         [SerializeField] private Sprite[] sandSprites;
         [Tooltip("유적 세트 목록. 세트마다 9장씩. 패치 단위로 세트를 골라 섞는다.")]
         [SerializeField] private RuinSet[] ruinSets;
+
+        [Header("돌길")]
+        [Tooltip("돌길 조각 8종(각 9장). 하나라도 9장이 안 차면 길을 깔지 않는다. 비워두면 길 없음.")]
+        [SerializeField] private RoadSprites roadSprites;
+        [Tooltip("길 배치 규칙. 길은 블록(3×3 타일) 단위의 곧은 가로·세로 줄이다.")]
+        [SerializeField] private RoadConfig roadConfig = new RoadConfig
+        {
+            blockSize = 3,
+            bandSize = 14,
+            bandChance = 0.6f,
+            segmentSize = 8,
+            segmentChance = 0.85f
+        };
 
         [Header("바닥 장식")]
         [Tooltip("바닥 위에 덧그릴 장식용 타일맵(꽃·사막 뼈 등). 바닥 타일맵보다 위에 그려지도록 Order in Layer를 더 크게 둔다. 비워두면 장식을 깔지 않는다.")]
@@ -83,6 +120,7 @@ namespace SushiSurvival.World
         private Tile[][] _ruinTileSets;
         private Tile[] _decorTiles;
         private HashSet<Sprite> _grassSpriteSet;
+        private Dictionary<RoadPiece, Tile[]> _roadTiles;
 
         private TileBase[] _patternTiles;
         private BoundsInt _patternBounds;
@@ -127,6 +165,7 @@ namespace SushiSurvival.World
             _grassDetailTiles = BuildTiles(grassDetailSprites);
             _sandTiles = BuildTiles(sandSprites);
             _ruinTileSets = BuildRuinSets();
+            _roadTiles = BuildRoadTiles();
             _decorTiles = decorTilemap != null ? BuildTiles(decorSprites) : new Tile[0];
             _grassSpriteSet = new HashSet<Sprite>(grassSprites ?? new Sprite[0]);
 
@@ -208,6 +247,9 @@ namespace SushiSurvival.World
                         ? painted
                         : ResolveTile(TilePicker.Pick(cellX, cellY, _activeSeed, _config));
 
+                    TileBase road = ResolveRoadTile(cellX, cellY);
+                    if (road != null) ground = road;
+
                     tiles[y * chunkSize + x] = ground;
 
                     if (decors != null && IsBaseGround(ground))
@@ -258,6 +300,76 @@ namespace SushiSurvival.World
                 default:
                     return Pick(_grassTiles, choice.Index);
             }
+        }
+
+        /// <summary>이 칸이 길이면 해당 조각의 타일, 아니면 null. 길은 손칠 패턴·유적보다 우선한다.</summary>
+        private TileBase ResolveRoadTile(int cellX, int cellY)
+        {
+            if (_roadTiles == null) return null;
+
+            int size = roadConfig.blockSize;
+            RoadPiece piece = RoadNetworkLogic.ChoosePiece(
+                RoadNetworkLogic.ToBlock(cellX, size), RoadNetworkLogic.ToBlock(cellY, size),
+                _activeSeed, roadConfig);
+
+            if (piece == RoadPiece.None) return null;
+
+            return _roadTiles[piece][RoadNetworkLogic.SpriteIndex(cellX, cellY, size)];
+        }
+
+        /// <summary>8종이 모두 블록 칸 수(기본 9장)만큼 채워졌을 때만 만든다. 하나라도 모자라면 길을 포기한다.</summary>
+        private Dictionary<RoadPiece, Tile[]> BuildRoadTiles()
+        {
+            if (roadSprites == null) return null;
+
+            int needed = Mathf.Max(1, roadConfig.blockSize) * Mathf.Max(1, roadConfig.blockSize);
+
+            var sets = new Dictionary<RoadPiece, Sprite[]>
+            {
+                { RoadPiece.Full, roadSprites.full },
+                { RoadPiece.Horizontal, roadSprites.horizontal },
+                { RoadPiece.Vertical, roadSprites.vertical },
+                { RoadPiece.CapLeft, roadSprites.capLeft },
+                { RoadPiece.CapRight, roadSprites.capRight },
+                { RoadPiece.CapTop, roadSprites.capTop },
+                { RoadPiece.CapBottom, roadSprites.capBottom },
+                { RoadPiece.Cross, roadSprites.cross }
+            };
+
+            var result = new Dictionary<RoadPiece, Tile[]>();
+            foreach (KeyValuePair<RoadPiece, Sprite[]> pair in sets)
+            {
+                Sprite[] sprites = pair.Value;
+                if (sprites == null || sprites.Length < needed)
+                {
+                    if (HasAnyRoadSprite())
+                        Debug.LogWarning($"{name}: 돌길 {pair.Key}이 {needed}장을 채우지 못해 길을 깔지 않습니다.");
+                    return null;
+                }
+
+                foreach (Sprite sprite in sprites)
+                {
+                    if (sprite != null) continue;
+                    Debug.LogWarning($"{name}: 돌길 {pair.Key}에 빈 스프라이트 칸이 있어 길을 깔지 않습니다.");
+                    return null;
+                }
+
+                result[pair.Key] = BuildTiles(sprites);
+            }
+
+            return result;
+        }
+
+        private bool HasAnyRoadSprite()
+        {
+            return (roadSprites.full != null && roadSprites.full.Length > 0)
+                || (roadSprites.horizontal != null && roadSprites.horizontal.Length > 0)
+                || (roadSprites.vertical != null && roadSprites.vertical.Length > 0)
+                || (roadSprites.capLeft != null && roadSprites.capLeft.Length > 0)
+                || (roadSprites.capRight != null && roadSprites.capRight.Length > 0)
+                || (roadSprites.capTop != null && roadSprites.capTop.Length > 0)
+                || (roadSprites.capBottom != null && roadSprites.capBottom.Length > 0)
+                || (roadSprites.cross != null && roadSprites.cross.Length > 0);
         }
 
         private Tile Pick(Tile[] tiles, int index)
