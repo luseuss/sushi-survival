@@ -36,6 +36,70 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
+        public void PickDecor_NeverPlaces_WhenChanceIsZero()
+        {
+            for (int x = -20; x < 20; x++)
+                for (int y = -20; y < 20; y++)
+                    Assert.AreEqual(-1, TilePicker.PickDecor(x, y, 7, 4, 0f));
+        }
+
+        [Test]
+        public void PickDecor_NeverPlaces_WhenThereAreNoSprites()
+        {
+            Assert.AreEqual(-1, TilePicker.PickDecor(3, 4, 7, 0, 1f));
+        }
+
+        [Test]
+        public void PickDecor_AlwaysPlacesWithinRange_WhenChanceIsOne()
+        {
+            for (int x = -20; x < 20; x++)
+            {
+                for (int y = -20; y < 20; y++)
+                {
+                    int index = TilePicker.PickDecor(x, y, 7, 4, 1f);
+                    Assert.GreaterOrEqual(index, 0);
+                    Assert.Less(index, 4);
+                }
+            }
+        }
+
+        [Test]
+        public void PickDecor_IsDeterministic_ForSameCoordinate()
+        {
+            Assert.AreEqual(TilePicker.PickDecor(17, -23, 5, 4, 0.5f),
+                            TilePicker.PickDecor(17, -23, 5, 4, 0.5f));
+        }
+
+        [Test]
+        public void PickDecor_Frequency_MatchesChance()
+        {
+            const int size = 200;
+            int placed = 0;
+
+            for (int x = 0; x < size; x++)
+                for (int y = 0; y < size; y++)
+                    if (TilePicker.PickDecor(x, y, 11, 4, 0.1f) >= 0) placed++;
+
+            float ratio = placed / (float)(size * size);
+            Assert.That(ratio, Is.InRange(0.08f, 0.12f));
+        }
+
+        [Test]
+        public void PickDecor_UsesEveryDecorKind()
+        {
+            var seen = new System.Collections.Generic.HashSet<int>();
+
+            for (int x = 0; x < 100; x++)
+                for (int y = 0; y < 100; y++)
+                {
+                    int index = TilePicker.PickDecor(x, y, 3, 4, 0.5f);
+                    if (index >= 0) seen.Add(index);
+                }
+
+            Assert.AreEqual(4, seen.Count);
+        }
+
+        [Test]
         public void Pick_IsDeterministic_ForSameCoordinate()
         {
             var config = Config(0.08f, 0.04f);

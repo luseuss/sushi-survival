@@ -64,6 +64,22 @@ namespace SushiSurvival.World
         private const int GrassDetailSeedOffset = 86028121;
         private const int GrassDetailIndexSeedOffset = 104395301;
 
+        private const int DecorSeedOffset = 122949823;
+        private const int DecorIndexSeedOffset = 141650939;
+
+        /// <summary>
+        /// 바닥 위에 덧그릴 장식(꽃·뼈 등)을 고른다. 이 칸에 장식이 없으면 -1, 있으면 0~decorCount-1.
+        /// 바닥 종류와는 별개 판정이라 바닥 선택 결과를 바꾸지 않는다.
+        /// </summary>
+        public static int PickDecor(int x, int y, int seed, int decorCount, float chance)
+        {
+            if (decorCount <= 0 || chance <= 0f) return -1;
+
+            if (TileHash.Normalized(x, y, seed + DecorSeedOffset) >= chance) return -1;
+
+            return TileHash.Index(x, y, seed + DecorIndexSeedOffset, decorCount);
+        }
+
         public static TileChoice Pick(int x, int y, int seed, TileMixConfig config)
         {
             int ruinSize = AtLeastOne(config.ruinSize);
