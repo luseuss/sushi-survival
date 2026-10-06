@@ -20,6 +20,12 @@ namespace SushiSurvival.UI
         [Tooltip("증강 항목이 생성될 부모. Horizontal Layout Group을 붙여두면 자동 정렬된다.")]
         [SerializeField] private Transform augmentListRoot;
         [SerializeField] private ResultAugmentEntry augmentEntryPrefab;
+        [Tooltip("와사비를 받았을 때 증강 목록 맨 끝에 같이 보여줄 아이콘. 비워두면 와사비는 표시하지 않는다.")]
+        [SerializeField] private Sprite wasabiIcon;
+        [Tooltip("증강 아이콘 뒤에 깔리는 두루마리. 9-slice(Sliced) 이미지여야 아이콘 개수만큼 좌우로 늘어난다. 비워두면 크기를 조정하지 않는다.")]
+        [SerializeField] private RectTransform augmentListBackground;
+        [Tooltip("아이콘 묶음 테두리 바깥으로 배경이 더 나오는 여백(px). x는 좌우 각각, y는 위아래 각각. 두루마리 말린 끝이 아이콘을 가리지 않게 그림의 테두리보다 크게 둔다.")]
+        [SerializeField] private Vector2 augmentListBackgroundPadding = new Vector2(60f, 40f);
         [SerializeField] private Button restartButton;
 
         private readonly List<ResultAugmentEntry> _spawnedEntries = new List<ResultAugmentEntry>();
@@ -39,7 +45,7 @@ namespace SushiSurvival.UI
         }
 
         public void Show(RunOutcome outcome, float elapsed, int level, int kills,
-                           IReadOnlyList<AugmentCount> augments)
+                           IReadOnlyList<AugmentCount> augments, int wasabiCount = 0)
         {
             Root.SetActive(true);
 
@@ -55,7 +61,7 @@ namespace SushiSurvival.UI
             if (killCountText != null)
                 killCountText.text = $"처치 수  {kills}";
 
-            BuildAugmentList(augments);
+            BuildAugmentList(augments, wasabiCount);
             ShowTraitLine(outcome);
         }
 
@@ -79,7 +85,7 @@ namespace SushiSurvival.UI
                 traitText.text = $"[{entry.displayName}] {line}";
         }
 
-        private void BuildAugmentList(IReadOnlyList<AugmentCount> augments)
+        private void BuildAugmentList(IReadOnlyList<AugmentCount> augments, int wasabiCount)
         {
             if (augmentListRoot == null || augmentEntryPrefab == null) return;
 
@@ -95,6 +101,47 @@ namespace SushiSurvival.UI
                 ResultAugmentEntry entry = Instantiate(augmentEntryPrefab, augmentListRoot);
                 entry.Bind(augment);
                 _spawnedEntries.Add(entry);
+            }
+
+            if (wasabiCount > 0 && wasabiIcon != null)
+            {
+                ResultAugmentEntry wasabiEntry = Instantiate(augmentEntryPrefab, augmentListRoot);
+                wasabiEntry.Bind(wasabiIcon, wasabiCount);
+                _spawnedEntries.Add(wasabiEntry);
+            }
+
+            FitAugmentRow();
+        }
+
+        /// <summary>
+        /// 아이콘 줄의 폭을 실제 개수만큼으로 맞추고 배경을 그 주위로 늘린다. 줄의 틀(augmentListRoot)을
+        /// 줄 폭과 같게 줄여야 중앙 기준으로 좌우 대칭이 된다 — 틀이 고정 크기면 HorizontalLayoutGroup이
+        /// 아이콘을 틀의 왼쪽 끝부터 채워서 개수가 늘수록 줄이 오른쪽으로 치우친다.
+        /// </summary>
+        private void FitAugmentRow()
+        {
+            int count = _spawnedEntries.Count;
+
+            if (augmentListBackground != null)
+                augmentListBackground.gameObject.SetActive(count > 0);
+
+            if (count == 0) return;
+
+            RectTransform entryRect = augmentEntryPrefab.GetComponent<RectTransform>();
+            var layout = augmentListRoot.GetComponent<HorizontalLayoutGroup>();
+            float spacing = layout != null ? layout.spacing : 0f;
+            RectOffset padding = layout != null ? layout.padding : new RectOffset();
+
+            float rowWidth = padding.left + padding.right + count * entryRect.sizeDelta.x + (count - 1) * spacing;
+            float rowHeight = padding.top + padding.bottom + entryRect.sizeDelta.y;
+
+            ((RectTransform)augmentListRoot).sizeDelta = new Vector2(rowWidth, rowHeight);
+
+            if (augmentListBackground != null)
+            {
+                augmentListBackground.sizeDelta = new Vector2(
+                    rowWidth + augmentListBackgroundPadding.x * 2f,
+                    rowHeight + augmentListBackgroundPadding.y * 2f);
             }
         }
 

@@ -117,7 +117,8 @@ namespace SushiSurvival.Enemies.Boss
                         RunResultCarrier.CurrentLevel,
                         RunResultCarrier.CurrentExperience,
                         RunResultCarrier.PickedAugments,
-                        RunResultCarrier.ExternalBuffs);
+                        RunResultCarrier.ExternalBuffs,
+                        RunResultCarrier.WasabiCount);
                 }
             }
 
@@ -145,6 +146,10 @@ namespace SushiSurvival.Enemies.Boss
                     {
                         Debug.LogError($"{eggWeapon.name}: RotatingUmbrellaWeapon 컴포넌트가 없어 우산 상태를 복원할 수 없습니다.");
                     }
+                }
+                else if (RunResultCarrier.WasabiWeaponConverted && weapon is ShrimpRifleWeapon rifle)
+                {
+                    rifle.EnableShotgun();
                 }
 
                 while (weapon.CurrentLevel < RunResultCarrier.WeaponLevel && weapon.CanLevelUp)
