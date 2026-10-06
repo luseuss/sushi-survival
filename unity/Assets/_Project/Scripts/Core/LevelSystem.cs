@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using SushiSurvival.Companions;
 using SushiSurvival.Data;
 using SushiSurvival.Player;
 using SushiSurvival.UI;
@@ -35,8 +36,12 @@ namespace SushiSurvival.Core
 
         [SerializeField] private LevelUpPanel panel;
         [SerializeField] private RoyalWasabiController royalWasabiController;
-        [Tooltip("꺼두면 레벨업 팝업에서 와사비 버튼이 숨겨진다. 새 보상(요정) 작업이 끝날 때까지 꺼둔다.")]
-        [SerializeField] private bool royalWasabiEnabled = false;
+        [Tooltip("꺼두면 레벨업 팝업에서 와사비 버튼이 숨겨진다.")]
+        [SerializeField] private bool royalWasabiEnabled = true;
+        [Tooltip("와사비 성공 보상으로 소환·강화하는 요정 시스템. 비워두면 요정 대신 스탯 버프를 준다.")]
+        [SerializeField] private FairyController fairyController;
+        [Tooltip("요정 선택 카드에 쓸 아이콘. 비워도 동작한다.")]
+        [SerializeField] private Sprite fairyIcon;
         [Tooltip("아델린이 아닌 캐릭터의 와사비 성공 보상(스탯 버프) 대상 증강 4종.")]
         [SerializeField] private AugmentData attackDamageAugment;
         [SerializeField] private AugmentData attackSpeedAugment;
@@ -88,6 +93,18 @@ namespace SushiSurvival.Core
         private float _xpTowardNext;
         private int _pendingLevelUps;
         private bool _panelOpen;
+        private bool _fairyRewardPending;
+
+        /// <summary>현재 요정들의 레벨(소환 순서). 요정 시스템이 없으면 빈 목록. 보스 씬 이월용.</summary>
+        public IReadOnlyList<int> FairyLevels
+            => fairyController != null ? fairyController.Levels : (IReadOnlyList<int>)Array.Empty<int>();
+
+        /// <summary>보스 씬에서 이전 씬의 요정을 같은 레벨로 되살린다. SetPlayer 뒤에 불러야 한다.</summary>
+        public void RestoreFairies(IReadOnlyList<int> levels)
+        {
+            if (fairyController != null)
+                fairyController.Restore(levels);
+        }
 
         public void SetPlayer(PlayerStats stats, PlayerHealth health, WeaponBase weapon, Sprite portrait)
         {
@@ -95,6 +112,9 @@ namespace SushiSurvival.Core
             _playerHealth = health;
             _weapon = weapon;
             _portrait = portrait;
+
+            if (fairyController != null && stats != null)
+                fairyController.SetPlayer(stats.transform, stats);
         }
 
         /// <summary>
@@ -212,18 +232,66 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            Func<string[]> onSuccess = _weapon switch
-            {
-                EggFanWeapon => (Func<string[]>)ConvertToUmbrella,
-                ShrimpRifleWeapon => (Func<string[]>)ConvertToShotgun,
-                _ => (Func<string[]>)ApplyRoyalWasabiStatBuffs
-            };
+            bool hasFairyReward = fairyController != null && fairyController.BuildChoices().Count > 0;
+            _fairyRewardPending = false;
 
             royalWasabiController.Show(_portrait, () =>
             {
                 WasabiCount++;
-                return onSuccess();
-            }, ShowNext);
+
+                if (hasFairyReward)
+                {
+                    _fairyRewardPending = true;
+                    return new[] { "요정의 힘을 얻었다!" };
+                }
+
+                // 요정 시스템이 없거나 모두 최대 레벨이면 성공이 헛되지 않게 스탯 버프를 준다.
+                return ApplyRoyalWasabiStatBuffs();
+            }, HandleRoyalWasabiFinished);
+        }
+
+        private void HandleRoyalWasabiFinished()
+        {
+            if (_fairyRewardPending)
+            {
+                _fairyRewardPending = false;
+                ShowFairyChoice();
+                return;
+            }
+
+            ShowNext();
+        }
+
+        /// <summary>
+        /// 와사비 성공 직후 "요정 소환/강화"를 레벨업 카드로 고르게 한다. _panelOpen과 timeScale 0은
+        /// 와사비 연출 때부터 그대로 이어지고, 선택이 끝나면 기존 대기 레벨업 큐(ShowNext)로 합류한다.
+        /// </summary>
+        private void ShowFairyChoice()
+        {
+            var options = new List<IUpgradeOption>();
+            if (fairyController != null)
+            {
+                foreach (FairyChoice choice in fairyController.BuildChoices())
+                    options.Add(new FairyOption(fairyController, choice, fairyIcon));
+            }
+
+            if (options.Count == 0)
+            {
+                ShowNext();
+                return;
+            }
+
+            panel.Show(options, OnFairyChosen, null);
+        }
+
+        private void OnFairyChosen(IUpgradeOption option)
+        {
+            option.Apply();
+
+            panel.Hide();
+            _panelOpen = false;
+
+            ShowNext();
         }
 
         /// <summary>아델린 전용 — 계란 양산을 회전 우산으로 바꾼다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>

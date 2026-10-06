@@ -320,6 +320,7 @@ namespace SushiSurvival.Core
                 RunResultCarrier.PickedAugments = new List<AugmentData>(levelSystem.PickedAugments);
                 RunResultCarrier.ExternalBuffs = new List<AugmentBuff>(levelSystem.ExternalBuffs);
                 RunResultCarrier.WasabiCount = levelSystem.WasabiCount;
+                RunResultCarrier.FairyLevels = new List<int>(levelSystem.FairyLevels).ToArray();
             }
 
             if (_playerTransform != null)
