@@ -179,6 +179,27 @@ namespace SushiSurvival.Core
             _externalBuffs.Add(new AugmentBuff(augment, amount));
         }
 
+        /// <summary>
+        /// 치트 레벨업. 한 레벨을 바로 올려 정상 레벨업과 같은 경로로 선택 팝업을 띄운다.
+        /// 팝업이 떠 있거나 보스 등장 연출 중(timeScale != 1)이면 무시한다.
+        /// </summary>
+        public bool CheatLevelUp()
+        {
+            GameManager manager = GameManager.Instance;
+            bool isPlaying = manager != null && manager.CurrentState == RunState.Playing;
+            if (!isPlaying || IsShowingPopup || !Mathf.Approximately(Time.timeScale, 1f))
+            {
+                Debug.Log($"[LevelSystem] 치트 레벨업 무시됨 (Playing={isPlaying}, 팝업={IsShowingPopup}, timeScale={Time.timeScale})");
+                return false;
+            }
+
+            // 소수 오차로 한 레벨에 살짝 못 미치지 않도록, 더하지 않고 필요량으로 딱 맞춘 뒤 처리한다.
+            _xpTowardNext = LevelCurve.GetRequiredXp(CurrentLevel, baseXp, xpIncrementPerLevel);
+            Debug.Log("[LevelSystem] 치트 레벨업");
+            AddExperience(0f);
+            return true;
+        }
+
         public void AddExperience(float amount)
         {
             _xpTowardNext += amount;
