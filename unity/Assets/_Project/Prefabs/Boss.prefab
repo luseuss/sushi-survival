@@ -257,6 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   summonDelayOverride: 0
+  californiaEffectPrefab: {fileID: 6672652630087383453, guid: 200207122d7e428a9abd859cb450c139, type: 3}
 --- !u!114 &7980025061145666681
 MonoBehaviour:
   m_ObjectHideFlags: 0

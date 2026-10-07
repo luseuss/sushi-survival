@@ -11,6 +11,9 @@ namespace SushiSurvival.Enemies.Boss
     {
         [Tooltip("등장 이펙트가 끝나고 잡몹이 나올 때까지의 시간(초). 0이면 이펙트 길이를 쓴다.")]
         [SerializeField] private float summonDelayOverride;
+        [Tooltip("캘리포니아롤을 소환할 때 쓰는 등장 이펙트 프리팹(OneShotEffect 포함). " +
+                 "비워두면 다른 몹과 같은 이펙트 풀을 쓴다.")]
+        [SerializeField] private GameObject californiaEffectPrefab;
 
         private Transform _player;
         private GameObjectPool _mobPool;
@@ -83,13 +86,15 @@ namespace SushiSurvival.Enemies.Boss
         {
             float delay = summonDelayOverride;
 
-            if (_effectPool != null)
-            {
-                GameObject effect = _effectPool.Get(position, Quaternion.identity);
+            // 캘리포니아롤은 전용 이펙트라 풀 없이 만든다 — OneShotEffect가 풀을 못 찾으면 스스로 Destroy한다.
+            GameObject effect = null;
+            if (pool != null && pool == _californiaPool && californiaEffectPrefab != null)
+                effect = Instantiate(californiaEffectPrefab, position, Quaternion.identity);
+            else if (_effectPool != null)
+                effect = _effectPool.Get(position, Quaternion.identity);
 
-                if (delay <= 0f && effect.TryGetComponent<OneShotEffect>(out var oneShot))
-                    delay = oneShot.Duration;
-            }
+            if (effect != null && delay <= 0f && effect.TryGetComponent<OneShotEffect>(out var oneShot))
+                delay = oneShot.Duration;
 
             if (delay > 0f)
                 yield return new WaitForSeconds(delay);
