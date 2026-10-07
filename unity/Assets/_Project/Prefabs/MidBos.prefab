@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6583734508533315117}
   - component: {fileID: 1108281474064982475}
   - component: {fileID: -4672852390917677874}
+  - component: {fileID: 2054945952394759817}
   m_Layer: 6
   m_Name: MidBos
   m_TagString: Untagged
@@ -186,6 +187,7 @@ MonoBehaviour:
   separationRadius: 1.2
   separationStrength: 1.5
   separationInterval: 0.1
+  contactOverlap: 0.02
 --- !u!114 &-4672852390917677874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,3 +200,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3dc5fee2692bfb49bb962ecc9b26399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2054945952394759817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a16c78c43be9f2e47ab69d590e8478a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rollPrefab: {fileID: 7520104674982364604, guid: d72675807de75334d8379d70bf3498f6, type: 3}
+  firstThrowDelay: 2
+  throwInterval: 5
+  windupSeconds: 0.6
+  flightSeconds: 0.9
+  minRange: 3
+  maxRange: 9
+  damage: 12
+  landingRadius: 1
