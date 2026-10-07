@@ -635,8 +635,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   hitsByLevel: 02000000020000000200000002000000
-  firstHitDelaySeconds: 0.123809524
-  hitGapSeconds: 0.18571429
+  firstHitDelaySeconds: 0.17687075
+  hitGapSeconds: 0.26530613
   umbrellaFromLevel: 3
 --- !u!114 &476107878086711385
 MonoBehaviour:
