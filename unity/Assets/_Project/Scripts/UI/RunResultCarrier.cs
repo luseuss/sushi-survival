@@ -18,6 +18,8 @@ namespace SushiSurvival.Core
         public static List<AugmentData> PickedAugments;
         public static List<AugmentBuff> ExternalBuffs;
         public static float PlayerCurrentHealth;
+        // 부활을 이미 쓴 횟수. 안 넘기면 보스 씬의 새 플레이어가 부활을 다시 쓸 수 있다.
+        public static int RevivesUsed;
         public static int WeaponLevel;
         // 와사비 알현 성공으로 무기가 바뀐 상태인지(아델린 회전 우산, 카마리온 샷건).
         public static bool WasabiWeaponConverted;
