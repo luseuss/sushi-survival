@@ -5,7 +5,7 @@ using SushiSurvival.Player;
 namespace SushiSurvival.Enemies
 {
     /// <summary>
-    /// 중형몹이 던진 롤 몬스터. 던진 순간의 플레이어 위치에 낙하 예고 마커를 띄우고, 그림은 포물선으로
+    /// 중형몹이 던진 롤 몬스터. 던진 순간의 플레이어 위치에 낙하 예고 마커를 띄우고, 그림은 일직선으로
     /// 날아가 거기에 떨어진다. 데미지는 착지 순간에 한 번만 들어가므로 날아오는 동안 벗어나면 피한다.
     ///
     /// 지금 날아가는 그림(body)은 롤 몬스터 아트가 없어 임시 박스다 — body의 스프라이트만 바꾸면 된다.
@@ -16,10 +16,6 @@ namespace SushiSurvival.Enemies
 
         [Header("날아가는 그림 (지금은 임시 박스)")]
         [SerializeField] private Transform body;
-        [Tooltip("포물선의 가장 높은 지점(월드 단위).")]
-        [SerializeField] private float peakHeight = 1.5f;
-        [Tooltip("날아가는 동안 그림이 도는 속도(초당 도).")]
-        [SerializeField] private float spinDegreesPerSecond = 540f;
 
         [Header("낙하 예고 마커 (스프라이트는 런타임에 채워진다 — 비워두는 게 정상)")]
         [SerializeField] private SpriteRenderer markerRing;
@@ -105,10 +101,8 @@ namespace SushiSurvival.Enemies
         {
             if (body == null) return;
 
-            Vector2 ground = Vector2.Lerp(_start, _target, progress);
-            float height = MidBossThrowLogic.ArcHeight(progress, peakHeight);
-            body.position = new Vector3(ground.x, ground.y + height, body.position.z);
-            body.Rotate(0f, 0f, spinDegreesPerSecond * Time.deltaTime);
+            Vector2 pos = Vector2.Lerp(_start, _target, progress);
+            body.position = new Vector3(pos.x, pos.y, body.position.z);
         }
 
         private void Land()
