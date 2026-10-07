@@ -15,7 +15,9 @@ namespace SushiSurvival.Weapons
         [SerializeField] private LayerMask enemyLayer;
         [Tooltip("레벨(1~4)별 연타 횟수. 기본: Lv1 1타, Lv2 2연타.")]
         [SerializeField] private int[] hitsByLevel = { 1, 2, 2, 2 };
-        [Tooltip("연타 사이의 간격(초).")]
+        [Tooltip("공격이 시작되고 첫 타격까지의 시간(초). 공격 모션에서 첫 번째 휘두름이 가장 크게 펼쳐지는 순간에 맞춘다.")]
+        [SerializeField] private float firstHitDelaySeconds;
+        [Tooltip("연타 사이의 간격(초). 공격 모션의 두 번째 휘두름 시점에 맞춘다.")]
         [SerializeField] private float hitGapSeconds = 0.15f;
         [Tooltip("이 레벨이 되면 회전 우산으로 바뀐다. 같은 오브젝트에 RotatingUmbrellaWeapon이 있어야 한다.")]
         [SerializeField] private int umbrellaFromLevel = 3;
@@ -44,8 +46,9 @@ namespace SushiSurvival.Weapons
 
             for (int i = 0; i < hits; i++)
             {
-                if (i > 0)
-                    yield return new WaitForSeconds(hitGapSeconds);
+                float wait = i == 0 ? firstHitDelaySeconds : hitGapSeconds;
+                if (wait > 0f)
+                    yield return new WaitForSeconds(wait);
 
                 Hit();
             }

@@ -16,7 +16,7 @@ MonoBehaviour:
   isMelee: 1
   projectilePrefab: {fileID: 0}
   levels:
-  - damage: 8
+  - damage: 10
     cooldown: 1.2
     range: 2
     angleDegrees: 120
