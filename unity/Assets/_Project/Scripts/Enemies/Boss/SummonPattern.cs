@@ -14,6 +14,9 @@ namespace SushiSurvival.Enemies.Boss
         [Tooltip("캘리포니아롤을 소환할 때 쓰는 등장 이펙트 프리팹(OneShotEffect 포함). " +
                  "비워두면 다른 몹과 같은 이펙트 풀을 쓴다.")]
         [SerializeField] private GameObject californiaEffectPrefab;
+        [Tooltip("중형몹을 소환할 때 쓰는 등장 이펙트 프리팹(OneShotEffect 포함). " +
+                 "비워두면 다른 몹과 같은 이펙트 풀을 쓴다.")]
+        [SerializeField] private GameObject midEffectPrefab;
 
         private Transform _player;
         private GameObjectPool _mobPool;
@@ -68,6 +71,15 @@ namespace SushiSurvival.Enemies.Boss
                 StartCoroutine(SummonAt(positions[i], pools[i]));
         }
 
+        /// <summary>전용 이펙트가 있는 몹 종류면 그 프리팹을, 아니면 null(공용 이펙트 풀을 쓴다).</summary>
+        private GameObject PickEffectPrefab(GameObjectPool pool)
+        {
+            if (pool == null) return null;
+            if (pool == _californiaPool) return californiaEffectPrefab;
+            if (pool == _midPool) return midEffectPrefab;
+            return null;
+        }
+
         private void AddPools(List<GameObjectPool> list, GameObjectPool pool, int count, string label)
         {
             if (count <= 0) return;
@@ -86,10 +98,11 @@ namespace SushiSurvival.Enemies.Boss
         {
             float delay = summonDelayOverride;
 
-            // 캘리포니아롤은 전용 이펙트라 풀 없이 만든다 — OneShotEffect가 풀을 못 찾으면 스스로 Destroy한다.
+            // 캘리포니아롤·중형몹은 전용 이펙트라 풀 없이 만든다 — OneShotEffect가 풀을 못 찾으면 스스로 Destroy한다.
             GameObject effect = null;
-            if (pool != null && pool == _californiaPool && californiaEffectPrefab != null)
-                effect = Instantiate(californiaEffectPrefab, position, Quaternion.identity);
+            GameObject prefab = PickEffectPrefab(pool);
+            if (prefab != null)
+                effect = Instantiate(prefab, position, Quaternion.identity);
             else if (_effectPool != null)
                 effect = _effectPool.Get(position, Quaternion.identity);
 
