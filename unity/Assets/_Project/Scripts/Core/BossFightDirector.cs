@@ -109,7 +109,8 @@ namespace SushiSurvival.Enemies.Boss
             // 스폰하지 않으므로(중복 스폰 버그 수정) 여기서 직접 배선한다.
             if (levelSystem != null)
             {
-                levelSystem.SetPlayer(playerStats, _playerHealth, weapon, selectedCharacter.portraitSprite);
+                levelSystem.SetPlayer(playerStats, _playerHealth, weapon, selectedCharacter.portraitSprite,
+                                      selectedCharacter.royalSceneAnimator);
 
                 // GameScene에서 쌓은 레벨·경험치·증강을 복원한다. 안 하면
                 // 5분간의 성장이 전부 사라지고 Lv1 기본 스탯으로 다시 시작한다.

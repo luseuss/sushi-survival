@@ -21,6 +21,9 @@ namespace SushiSurvival.Data
         public float baseMaxHealth = 100f;
         public WeaponData weaponData;
         public RuntimeAnimatorController animatorController;
+        [Tooltip("와사비 알현 화면의 왕국 배경 애니메이터(입장→대기). 이 캐릭터가 서 있는 장면이 나온다. " +
+                 "비워두면 알현 패널의 기본 애니메이터를 쓴다.")]
+        public RuntimeAnimatorController royalSceneAnimator;
         [Tooltip("호감도 대화 #1(런 시작 직전)·#2(보스전 진입 직전) 데이터. introLines/question1이 " +
                  "비어 있으면 대화 없이 바로 런이 시작되고, bossIntroLines가 비어 있으면 " +
                  "인터럽트 없이 바로 보스전으로 넘어간다.")]

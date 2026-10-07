@@ -22,4 +22,6 @@ MonoBehaviour:
   baseMaxHealth: 100
   weaponData: {fileID: 11400000, guid: b77dcefefb47f7344b9e259da98ca698, type: 2}
   animatorController: {fileID: 0}
+  royalSceneAnimator: {fileID: 9100000, guid: 6b32a5fb7a0e5bd4ca8198a8d6cec40d, type: 2}
   affinityDialogue: {fileID: 11400000, guid: 791a1e1e7c7d1a040b9dff0c7e21db59, type: 2}
+  lockedMessage: 
