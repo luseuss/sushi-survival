@@ -14,31 +14,5 @@ namespace SushiSurvival.EditModeTests
         {
             Assert.AreEqual(expected, MidBossThrowLogic.InThrowRange(distance, 3f, 9f));
         }
-
-        [Test]
-        public void ArcHeight_StartsAndEndsOnTheGround()
-        {
-            Assert.AreEqual(0f, MidBossThrowLogic.ArcHeight(0f, 1.5f), 0.0001f);
-            Assert.AreEqual(0f, MidBossThrowLogic.ArcHeight(1f, 1.5f), 0.0001f);
-        }
-
-        [Test]
-        public void ArcHeight_PeaksAtMidpoint()
-        {
-            Assert.AreEqual(1.5f, MidBossThrowLogic.ArcHeight(0.5f, 1.5f), 0.0001f);
-        }
-
-        [Test]
-        public void ArcHeight_IsSymmetric()
-        {
-            Assert.AreEqual(MidBossThrowLogic.ArcHeight(0.25f, 2f), MidBossThrowLogic.ArcHeight(0.75f, 2f), 0.0001f);
-        }
-
-        [Test]
-        public void ArcHeight_ClampsProgressOutsideZeroToOne()
-        {
-            Assert.AreEqual(0f, MidBossThrowLogic.ArcHeight(-0.5f, 2f), 0.0001f);
-            Assert.AreEqual(0f, MidBossThrowLogic.ArcHeight(1.5f, 2f), 0.0001f);
-        }
     }
 }

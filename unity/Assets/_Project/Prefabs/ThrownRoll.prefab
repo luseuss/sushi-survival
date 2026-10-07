@@ -216,8 +216,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 8958484337894436313}
-  peakHeight: 1.5
-  spinDegreesPerSecond: 540
   markerRing: {fileID: 8001320416427856450}
   markerFill: {fileID: 1641404522157466428}
   markerColor: {r: 0.9, g: 0.5, b: 0.1, a: 0.85}
