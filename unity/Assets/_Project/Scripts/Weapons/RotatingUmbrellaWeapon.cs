@@ -18,6 +18,9 @@ namespace SushiSurvival.Weapons
         [SerializeField] private int[] umbrellaCountByLevel = { 3, 3, 3, 5 };
         [Tooltip("공격속도 배율 1.0 기준 회전 속도(초당 도).")]
         [SerializeField] private float rotationSpeedDegreesPerSecond = 360f;
+        [Tooltip("우산 그림이 그려진 기본 방향 보정(도). 그림이 오른쪽(+x)을 향해 그려져 있으면 0, " +
+                 "위쪽(+y)을 향해 그려져 있으면 -90(그림 윗부분이 바깥을 향한다). 거꾸로 보이면 90.")]
+        [SerializeField] private float spriteAngleOffset;
         [Tooltip("우산 하나가 적을 스쳤다고 판정하는 반경.")]
         [SerializeField] private float hitRadius = 0.3f;
         [SerializeField] private LayerMask enemyLayer;
@@ -46,7 +49,7 @@ namespace SushiSurvival.Weapons
 
                 float angle = UmbrellaOrbitLogic.AngleForIndex(_currentAngle, i, count);
                 umbrellas[i].localPosition = UmbrellaOrbitLogic.PositionForAngle(angle, radius);
-                umbrellas[i].localRotation = Quaternion.Euler(0f, 0f, angle);
+                umbrellas[i].localRotation = Quaternion.Euler(0f, 0f, angle + spriteAngleOffset);
             }
 
             float reHitInterval = CooldownLogic.ApplyAttackSpeed(
