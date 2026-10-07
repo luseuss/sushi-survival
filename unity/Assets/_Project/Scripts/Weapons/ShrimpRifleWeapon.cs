@@ -6,6 +6,7 @@ namespace SushiSurvival.Weapons
 {
     /// <summary>
     /// 간장 소총 — 시선 방향으로 투사체를 발사한다. 자동 조준은 없다(기획서).
+    /// 레벨이 정해진 값에 닿으면 LevelSystem이 샷건으로 바꾼다(무기 강화 카드의 성장 경로).
     /// </summary>
     public class ShrimpRifleWeapon : WeaponBase
     {
@@ -13,7 +14,9 @@ namespace SushiSurvival.Weapons
         [Tooltip("투사체가 나가는 위치. 비워두면 이 오브젝트 위치에서 발사한다.")]
         [SerializeField] private Transform muzzle;
 
-        [Header("샷건 (와사비 알현 보상)")]
+        [Header("샷건 (무기 강화로 변신)")]
+        [Tooltip("이 레벨이 되면 소총이 샷건으로 바뀐다.")]
+        [SerializeField] private int shotgunFromLevel = 3;
         [Tooltip("샷건 모드에서 한 번에 나가는 산탄 수.")]
         [SerializeField] private int shotgunPelletCount = 5;
         [Tooltip("산탄이 퍼지는 전체 각도(도).")]
@@ -23,10 +26,20 @@ namespace SushiSurvival.Weapons
 
         private GameObjectPool _projectilePool;
 
-        /// <summary>와사비 알현 성공으로 샷건으로 바뀐 상태인지. 보스 씬 이월에도 쓴다.</summary>
+        /// <summary>샷건으로 바뀐 상태인지. 보스 씬 이월에도 쓴다.</summary>
         public bool IsShotgun { get; private set; }
 
+        /// <summary>소총이 샷건으로 바뀔 레벨에 닿았는데 아직 안 바뀐 상태인지.</summary>
+        public bool ReadyToEvolve =>
+            !IsShotgun && ShotgunProgressionLogic.ShouldEvolve(currentLevel, shotgunFromLevel);
+
         public void EnableShotgun() => IsShotgun = true;
+
+        public override string DescribeUpgrade(string statText)
+        {
+            bool evolvesNext = !IsShotgun && ShotgunProgressionLogic.ShouldEvolve(currentLevel + 1, shotgunFromLevel);
+            return ShotgunProgressionLogic.DescribeRifleUpgrade(statText, evolvesNext, Mathf.Max(1, shotgunPelletCount));
+        }
 
         /// <summary>
         /// PlayerSpawner가 스폰 직후 주입한다. 프리팹 에셋은 씬에만 존재하는

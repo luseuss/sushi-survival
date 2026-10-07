@@ -314,7 +314,7 @@ namespace SushiSurvival.Core
             return new[] { "계란 양산이 회전 우산으로 변했다!" };
         }
 
-        /// <summary>카마리온 전용 보상 — 간장 소총이 산탄을 부채꼴로 쏘는 샷건이 된다.</summary>
+        /// <summary>카마리온 전용 — 간장 소총이 산탄을 부채꼴로 쏘는 샷건이 된다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>
         private string[] ConvertToShotgun()
         {
             if (_weapon is not ShrimpRifleWeapon rifle) return Array.Empty<string>();
@@ -356,8 +356,13 @@ namespace SushiSurvival.Core
             option.Apply();
 
             // 아델린의 양산은 정해진 레벨에 닿으면 회전 우산으로 바뀐다(와사비와 무관한 성장 경로).
+            // 아래 카마리온의 샷건 전환도 같은 방식이다.
             if (option is WeaponLevelUpOption && _weapon is EggFanWeapon egg && egg.ReadyToEvolve)
                 ConvertToUmbrella();
+
+            // 카마리온의 소총도 정해진 레벨에 닿으면 샷건으로 바뀐다.
+            if (option is WeaponLevelUpOption && _weapon is ShrimpRifleWeapon rifle && rifle.ReadyToEvolve)
+                ConvertToShotgun();
 
             if (option is AugmentOption augmentOption)
             {
