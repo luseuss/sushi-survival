@@ -3,8 +3,8 @@ namespace SushiSurvival.Enemies
     /// <summary>중형몹이 롤 몬스터를 던지는 패턴의 순수 계산부.</summary>
     public static class MidBossThrowLogic
     {
-        /// <summary>플레이어가 던질 수 있는 거리 안에 있는지. 너무 붙어 있거나 너무 멀면 던지지 않는다.</summary>
-        public static bool InThrowRange(float distance, float minRange, float maxRange)
-            => distance >= minRange && distance <= maxRange;
+        /// <summary>체력이 최대 체력 대비 threshold 비율 이하로 내려갔는지. 최대 체력이 0이면 발동하지 않는다.</summary>
+        public static bool HealthBelowThreshold(float currentHealth, float maxHealth, float threshold)
+            => maxHealth > 0f && currentHealth / maxHealth <= threshold;
     }
 }

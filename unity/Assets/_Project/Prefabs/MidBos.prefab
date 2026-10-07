@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6583734508533315117}
   - component: {fileID: 1108281474064982475}
   - component: {fileID: -4672852390917677874}
+  - component: {fileID: 3300000000000000001}
   - component: {fileID: 2054945952394759817}
   m_Layer: 6
   m_Name: MidBos
@@ -213,11 +214,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rollPrefab: {fileID: 7520104674982364604, guid: d72675807de75334d8379d70bf3498f6, type: 3}
-  firstThrowDelay: 2
-  throwInterval: 5
+  healthThreshold: 0.3
   windupSeconds: 0.6
   flightSeconds: 0.9
-  minRange: 3
-  maxRange: 9
   damage: 12
   landingRadius: 1
+--- !u!95 &3300000000000000001
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ec6989617bdb4168b3dba84876df22bb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

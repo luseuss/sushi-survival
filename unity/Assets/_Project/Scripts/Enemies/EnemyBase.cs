@@ -28,6 +28,9 @@ namespace SushiSurvival.Enemies
 
         public float CurrentHealth { get; private set; }
 
+        /// <summary>스폰 순간 정해진 최대 체력(시간 배율 반영). 체력 비율 계산용.</summary>
+        public float MaxHealth { get; private set; }
+
         /// <summary>EnemyAI가 이동에 더한다. 여기서 직접 위치를 옮기지 않는다.</summary>
         public Vector2 KnockbackVelocity { get; private set; }
         public event Action<EnemyBase> OnDeath;
@@ -47,7 +50,8 @@ namespace SushiSurvival.Enemies
             // 않는다. 이미 나와 있는 적이 시간이 지났다고 갑자기 단단해지면
             // 때리던 사람 입장에서 이유를 알 수 없다.
             AliveCount++;
-            CurrentHealth = monsterData.maxHealth * GetHealthScale();
+            MaxHealth = monsterData.maxHealth * GetHealthScale();
+            CurrentHealth = MaxHealth;
             _contactTimer = 0f;
             KnockbackVelocity = Vector2.zero;
         }
