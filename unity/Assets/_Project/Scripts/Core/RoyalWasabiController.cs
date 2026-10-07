@@ -20,7 +20,9 @@ namespace SushiSurvival.Core
         /// 성공했을 때만 호출된다. 실제 보상을 적용하고, 결과 화면에 한 줄씩 보여줄 설명 목록을
         /// 돌려준다(승리 연출용). 실패하면 아예 호출되지 않는다 — 위로 보상이 없기 때문이다.
         /// </param>
-        public void Show(Sprite portrait, Func<string[]> onSuccess, Action onComplete)
+        /// <param name="sceneAnimator">알현 배경에 쓸 캐릭터별 애니메이터. null이면 패널 기본값을 쓴다.</param>
+        public void Show(Sprite portrait, RuntimeAnimatorController sceneAnimator,
+                         Func<string[]> onSuccess, Action onComplete)
         {
             if (panel == null || rpsPanel == null)
             {
@@ -31,7 +33,7 @@ namespace SushiSurvival.Core
 
             // "와사비를 받으러 왔습니다" 대사를 먼저 보여준 뒤에야 가위바위보로
             // 넘어간다 — 결과 확인용 패널을 도입부 연출로도 재사용한다.
-            panel.ShowFlavor(portrait, () =>
+            panel.ShowFlavor(portrait, sceneAnimator, () =>
             {
                 // panel.Hide()가 아니라 HideDialogueBox() — 왕궁 배경은
                 // 가위바위보 도중에도 계속 보여야 한다.

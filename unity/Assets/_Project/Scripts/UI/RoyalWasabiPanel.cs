@@ -20,6 +20,9 @@ namespace SushiSurvival.UI
         [SerializeField] private GameObject textBar;
         [Tooltip("대화창 안 작은 초상화 창. 비워두면 표시하지 않는다.")]
         [SerializeField] private Image portraitImage;
+        [Tooltip("왕국 배경(Backgrund)의 Animator. 캐릭터마다 다른 배경 애니메이터(CharacterData.royalSceneAnimator)를 " +
+                 "알현이 열릴 때 이 Animator에 꽂는다. 비워두면 캐릭터별 교체 없이 이 Animator의 기본 컨트롤러를 쓴다.")]
+        [SerializeField] private Animator backgroundAnimator;
         [SerializeField] private Text flavorText;
         [SerializeField] private Text resultText;
         [Tooltip("승리 시 적용된 강화 내용을 한 줄씩 순서대로 보여줄 Text. 비워두면 건너뛴다.")]
@@ -90,8 +93,18 @@ namespace SushiSurvival.UI
         /// 가위바위보 시작 전 "알현" 대사만 보여준다. flavorDuration이 지나면
         /// onFlavorDone을 불러 호출자가 RPS 패널로 넘어가게 한다.
         /// </summary>
-        public void ShowFlavor(Sprite portrait, Action onFlavorDone)
+        /// <param name="sceneAnimator">
+        /// 이 캐릭터의 왕국 배경 애니메이터. null이면 배경 Animator의 기본 컨트롤러를 그대로 쓴다.
+        /// 패널을 켜기 전에 꽂아야 입장 애니메이션이 처음부터 그 캐릭터 것으로 재생된다.
+        /// </param>
+        public void ShowFlavor(Sprite portrait, RuntimeAnimatorController sceneAnimator, Action onFlavorDone)
         {
+            if (backgroundAnimator != null && sceneAnimator != null &&
+                backgroundAnimator.runtimeAnimatorController != sceneAnimator)
+            {
+                backgroundAnimator.runtimeAnimatorController = sceneAnimator;
+            }
+
             Root.SetActive(true);
             ShowDialogueBox();
             SetDim(dimColor);

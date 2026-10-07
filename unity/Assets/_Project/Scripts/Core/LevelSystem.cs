@@ -89,6 +89,7 @@ namespace SushiSurvival.Core
         private PlayerHealth _playerHealth;
         private WeaponBase _weapon;
         private Sprite _portrait;
+        private RuntimeAnimatorController _royalSceneAnimator;
 
         private float _xpTowardNext;
         private int _pendingLevelUps;
@@ -106,12 +107,17 @@ namespace SushiSurvival.Core
                 fairyController.Restore(levels);
         }
 
-        public void SetPlayer(PlayerStats stats, PlayerHealth health, WeaponBase weapon, Sprite portrait)
+        /// <param name="royalSceneAnimator">
+        /// 와사비 알현 화면 배경에 쓸 캐릭터별 애니메이터(CharacterData.royalSceneAnimator). 비우면 패널 기본값.
+        /// </param>
+        public void SetPlayer(PlayerStats stats, PlayerHealth health, WeaponBase weapon, Sprite portrait,
+                              RuntimeAnimatorController royalSceneAnimator = null)
         {
             _playerStats = stats;
             _playerHealth = health;
             _weapon = weapon;
             _portrait = portrait;
+            _royalSceneAnimator = royalSceneAnimator;
 
             if (fairyController != null && stats != null)
                 fairyController.SetPlayer(stats.transform, stats);
@@ -235,7 +241,7 @@ namespace SushiSurvival.Core
             bool hasFairyReward = fairyController != null && fairyController.BuildChoices().Count > 0;
             _fairyRewardPending = false;
 
-            royalWasabiController.Show(_portrait, () =>
+            royalWasabiController.Show(_portrait, _royalSceneAnimator, () =>
             {
                 WasabiCount++;
 

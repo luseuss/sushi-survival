@@ -184,7 +184,8 @@ namespace SushiSurvival.Core
             _activeCharacterName = characterData.characterName;
 
             var weapon = PlayerWeaponResolver.GetActive(player);
-            levelSystem.SetPlayer(_playerStats, _playerHealth, weapon, characterData.portraitSprite);
+            levelSystem.SetPlayer(_playerStats, _playerHealth, weapon, characterData.portraitSprite,
+                                  characterData.royalSceneAnimator);
 
             cameraFollow.SetTarget(_playerTransform);
 
