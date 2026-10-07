@@ -64,6 +64,8 @@ namespace SushiSurvival.Enemies.Boss
         [SerializeField] private float impactShakeSeconds = 0.6f;
         [Tooltip("착지 순간 걷혀 나갈 초록 땅(사막 땅 위에 덮여 있다). 비우면 이 연출 없이 처음부터 사막이다.")]
         [SerializeField] private Tilemap groundGrass;
+        [Tooltip("초록 땅 위에 깔린 꽃 타일맵. 초록 땅이 걷힐 때 같은 칸의 꽃도 같이 지운다. 비우면 꽃은 그대로 남는다.")]
+        [SerializeField] private Tilemap groundGrassDecor;
         [Tooltip("초록 땅을 채우는 스트리머. 걷힘이 시작되면 꺼서, 지운 땅이 다시 채워지지 않게 한다.")]
         [SerializeField] private MonoBehaviour groundGrassStreamer;
         [Tooltip("초록 땅이 착지점에서 끝까지 걷히는 시간(초, 실시간).")]
@@ -292,14 +294,23 @@ namespace SushiSurvival.Enemies.Boss
                 int end = GroundTransitionLogic.AdvanceIndex(sortedDistances, next, radius);
 
                 for (; next < end; next++)
-                    groundGrass.SetTile(order[next], null);
+                    ClearGrassCell(order[next]);
 
                 if (elapsed >= groundTransitionSeconds) end = order.Length;
                 for (; next < end; next++)
-                    groundGrass.SetTile(order[next], null);
+                    ClearGrassCell(order[next]);
 
                 yield return null;
             }
+        }
+
+        /// <summary>초록 땅 한 칸을 걷어낸다. 그 위의 꽃도 같이 지워야 사막 위에 꽃만 떠 있지 않는다.</summary>
+        private void ClearGrassCell(Vector3Int cell)
+        {
+            groundGrass.SetTile(cell, null);
+
+            if (groundGrassDecor != null)
+                groundGrassDecor.SetTile(cell, null);
         }
 
         private void PlaceBoss(Vector3 position)
