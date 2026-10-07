@@ -17,6 +17,15 @@ namespace SushiSurvival.Player
         public float CurrentHealth { get; private set; }
         public float MaxHealth => _stats.GetValue(StatType.MaxHealth);
 
+        /// <summary>지금까지 쓴 부활 횟수. 보스 씬으로 넘어갈 때 이월한다.</summary>
+        public int RevivesUsed => _revivesUsed;
+
+        /// <summary>
+        /// 이월한 부활 사용 횟수를 복원한다. 보스 씬은 새 플레이어에 부활 증강을 다시 입히므로
+        /// 이걸 안 하면 GameScene에서 이미 쓴 부활이 한 번 더 작동한다.
+        /// </summary>
+        public void SetRevivesUsed(int used) => _revivesUsed = Mathf.Max(0, used);
+
         public event Action OnDeath;
         /// <summary>(현재 체력, 최대 체력) — 체력바가 구독한다.</summary>
         public event Action<float, float> OnHealthChanged;
@@ -78,7 +87,7 @@ namespace SushiSurvival.Player
         private bool TryRevive()
         {
             int allowedRevives = Mathf.FloorToInt(_stats.GetValue(StatType.Revive));
-            if (_revivesUsed >= allowedRevives) return false;
+            if (!ReviveLogic.CanRevive(_revivesUsed, allowedRevives)) return false;
 
             _revivesUsed++;
             CurrentHealth = MaxHealth;

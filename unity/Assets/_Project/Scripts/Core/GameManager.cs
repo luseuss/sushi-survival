@@ -309,6 +309,7 @@ namespace SushiSurvival.Core
             if (_playerHealth != null)
             {
                 RunResultCarrier.PlayerCurrentHealth = _playerHealth.CurrentHealth;
+                RunResultCarrier.RevivesUsed = _playerHealth.RevivesUsed;
             }
 
             // 레벨/경험치/증강/무기 강화 — 안 넘기면 보스 씬에서 완전히 새

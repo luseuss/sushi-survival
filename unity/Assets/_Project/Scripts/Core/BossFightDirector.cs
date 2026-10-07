@@ -133,6 +133,10 @@ namespace SushiSurvival.Enemies.Boss
             if (_playerHealth != null && RunResultCarrier.PlayerCurrentHealth > 0f)
                 _playerHealth.SetHealth(RunResultCarrier.PlayerCurrentHealth);
 
+            // GameScene에서 이미 쓴 부활은 다시 쓰지 못하게 횟수를 복원한다.
+            if (_playerHealth != null)
+                _playerHealth.SetRevivesUsed(RunResultCarrier.RevivesUsed);
+
             // 무기 강화 레벨도 같은 이유로 복원한다. 와사비로 우산으로 바뀐
             // 상태였다면 먼저 우산을 켜야 레벨 복원 대상이 우산이 된다.
             if (weapon != null)
