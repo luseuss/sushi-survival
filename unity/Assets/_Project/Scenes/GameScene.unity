@@ -10961,7 +10961,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8c9c8992a024644699b17ade6cc1ff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fairyData: {fileID: 11400000, guid: a10c7586920913848a895dc17153fa3d, type: 2}
+  catalog:
+  - {fileID: 11400000, guid: 3500a91514a74051c9134191a42e44a7, type: 2}
+  - {fileID: 11400000, guid: 8db61866b6f9306cf15da0b2db033287, type: 2}
+  - {fileID: 11400000, guid: ea83462cdf1bd7871b516f006c11e7f1, type: 2}
+  - {fileID: 11400000, guid: 062ef3d5debdc0a7607903849b1dd0fb, type: 2}
+  - {fileID: 11400000, guid: c2ee3856b01461dc5149697603426fc1, type: 2}
+  - {fileID: 11400000, guid: 8f740d712c8954fcaca1ae75afd77e78, type: 2}
+  - {fileID: 11400000, guid: 182b52d10ff6213725ffa980884e06a4, type: 2}
+  - {fileID: 11400000, guid: c4931902ff7c437bd8cd12c8c4bb53cb, type: 2}
+  - {fileID: 11400000, guid: a5a4fc4341c0937af48f7dc25c96545b, type: 2}
   projectilePool: {fileID: 1395359040}
   enemyLayer:
     serializedVersion: 2
