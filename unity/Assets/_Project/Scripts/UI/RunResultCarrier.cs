@@ -27,5 +27,7 @@ namespace SushiSurvival.Core
         public static int WasabiCount;
         // 요정 한 마리당 하나씩, 소환 순서대로의 레벨. 보스 씬에서 같은 요정을 되살린다.
         public static int[] FairyLevels;
+        // FairyLevels와 같은 길이·같은 순서로, 요정마다의 펫 종류(카탈로그 번호).
+        public static int[] FairyKinds;
     }
 }

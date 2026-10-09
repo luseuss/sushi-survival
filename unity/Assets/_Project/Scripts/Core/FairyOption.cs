@@ -3,7 +3,7 @@ using SushiSurvival.Companions;
 
 namespace SushiSurvival.Core
 {
-    /// <summary>와사비 성공 뒤 레벨업 카드로 뜨는 "요정 소환 / 요정 N 강화" 선택지.</summary>
+    /// <summary>와사비 성공 뒤 레벨업 카드로 뜨는 "{펫} 소환 / {펫} 강화" 선택지.</summary>
     public class FairyOption : IUpgradeOption
     {
         private readonly FairyController _controller;
@@ -12,24 +12,28 @@ namespace SushiSurvival.Core
         public Sprite Icon { get; }
 
         public string DisplayName => _choice.Kind == FairyChoiceKind.Summon
-            ? "요정 소환"
-            : $"요정 {_choice.Index + 1} 강화 Lv{_controller.Levels[_choice.Index] + 1}";
+            ? $"{_controller.NameOfKind(_choice.KindIndex)} 소환"
+            : $"{_controller.NameOfFairy(_choice.Index)} 강화 Lv{_controller.Levels[_choice.Index] + 1}";
 
         public string Description => _choice.Kind == FairyChoiceKind.Summon
-            ? $"곁을 따라다니며 가까운 적을 공격한다 ({_controller.Count + 1}/{_controller.MaxCount})"
+            ? _controller.DescribeSummon(_choice.KindIndex)
             : _controller.DescribeUpgrade(_choice.Index);
 
-        public FairyOption(FairyController controller, FairyChoice choice, Sprite icon)
+        public FairyOption(FairyController controller, FairyChoice choice, Sprite fallbackIcon)
         {
             _controller = controller;
             _choice = choice;
-            Icon = icon;
+
+            Sprite petIcon = choice.Kind == FairyChoiceKind.Summon
+                ? controller.IconOfKind(choice.KindIndex)
+                : null;
+            Icon = petIcon != null ? petIcon : fallbackIcon;
         }
 
         public void Apply()
         {
             if (_choice.Kind == FairyChoiceKind.Summon)
-                _controller.Summon();
+                _controller.Summon(_choice.KindIndex);
             else
                 _controller.Upgrade(_choice.Index);
         }
