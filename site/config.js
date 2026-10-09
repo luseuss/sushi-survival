@@ -9,9 +9,9 @@ window.SITE_CONFIG = {
 
   // GitHub Release에 올린 zip의 다운로드 주소. 비워 두면 버튼이 "곧 공개됩니다"로 잠긴다.
   // 예: "https://github.com/<계정>/<저장소>/releases/download/v1.0/WasabiSurvival_v1.0_win64.zip"
-  downloadUrl: "",
+  downloadUrl: "https://github.com/luseuss/sushi-survival/releases/download/v1.0/WasabiSurvival_v1.0_win64.zip",
   // 전체 릴리스 목록 페이지(선택). 비워 두면 링크를 숨긴다.
-  releasesUrl: "",
+  releasesUrl: "https://github.com/luseuss/sushi-survival/releases",
 
   // 게임 화면 스크린샷. site/assets/screenshots/ 에 이미지를 넣고 아래처럼 적으면 갤러리가 나타난다.
   // 비워 두면 스크린샷 섹션이 통째로 숨겨진다.
