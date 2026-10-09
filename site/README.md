@@ -34,17 +34,28 @@ cd .. && bash tools/package-windows.sh
 
 결과: `unity/Build/WasabiSurvival_v<버전>_win64.zip` (약 477MB). 이 파일은 저장소에 올라가지 않는다(`.gitignore`).
 
-## 3. 공개하기 (GitHub Pages + Release)
+## 3. 공개 현황과 갱신 (이 저장소는 공개 저장소다)
 
-이 게임 저장소는 **비공개**라서 거기에서는 Pages도, 누구나 받을 수 있는 Release도 쓸 수 없다. **공개 저장소를 새로 하나** 만든다(예: `wasabi-survival`).
+- **사이트:** https://luseuss.github.io/sushi-survival/ — `gh-pages` 브랜치(루트)에서 GitHub Pages로 서비스한다.
+- **다운로드:** 이 저장소의 **Releases** `v1.0`에 zip이 올라가 있다. `config.js`의 `downloadUrl`이 그 주소를 가리킨다.
 
-1. GitHub에서 새 저장소를 **Public**으로 만든다.
-2. `site/` 폴더의 **내용물**(폴더 자체가 아니라 안의 파일)을 그 저장소 루트에 올린다(`.nojekyll` 포함).
-3. 저장소 **Settings → Pages → Source: Deploy from a branch → `main` / `/ (root)`** 로 켠다. 몇 분 뒤 `https://<계정>.github.io/<저장소>/`로 열린다.
-4. 같은 저장소의 **Releases → Draft a new release**에서 태그 `v1.0`을 만들고 zip을 끌어다 놓아 올린다(파일당 2GB까지 가능).
-5. 올라간 zip의 주소(`.../releases/download/v1.0/WasabiSurvival_v1.0_win64.zip`)를 `config.js`의 `downloadUrl`에 넣고 다시 커밋한다. 버튼이 **"곧 공개됩니다" → "Windows용 다운로드"** 로 바뀐다.
+### 사이트를 고쳤을 때 (문구·스크린샷·크레딧·문의)
+1. `site/`를 고치고 PR로 `main`에 머지한다.
+2. 아래 명령으로 `gh-pages`에 배포한다(몇 분 뒤 반영, 공개되는 작업이라 직접 실행한다).
 
-새 버전을 낼 때는 zip을 새 Release로 올리고 `config.js`의 `version`·`fileSize`·`releaseDate`·`downloadUrl`만 고치면 된다.
+```bash
+bash tools/deploy-site.sh
+```
+
+`gh-pages`는 배포 전용 브랜치다. 항상 `site/` 내용 한 커밋으로 덮어쓰며(강제 푸시), `README.md`는 공개 파일에서 뺀다.
+
+### 새 버전을 낼 때
+1. 위 "2. zip 만들기"로 zip을 새로 만든다.
+2. 새 Release를 만든다.
+   ```bash
+   gh release create v1.1 unity/Build/WasabiSurvival_v1.1_win64.zip --title "와사비를 먹으면 강해지는 군요 v1.1 (Windows)" --notes "변경 내용"
+   ```
+3. `config.js`의 `version`·`fileSize`·`releaseDate`·`downloadUrl`을 고쳐 PR로 머지하고, `bash tools/deploy-site.sh`로 배포한다.
 
 ## 4. 올리기 전에 채울 것
 
