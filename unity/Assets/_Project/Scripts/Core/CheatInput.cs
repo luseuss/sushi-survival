@@ -1,3 +1,5 @@
+// 배포 빌드에는 치트가 들어가지 않는다 — 에디터와 개발용 빌드(Development Build)에서만 켜진다.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -37,3 +39,4 @@ namespace SushiSurvival.Core
         }
     }
 }
+#endif
