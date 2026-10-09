@@ -323,6 +323,7 @@ namespace SushiSurvival.Core
                 RunResultCarrier.ExternalBuffs = new List<AugmentBuff>(levelSystem.ExternalBuffs);
                 RunResultCarrier.WasabiCount = levelSystem.WasabiCount;
                 RunResultCarrier.FairyLevels = new List<int>(levelSystem.FairyLevels).ToArray();
+                RunResultCarrier.FairyKinds = new List<int>(levelSystem.FairyKinds).ToArray();
             }
 
             if (_playerTransform != null)

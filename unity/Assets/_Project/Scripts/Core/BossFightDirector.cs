@@ -123,7 +123,7 @@ namespace SushiSurvival.Enemies.Boss
                         RunResultCarrier.ExternalBuffs,
                         RunResultCarrier.WasabiCount);
 
-                    levelSystem.RestoreFairies(RunResultCarrier.FairyLevels);
+                    levelSystem.RestoreFairies(RunResultCarrier.FairyKinds, RunResultCarrier.FairyLevels);
                 }
             }
 

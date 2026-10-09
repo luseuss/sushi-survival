@@ -33,8 +33,9 @@ namespace SushiSurvival.Companions
     }
 
     /// <summary>
-    /// 요정 한 마리. 플레이어 주변 슬롯을 부드럽게 따라다니고, 쿨타임마다 사거리 안의 가장 가까운
-    /// 적에게 기존 Projectile을 쏜다. 수치는 WeaponData의 레벨 표에서 읽고 플레이어 증강 배율을 곱한다.
+    /// 펫 한 마리. 플레이어 주변 슬롯을 부드럽게 따라다니고, 쿨타임마다 사거리 안의 가장 가까운 적에게
+    /// 기존 Projectile을 쏜다. 수치와 그림은 FairyData에서 읽고(레벨 표 + 프레임 애니메이션) 플레이어 증강 배율을 곱한다.
+    /// 프레임이 비어 있으면 스프라이트를 건드리지 않아 컨트롤러의 플레이스홀더 원이 그대로 보인다.
     /// </summary>
     public class Fairy : MonoBehaviour
     {
@@ -47,18 +48,22 @@ namespace SushiSurvival.Companions
 
         private Transform _player;
         private PlayerStats _stats;
-        private WeaponData _data;
+        private FairyData _data;
         private GameObjectPool _pool;
         private LayerMask _enemyLayer;
         private FairyMotion _motion;
+        private SpriteRenderer _renderer;
         private int _level = 1;
         private int _slotIndex;
         private int _slotCount = 1;
         private float _time;
+        private float _animTime;
+        private bool _flipped;
 
         public int Level => _level;
+        public FairyData Data => _data;
 
-        public void Initialize(Transform player, PlayerStats stats, WeaponData data, GameObjectPool projectilePool,
+        public void Initialize(Transform player, PlayerStats stats, FairyData data, GameObjectPool projectilePool,
                                LayerMask enemyLayer, FairyMotion motion, int level, int slotIndex, int slotCount)
         {
             _player = player;
@@ -69,11 +74,17 @@ namespace SushiSurvival.Companions
             _motion = motion;
             _slotIndex = slotIndex;
             _slotCount = slotCount;
+            _renderer = GetComponent<SpriteRenderer>();
             SetLevel(level);
+
+            if (_data != null)
+                transform.localScale = Vector3.one * Mathf.Max(0.01f, _data.visualScale);
 
             // 소환되는 순간 플레이어 옆에서 시작하게 해 화면 구석에서 날아오지 않게 한다.
             if (_player != null)
                 transform.position = TargetPosition();
+
+            ApplyVisual(0f);
         }
 
         public void SetPlayer(Transform player, PlayerStats stats)
@@ -98,11 +109,18 @@ namespace SushiSurvival.Companions
         {
             if (_player == null || _data == null || _data.levels == null || _data.levels.Length == 0) return;
 
-            _time += Time.deltaTime;
-            transform.position = FairySlotLogic.Follow(
-                transform.position, TargetPosition(), _motion.followSharpness, Time.deltaTime);
+            float dt = Time.deltaTime;
+            _time += dt;
+            _animTime += dt;
 
-            _cooldown.Tick(Time.deltaTime);
+            float beforeX = transform.position.x;
+            transform.position = FairySlotLogic.Follow(
+                transform.position, TargetPosition(), _motion.followSharpness, dt);
+            float velocityX = dt > 0f ? (transform.position.x - beforeX) / dt : 0f;
+
+            ApplyVisual(velocityX);
+
+            _cooldown.Tick(dt);
             if (!_cooldown.IsReady) return;
 
             WeaponLevelStats stats = _data.levels[_level - 1];
@@ -110,6 +128,18 @@ namespace SushiSurvival.Companions
 
             _cooldown.Reset(CooldownLogic.ApplyAttackSpeed(
                 stats.cooldown, StatMultiplier(StatType.AttackSpeed), minCooldown));
+        }
+
+        /// <summary>프레임을 시간에 맞춰 바꾸고 이동 방향에 따라 좌우를 뒤집는다. 프레임이 없으면 아무것도 안 한다.</summary>
+        private void ApplyVisual(float velocityX)
+        {
+            if (_renderer == null || _data == null || _data.frames == null || _data.frames.Length == 0) return;
+
+            int frame = FrameAnimLogic.FrameIndex(_animTime, _data.framesPerSecond, _data.frames.Length);
+            _renderer.sprite = _data.frames[frame];
+
+            _flipped = FairyFacingLogic.FlipX(velocityX, _flipped, _data.facesRight);
+            _renderer.flipX = _flipped;
         }
 
         private Vector2 TargetPosition()

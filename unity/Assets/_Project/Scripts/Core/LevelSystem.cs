@@ -100,11 +100,15 @@ namespace SushiSurvival.Core
         public IReadOnlyList<int> FairyLevels
             => fairyController != null ? fairyController.Levels : (IReadOnlyList<int>)Array.Empty<int>();
 
-        /// <summary>보스 씬에서 이전 씬의 요정을 같은 레벨로 되살린다. SetPlayer 뒤에 불러야 한다.</summary>
-        public void RestoreFairies(IReadOnlyList<int> levels)
+        /// <summary>현재 요정들의 펫 종류(카탈로그 번호, FairyLevels와 같은 순서). 보스 씬 이월용.</summary>
+        public IReadOnlyList<int> FairyKinds
+            => fairyController != null ? fairyController.Kinds : (IReadOnlyList<int>)Array.Empty<int>();
+
+        /// <summary>보스 씬에서 이전 씬의 펫을 같은 종류·레벨로 되살린다. SetPlayer 뒤에 불러야 한다.</summary>
+        public void RestoreFairies(IReadOnlyList<int> kinds, IReadOnlyList<int> levels)
         {
             if (fairyController != null)
-                fairyController.Restore(levels);
+                fairyController.Restore(kinds, levels);
         }
 
         /// <param name="royalSceneAnimator">
