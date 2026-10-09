@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b8aed19722d44246850aaa566e1e712, type: 3}
+  m_Name: \uC720\uBD80\uCD08\uBC25
+  m_EditorClassIdentifier:
+  displayName: "\uC720\uBD80\uCD08\uBC25"
+  roleLine: "\uBE60\uB978 \uC5F0\uC0AC"
+  frames:
+  - {fileID: -1469844341, guid: e49e3bc5570f90a191aff49c777bf273, type: 3}
+  - {fileID: 1481696041, guid: e49e3bc5570f90a191aff49c777bf273, type: 3}
+  - {fileID: 564660321, guid: e49e3bc5570f90a191aff49c777bf273, type: 3}
+  - {fileID: 395615902, guid: e49e3bc5570f90a191aff49c777bf273, type: 3}
+  - {fileID: 669125757, guid: e49e3bc5570f90a191aff49c777bf273, type: 3}
+  framesPerSecond: 8
+  facesRight: 0
+  visualScale: 1
+  levels:
+  - damage: 3
+    cooldown: 0.6
+    range: 5
+    angleDegrees: 0
+    pierceCount: 0
+  - damage: 3.75
+    cooldown: 0.55
+    range: 5
+    angleDegrees: 0
+    pierceCount: 0
+  - damage: 4.5
+    cooldown: 0.51
+    range: 5
+    angleDegrees: 0
+    pierceCount: 1
+  - damage: 6
+    cooldown: 0.45
+    range: 5
+    angleDegrees: 0
+    pierceCount: 1
