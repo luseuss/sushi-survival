@@ -17,8 +17,13 @@ namespace SushiSurvival.Enemies
         [SerializeField] private float knockbackForce = 3f;
         [Tooltip("넉백 속도가 초당 이만큼씩 줄어든다.")]
         [SerializeField] private float knockbackDecay = 12f;
-        [Tooltip("피격 시 흰색으로 번쩍인다. 비워두면 플래시 없이 조용히 넘어간다.")]
+        [Tooltip("피격 시 하얗게 번쩍인다. 비워두면 플래시 없이 조용히 넘어간다.")]
         [SerializeField] private SpriteFlasher spriteFlasher;
+        [Tooltip("피격 때 하얗게 덮여 있는 시간(초).")]
+        [SerializeField] private float hitFlashHoldSeconds = 0.06f;
+        [Tooltip("하얀 덮임이 풀리며 붉은 기운이 사라지는 데 걸리는 시간(초).")]
+        [SerializeField] private float hitFlashFadeSeconds = 0.14f;
+        [SerializeField] private Color hitFlashFadeColor = new Color(1f, 0.35f, 0.3f, 1f);
 
         private XPGemPoolSet _xpGemPools;
         private GameObjectPool _selfPool;
@@ -85,7 +90,7 @@ namespace SushiSurvival.Enemies
                 sourcePosition, transform.position, knockbackForce, monsterData.knockbackResistance);
 
             if (spriteFlasher != null)
-                spriteFlasher.Flash(Color.white, 0.08f);
+                spriteFlasher.HitFlash(hitFlashHoldSeconds, hitFlashFadeSeconds, hitFlashFadeColor);
 
             CurrentHealth = HealthLogic.ApplyDamage(CurrentHealth, damage);
 

@@ -34,6 +34,21 @@ namespace SushiSurvival.Core
         [SerializeField] private Color numberColor = Color.white;
         [SerializeField] private Color killNumberColor = new Color(1f, 0.85f, 0.3f);
 
+        [Header("피격 스파크")]
+        [Tooltip("적을 맞힐 때마다 맞은 자리에 번쩍이는 별 모양. 끄면 숫자와 플래시만 나온다.")]
+        [SerializeField] private bool hitSparkEnabled = true;
+        [Tooltip("스파크가 다 커졌을 때의 크기(월드 단위). 잡몹 스프라이트가 대략 0.3~0.4 정도다.")]
+        [SerializeField] private float hitSparkSize = 0.7f;
+        [SerializeField] private float hitSparkLife = 0.14f;
+        [Tooltip("막타(적이 죽는 타격)일 때의 크기 배율.")]
+        [SerializeField] private float killSparkScale = 1.5f;
+        [Tooltip("스파크가 맞은 자리에서 흩어지는 폭(월드 단위). 같은 자리에 겹쳐 하나로 보이지 않게 한다.")]
+        [SerializeField] private float hitSparkJitter = 0.12f;
+        [Tooltip("동시에 띄울 수 있는 스파크 수. 광역 공격으로 한꺼번에 맞을 때 화면이 덮이지 않게 한다.")]
+        [SerializeField] private int maxSparks = 40;
+        [SerializeField] private Color hitSparkColor = new Color(1f, 0.95f, 0.65f, 1f);
+        [SerializeField] private Color killSparkColor = new Color(1f, 0.8f, 0.3f, 1f);
+
         [Header("히트스톱")]
         [SerializeField] private float playerHitStopDuration = 0.08f;
         [SerializeField] private float enemyDeathStopDuration = 0.03f;
@@ -52,6 +67,9 @@ namespace SushiSurvival.Core
 
         private ObjectPool<DamageNumberPopup> _numberPool;
         private int _activeNumbers;
+
+        private ObjectPool<HitSpark> _sparkPool;
+        private int _activeSparks;
 
         private Coroutine _hitstopRoutine;
         private float _hitstopResumeScale = 1f;
@@ -118,6 +136,8 @@ namespace SushiSurvival.Core
         /// <summary>적이 맞을 때마다 머리 위에 데미지 숫자를 띄운다. 막타는 더 크고 노랗게 보여준다.</summary>
         public void EnemyHit(Vector3 position, float damage, bool killed)
         {
+            SpawnHitSpark(position, killed);
+
             if (_activeNumbers >= maxNumbers) return;
 
             if (_numberPool == null)
@@ -142,6 +162,30 @@ namespace SushiSurvival.Core
                 killed ? killNumberScale : 1f,
                 numberLifetime,
                 numberRiseHeight);
+        }
+
+        private void SpawnHitSpark(Vector3 position, bool killed)
+        {
+            if (!hitSparkEnabled || _activeSparks >= maxSparks) return;
+
+            _sparkPool ??= new ObjectPool<HitSpark>(
+                factory: () => HitSpark.Create(transform, ReleaseSpark),
+                onGet: spark => spark.gameObject.SetActive(true),
+                onRelease: spark => spark.gameObject.SetActive(false));
+
+            _activeSparks++;
+            Vector3 jittered = position + (Vector3)(Random.insideUnitCircle * hitSparkJitter);
+            _sparkPool.Get().Play(
+                jittered,
+                killed ? killSparkColor : hitSparkColor,
+                hitSparkSize * (killed ? killSparkScale : 1f),
+                hitSparkLife);
+        }
+
+        private void ReleaseSpark(HitSpark spark)
+        {
+            _activeSparks = Mathf.Max(0, _activeSparks - 1);
+            _sparkPool.Release(spark);
         }
 
         private void ReleaseNumber(DamageNumberPopup popup)
