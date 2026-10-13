@@ -34,6 +34,21 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
+        public void DescribeStats_IsStatsLineOnly()
+        {
+            Assert.AreEqual("피해 6 · 쿨타임 1.3초 · 사거리 7", FairyDescriptionLogic.DescribeStats(Stats(6f, 1.3f, 7f)));
+        }
+
+        [Test]
+        public void DescribeSummon_EndsWithTheStatsLine()
+        {
+            WeaponLevelStats level = Stats(4f, 0.8f, 6f);
+
+            StringAssert.EndsWith(FairyDescriptionLogic.DescribeStats(level),
+                                  FairyDescriptionLogic.DescribeSummon("중간 연사", level));
+        }
+
+        [Test]
         public void RoundsToTwoDecimals()
         {
             string text = FairyDescriptionLogic.DescribeSummon("x", Stats(4.126f, 0.6f, 5f));
