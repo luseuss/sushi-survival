@@ -273,6 +273,7 @@ MonoBehaviour:
   separationRadius: 1.2
   separationStrength: 0
   separationInterval: 0.1
+  blockAgainstMobs: 0
   contactOverlap: 0.02
 --- !u!114 &405356964781061093
 MonoBehaviour:

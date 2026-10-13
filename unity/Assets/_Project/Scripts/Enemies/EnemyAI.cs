@@ -15,16 +15,27 @@ namespace SushiSurvival.Enemies
 
         // FixedUpdate는 단일 스레드이고 결과를 즉시 소비하므로 공유해도 안전하다.
         private static readonly Collider2D[] NeighborBuffer = new Collider2D[MaxNeighbors];
+        private static readonly Collider2D[] MobBlockBuffer = new Collider2D[16];
 
         [SerializeField] private MonsterData monsterData;
         [Tooltip("다른 적을 찾을 레이어. Enemy 레이어를 지정한다.")]
         [SerializeField] private LayerMask enemyLayer;
         [Tooltip("이 반경 안의 다른 적에게서 밀려난다.")]
         [SerializeField] private float separationRadius = 0.6f;
-        [Tooltip("이동속도 대비 분리 힘의 배율.")]
+        [Tooltip("이동속도 대비 분리 힘의 배율. 몹을 서로 멀리 떼어 놓는 힘이다. 0이면 이 힘을 쓰지 않는다 — " +
+                 "몹끼리 겹치지 않는 건 아래 '몹끼리 막기'가 맡는다.")]
         [SerializeField] private float separationStrength = 1.5f;
         [Tooltip("분리 벡터 갱신 주기(초). 매 프레임 물리 쿼리를 돌리지 않기 위함.")]
         [SerializeField] private float separationInterval = 0.1f;
+
+        [Header("몹끼리 막기")]
+        [Tooltip("켜면 다른 몹의 몸 안으로 들어가지 못하고 그 경계를 따라 미끄러진다. 서로 밀어내지는 않는다. " +
+                 "보스처럼 몹을 뚫고 돌진해야 하는 몹은 끈다.")]
+        [SerializeField] private bool blockAgainstMobs = true;
+        [Tooltip("몸이 이미 겹쳐 있을 때 초당 이만큼씩만 천천히 벌어진다(월드 단위). 클수록 빨리 떨어진다.")]
+        [SerializeField] private float mobOverlapResolveSpeed = 0.6f;
+        [Tooltip("몹끼리 막을 때 이웃을 찾는 반경(월드 단위). 가장 큰 몹과도 부딪힐 수 있게 넉넉히 잡는다.")]
+        [SerializeField] private float mobBlockQueryRadius = 1.2f;
 
         private readonly List<Vector2> _neighborPositions = new List<Vector2>(MaxNeighbors);
 
@@ -76,7 +87,9 @@ namespace SushiSurvival.Enemies
         {
             if (_target == null) return;
 
-            UpdateSeparation();
+            // 분리 힘이 0이면 몹끼리 밀어내지 않는다 — 이웃을 찾는 물리 쿼리도 건너뛴다.
+            if (separationStrength > 0f)
+                UpdateSeparation();
 
             Vector2 chaseDirection = LockedDirection != Vector2.zero
                 ? LockedDirection
@@ -87,7 +100,34 @@ namespace SushiSurvival.Enemies
             Vector2 knockback = _enemy != null ? _enemy.KnockbackVelocity : Vector2.zero;
 
             Vector2 move = (chase + separation + knockback) * Time.fixedDeltaTime;
-            _rigidbody.MovePosition(BlockAgainstPlayer(_rigidbody.position + move));
+            Vector2 next = BlockAgainstMobs(_rigidbody.position, _rigidbody.position + move);
+
+            // 플레이어는 마지막에 막는다 — 접촉 데미지가 들어오려면 플레이어와의 간격이 이 규칙으로 정해져야 한다.
+            _rigidbody.MovePosition(BlockAgainstPlayer(next));
+        }
+
+        /// <summary>
+        /// 다른 몹의 몸 안으로 파고들지 못하게 보정한다(MobBlockLogic 참고). 이웃은 움직이지 않고 이 몹만 경계를 따라
+        /// 미끄러지므로 서로 밀치는 느낌 없이 겹치지만 않는다. 보스의 돌진처럼 방향이 고정된 이동은 몹을 뚫고 가야 해서 건너뛴다.
+        /// </summary>
+        private Vector2 BlockAgainstMobs(Vector2 current, Vector2 next)
+        {
+            if (!blockAgainstMobs || _ownCollider == null || LockedDirection != Vector2.zero) return next;
+
+            int count = Physics2D.OverlapCircleNonAlloc(current, mobBlockQueryRadius, MobBlockBuffer, enemyLayer);
+            float ownHalfWidth = _ownCollider.bounds.extents.x;
+            float resolveStep = mobOverlapResolveSpeed * Time.fixedDeltaTime;
+
+            for (int i = 0; i < count; i++)
+            {
+                Collider2D other = MobBlockBuffer[i];
+                if (other == null || other.attachedRigidbody == _rigidbody) continue;
+
+                float minDistance = ownHalfWidth + other.bounds.extents.x;
+                next = MobBlockLogic.Resolve(current, next, other.bounds.center, minDistance, resolveStep);
+            }
+
+            return next;
         }
 
         /// <summary>
