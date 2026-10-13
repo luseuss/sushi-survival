@@ -35,6 +35,10 @@ namespace SushiSurvival.Weapons
                 UmbrellaProgressionLogic.ShouldEvolve(next, umbrellaFromLevel));
         }
 
+        // 한 번만 때리는 레벨에서는 모션도 첫 휘두름까지만 보여 준다(타격 시점은 firstHitDelaySeconds가 이미 첫 휘두름에 맞춰져 있다).
+        protected override bool UseShortAttackMotion
+            => UmbrellaProgressionLogic.HitCount(currentLevel, hitsByLevel) <= 1;
+
         protected override void Attack()
         {
             StartCoroutine(SwingRoutine());

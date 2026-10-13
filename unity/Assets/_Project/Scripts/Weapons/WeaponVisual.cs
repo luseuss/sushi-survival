@@ -11,7 +11,8 @@ namespace SushiSurvival.Weapons
     {
         [Tooltip("FlipOnly는 좌우 반전만(계란 양산), RotateToFacing은 시선 방향 회전(간장새우 라이플).")]
         [SerializeField] private WeaponOrientMode orientMode = WeaponOrientMode.FlipOnly;
-        [Tooltip("FlipOnly에서 쓰는 캐릭터 기준 무기 위치. 오른쪽을 볼 때 기준.")]
+        [Tooltip("FlipOnly에서 쓰는 캐릭터 기준 무기 위치(캐릭터 로컬 단위). 오른쪽을 볼 때 기준이고 왼쪽에서는 x가 뒤집힌다. " +
+                 "캐릭터 크기가 2배라 값 1이 화면에서는 2칸이다. 모든 공격 프레임이 같이 움직이며, 플레이 중에 바꾸면 바로 반영된다.")]
         [SerializeField] private Vector2 baseOffset = new Vector2(0.5f, 0f);
         [Tooltip("RotateToFacing에서 쓰는 캐릭터로부터의 거리.")]
         [SerializeField] private float orbitDistance = 0.5f;

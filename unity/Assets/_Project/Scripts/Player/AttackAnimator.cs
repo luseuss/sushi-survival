@@ -12,11 +12,36 @@ namespace SushiSurvival.Player
     public class AttackAnimator : MonoBehaviour
     {
         private static readonly int AttackHash = Animator.StringToHash("Attack");
+        private static readonly int ShortAttackHash = Animator.StringToHash("ShortAttack");
 
         private Animator _animator;
+        private bool _hasShortAttackParameter;
 
-        private void Awake() => _animator = GetComponent<Animator>();
+        private void Awake()
+        {
+            _animator = GetComponent<Animator>();
 
-        public void TriggerAttack() => _animator.SetTrigger(AttackHash);
+            // 짧은 모션이 없는 컨트롤러(간장새우·이나리)에 값을 쓰면 매번 경고가 찍히므로 있는지 먼저 확인한다.
+            foreach (AnimatorControllerParameter parameter in _animator.parameters)
+            {
+                if (parameter.nameHash == ShortAttackHash)
+                {
+                    _hasShortAttackParameter = true;
+                    break;
+                }
+            }
+        }
+
+        /// <param name="shortMotion">
+        /// true면 모션을 반만 재생한다(컨트롤러에 ShortAttack 파라미터와 짧은 모션 상태가 있을 때). 한 번만 때리는
+        /// 레벨에서 모션도 한 번만 휘두르게 하려는 용도다.
+        /// </param>
+        public void TriggerAttack(bool shortMotion = false)
+        {
+            if (_hasShortAttackParameter)
+                _animator.SetBool(ShortAttackHash, shortMotion);
+
+            _animator.SetTrigger(AttackHash);
+        }
     }
 }
