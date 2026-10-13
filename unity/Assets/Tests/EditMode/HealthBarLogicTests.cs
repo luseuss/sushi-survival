@@ -78,5 +78,56 @@ namespace SushiSurvival.EditModeTests
         {
             Assert.That(HealthBarLogic.MoveTowardsFill(0.5f, 0f, -1f), Is.EqualTo(0.5f).Within(0.0001f));
         }
+
+        [TestCase(0f, 0.4f)]
+        [TestCase(1f, 0.6f)]
+        [TestCase(0.5f, 0.5f)]
+        public void MapFill_MapsRatioIntoBarRange(float ratio, float expected)
+        {
+            Assert.That(HealthBarLogic.MapFill(ratio, 0.4f, 0.6f), Is.EqualTo(expected).Within(0.0001f));
+        }
+
+        [Test]
+        public void MapFill_ClampsRatio()
+        {
+            Assert.That(HealthBarLogic.MapFill(2f, 0.4f, 0.6f), Is.EqualTo(0.6f).Within(0.0001f));
+            Assert.That(HealthBarLogic.MapFill(-1f, 0.4f, 0.6f), Is.EqualTo(0.4f).Within(0.0001f));
+        }
+
+        [Test]
+        public void TryFindOpaqueRangeX_FindsHorizontalSpanOfBar()
+        {
+            // 10x4 이미지의 가로 3~6번 칸(픽셀 4개)에만 불투명 픽셀이 있다.
+            var pixels = new UnityEngine.Color32[10 * 4];
+            for (int y = 1; y < 3; y++)
+                for (int x = 3; x <= 6; x++)
+                    pixels[y * 10 + x] = new UnityEngine.Color32(255, 0, 0, 255);
+
+            bool found = HealthBarLogic.TryFindOpaqueRangeX(pixels, 10, 4, 16, out float start, out float end);
+
+            Assert.IsTrue(found);
+            Assert.That(start, Is.EqualTo(0.3f).Within(0.0001f));
+            Assert.That(end, Is.EqualTo(0.7f).Within(0.0001f));
+        }
+
+        [Test]
+        public void TryFindOpaqueRangeX_IgnoresFaintPixelsBelowThreshold()
+        {
+            var pixels = new UnityEngine.Color32[10 * 2];
+            pixels[0] = new UnityEngine.Color32(255, 255, 255, 5);
+            pixels[15] = new UnityEngine.Color32(255, 0, 0, 255);
+
+            bool found = HealthBarLogic.TryFindOpaqueRangeX(pixels, 10, 2, 16, out float start, out float end);
+
+            Assert.IsTrue(found);
+            Assert.That(start, Is.EqualTo(0.5f).Within(0.0001f));
+            Assert.That(end, Is.EqualTo(0.6f).Within(0.0001f));
+        }
+
+        [Test]
+        public void TryFindOpaqueRangeX_FullyTransparent_ReturnsFalse()
+        {
+            Assert.IsFalse(HealthBarLogic.TryFindOpaqueRangeX(new UnityEngine.Color32[20], 10, 2, 16, out _, out _));
+        }
     }
 }
