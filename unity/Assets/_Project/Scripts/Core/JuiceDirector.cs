@@ -49,6 +49,16 @@ namespace SushiSurvival.Core
         [SerializeField] private Color hitSparkColor = new Color(1f, 0.95f, 0.65f, 1f);
         [SerializeField] private Color killSparkColor = new Color(1f, 0.8f, 0.3f, 1f);
 
+        [Header("플레이어 피격 화면 효과")]
+        [Tooltip("플레이어가 맞을 때 화면 가장자리가 붉게 번쩍인다. 끄면 히트스톱·흔들림만 나온다.")]
+        [SerializeField] private bool playerHitVignetteEnabled = true;
+        [SerializeField] private Color playerHitVignetteColor = new Color(0.85f, 0.05f, 0.05f, 1f);
+        [Tooltip("맞는 순간 가장자리의 가장 진한 투명도(0~1).")]
+        [Range(0f, 1f)]
+        [SerializeField] private float playerHitVignettePeakAlpha = 0.65f;
+        [Tooltip("붉은 기운이 사라지는 데 걸리는 실시간(초).")]
+        [SerializeField] private float playerHitVignetteDuration = 0.5f;
+
         [Header("히트스톱")]
         [SerializeField] private float playerHitStopDuration = 0.08f;
         [SerializeField] private float enemyDeathStopDuration = 0.03f;
@@ -67,6 +77,8 @@ namespace SushiSurvival.Core
 
         private ObjectPool<DamageNumberPopup> _numberPool;
         private int _activeNumbers;
+
+        private HitVignette _hitVignette;
 
         private ObjectPool<HitSpark> _sparkPool;
         private int _activeSparks;
@@ -131,6 +143,12 @@ namespace SushiSurvival.Core
         {
             TriggerHitstop(playerHitStopDuration);
             TriggerShake(playerHitShakeMagnitude, playerHitShakeDuration);
+
+            if (playerHitVignetteEnabled)
+            {
+                _hitVignette ??= HitVignette.Create(transform);
+                _hitVignette.Play(playerHitVignetteColor, playerHitVignettePeakAlpha, playerHitVignetteDuration);
+            }
         }
 
         /// <summary>적이 맞을 때마다 머리 위에 데미지 숫자를 띄운다. 막타는 더 크고 노랗게 보여준다.</summary>
