@@ -214,7 +214,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   separationRadius: 0.6
-  separationStrength: 1.5
+  separationStrength: 0
   separationInterval: 0.1
   contactOverlap: 0.02
 --- !u!114 &-1469184766798522211
