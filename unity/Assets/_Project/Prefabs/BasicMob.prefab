@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6710851900880391801}
   - component: {fileID: 4469577831396466761}
   - component: {fileID: 596849244926963855}
+  - component: {fileID: 7700000000000000001}
   - component: {fileID: 6583734508533315117}
   - component: {fileID: 1108281474064982475}
   - component: {fileID: -2361642250285822996}
@@ -116,8 +117,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &596849244926963855
-CircleCollider2D:
+--- !u!60 &596849244926963855
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -149,8 +150,34 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.22
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.29, y: 0.36}
+    newSize: {x: 0.29, y: 0.36}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.145, y: 0.17999999}
+      - {x: -0.145, y: -0.17999999}
+      - {x: 0.145, y: -0.17999999}
+      - {x: 0.145, y: 0.17999999}
+  m_UseDelaunayMesh: 0
+--- !u!114 &7700000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285ddcf5a9bb41e68079d58d03113cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6583734508533315117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +213,7 @@ MonoBehaviour:
   separationRadius: 0.6
   separationStrength: 1.5
   separationInterval: 0.1
+  contactOverlap: 0.02
 --- !u!114 &-2361642250285822996
 MonoBehaviour:
   m_ObjectHideFlags: 0
