@@ -65,6 +65,14 @@ namespace SushiSurvival.Core
             return string.Join("\n", lines);
         }
 
+        /// <summary>한 번에 오르는 값과 누적 상한으로 계산한 최대 선택 횟수. 상한까지 몇 번 고를 수 있는지 설명창에 보여준다.</summary>
+        public static int MaxPicks(float valuePerPick, float maxCap)
+            => valuePerPick <= 0f ? 0 : System.Math.Max(1, (int)System.Math.Round(maxCap / valuePerPick));
+
+        /// <summary>설명창의 상한 줄. 예: "최대 10회 (공격력 +200%)".</summary>
+        public static string DescribeAugmentLimit(StatType stat, float valuePerPick, float maxCap)
+            => $"최대 {MaxPicks(valuePerPick, maxCap)}회 ({DescribeAugment(stat, maxCap)})";
+
         private static bool Changed(float a, float b) => System.Math.Abs(a - b) > 0.0001f;
 
         // 0.2 → "20", 0.06 → "6". 부동소수 오차(0.1f*100=10.000001)가 "10.000001"로 보이지 않게 반올림한다.

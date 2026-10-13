@@ -6,6 +6,31 @@ namespace SushiSurvival.EditModeTests
 {
     public class UpgradeDescriptionLogicTests
     {
+        // ---- MaxPicks / DescribeAugmentLimit ----
+
+        [TestCase(0.2f, 2f, 10)]
+        [TestCase(30f, 300f, 10)]
+        [TestCase(0.5f, 5f, 10)]
+        [TestCase(1f, 1f, 1)]
+        [TestCase(0.05f, 0.5f, 10)]
+        public void MaxPicks_IsCapDividedByValuePerPick(float value, float cap, int expected)
+        {
+            Assert.AreEqual(expected, UpgradeDescriptionLogic.MaxPicks(value, cap));
+        }
+
+        [Test]
+        public void MaxPicks_ZeroValuePerPick_IsZero()
+        {
+            Assert.AreEqual(0, UpgradeDescriptionLogic.MaxPicks(0f, 1f));
+        }
+
+        [Test]
+        public void DescribeAugmentLimit_ShowsPicksAndCapEffect()
+        {
+            Assert.AreEqual("최대 10회 (공격력 +200%)", UpgradeDescriptionLogic.DescribeAugmentLimit(StatType.AttackDamage, 0.2f, 2f));
+            Assert.AreEqual("최대 1회 (쓰러져도 부활 +1회)", UpgradeDescriptionLogic.DescribeAugmentLimit(StatType.Revive, 1f, 1f));
+        }
+
         // ---- DescribeAugment ----
 
         [Test]
