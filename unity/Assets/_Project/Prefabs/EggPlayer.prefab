@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orientMode: 0
-  baseOffset: {x: 0.3, y: 0}
+  baseOffset: {x: 0.08, y: 0}
   orbitDistance: 0.5
   spriteAngleOffset: 0
   facing: {fileID: 4542973571035354992}
@@ -634,9 +634,9 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  hitsByLevel: 02000000020000000200000002000000
+  hitsByLevel: 01000000020000000200000002000000
   firstHitDelaySeconds: 0.17687075
-  hitGapSeconds: 0.26530613
+  hitGapSeconds: 0.26530612
   umbrellaFromLevel: 3
 --- !u!114 &476107878086711385
 MonoBehaviour:

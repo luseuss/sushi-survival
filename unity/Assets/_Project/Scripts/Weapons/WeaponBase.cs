@@ -77,13 +77,16 @@ namespace SushiSurvival.Weapons
             _cooldown.Tick(Time.deltaTime);
             if (!_cooldown.IsReady) return;
 
-            attackAnimator?.TriggerAttack();
+            attackAnimator?.TriggerAttack(UseShortAttackMotion);
             Attack();
 
             float cooldown = CooldownLogic.ApplyAttackSpeed(
                 BaseStats.cooldown, StatMultiplier(StatType.AttackSpeed), minCooldown);
             _cooldown.Reset(cooldown);
         }
+
+        /// <summary>true면 공격 모션을 짧게(반만) 재생한다. 한 번만 때리는 무기가 모션도 한 번만 휘두르게 할 때 쓴다.</summary>
+        protected virtual bool UseShortAttackMotion => false;
 
         protected abstract void Attack();
     }
