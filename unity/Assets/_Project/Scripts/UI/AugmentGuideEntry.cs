@@ -13,6 +13,12 @@ namespace SushiSurvival.UI
         [SerializeField] private Text effectText;
         [SerializeField] private Text limitText;
 
+        /// <summary>아이콘 배율을 바꾼다(설명창 탭 연출용). 1이면 원래 크기.</summary>
+        public void SetIconScale(float scale)
+        {
+            if (iconImage != null) iconImage.rectTransform.localScale = new Vector3(scale, scale, 1f);
+        }
+
         public void Bind(AugmentData data)
         {
             if (data == null) return;

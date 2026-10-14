@@ -67,6 +67,25 @@ namespace SushiSurvival.UI
         private bool _built;
         private bool _selectWasVisible;
 
+        // 연출 상태. 설명창은 일시정지 중에도 열리므로 시간은 전부 unscaled로 센다.
+        private CanvasGroup _panelGroup;
+        private Vector3 _panelBaseScale = Vector3.one;
+        private float _openElapsed = float.MaxValue;
+        private float _closeElapsed;
+        private bool _closing;
+
+        private RectTransform _tabRoot;
+        private CanvasGroup _tabGroup;
+        private Vector2 _tabBasePosition;
+        private float _tabElapsed = float.MaxValue;
+        private readonly List<RowAnim> _rowAnims = new List<RowAnim>();
+
+        private sealed class RowAnim
+        {
+            public CanvasGroup group;
+            public AugmentGuideEntry augmentEntry;
+        }
+
         private void Awake()
         {
             if (openButton != null) openButton.onClick.AddListener(Open);
@@ -74,7 +93,12 @@ namespace SushiSurvival.UI
             if (gameplayTabButton != null) gameplayTabButton.onClick.AddListener(ShowGameplay);
             if (augmentTabButton != null) augmentTabButton.onClick.AddListener(ShowAugments);
             if (fairyTabButton != null) fairyTabButton.onClick.AddListener(ShowFairy);
-            if (panelRoot != null) panelRoot.SetActive(false);
+            if (panelRoot != null)
+            {
+                _panelBaseScale = panelRoot.transform.localScale;
+                _panelGroup = GetOrAddGroup(panelRoot);
+                panelRoot.SetActive(false);
+            }
         }
 
         private void OnDestroy()
@@ -95,6 +119,7 @@ namespace SushiSurvival.UI
             _selectWasVisible = selectVisible;
 
             bool open = panelRoot != null && panelRoot.activeSelf;
+            if (open) TickAnimations(Mathf.Min(Time.unscaledDeltaTime, 0.1f));
 
             // 설명창을 연 동안과 캐릭터 선택이 끝난 뒤에는 열기 버튼을 숨긴다.
             if (openButton != null)
@@ -107,7 +132,7 @@ namespace SushiSurvival.UI
             if (!open) return;
 
             Keyboard keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && !_closing)
                 Close();
         }
 
@@ -117,13 +142,133 @@ namespace SushiSurvival.UI
             if (panelRoot == null) return;
 
             BuildRows();
+            _closing = false;
+            _openElapsed = 0f;
             ShowGameplay();
+            ApplyPanel(GuideAnimLogic.OpenScale(0f), GuideAnimLogic.OpenAlpha(0f));
             panelRoot.SetActive(true);
         }
 
+        /// <summary>설명창을 닫는다. 켜져 있는 동안엔 짧게 줄어들며 사라진 뒤에 꺼진다.</summary>
         public void Close()
         {
-            if (panelRoot != null) panelRoot.SetActive(false);
+            if (panelRoot == null || _closing) return;
+
+            if (!panelRoot.activeInHierarchy)
+            {
+                panelRoot.SetActive(false);
+                return;
+            }
+
+            _closing = true;
+            _closeElapsed = 0f;
+        }
+
+        /// <summary>연출 없이 바로 닫는다.</summary>
+        public void CloseImmediate()
+        {
+            _closing = false;
+            _openElapsed = float.MaxValue;
+            if (panelRoot != null)
+            {
+                ApplyPanel(1f, 1f);
+                panelRoot.SetActive(false);
+            }
+        }
+
+        private static CanvasGroup GetOrAddGroup(GameObject target)
+        {
+            CanvasGroup group = target.GetComponent<CanvasGroup>();
+            return group != null ? group : target.AddComponent<CanvasGroup>();
+        }
+
+        private void ApplyPanel(float scale, float alpha)
+        {
+            if (panelRoot == null) return;
+            panelRoot.transform.localScale = _panelBaseScale * scale;
+            if (_panelGroup != null) _panelGroup.alpha = alpha;
+        }
+
+        private void TickAnimations(float dt)
+        {
+            if (_closing)
+            {
+                _closeElapsed += dt;
+                float closeT = GuideAnimLogic.Progress(_closeElapsed, GuideAnimLogic.CloseDuration);
+                ApplyPanel(GuideAnimLogic.CloseScale(closeT), GuideAnimLogic.CloseAlpha(closeT));
+                if (closeT >= 1f) CloseImmediate();
+                return;
+            }
+
+            if (_openElapsed < GuideAnimLogic.OpenDuration)
+            {
+                _openElapsed += dt;
+                float openT = GuideAnimLogic.Progress(_openElapsed, GuideAnimLogic.OpenDuration);
+                ApplyPanel(GuideAnimLogic.OpenScale(openT), GuideAnimLogic.OpenAlpha(openT));
+            }
+
+            if (_tabElapsed < GuideAnimLogic.TabTotalDuration)
+            {
+                _tabElapsed += dt;
+                ApplyTab(_tabElapsed >= GuideAnimLogic.TabTotalDuration);
+            }
+        }
+
+        private void ApplyTab(bool finished)
+        {
+            float t = GuideAnimLogic.Progress(_tabElapsed, GuideAnimLogic.TabDuration);
+            if (_tabRoot != null)
+            {
+                float rise = finished ? 0f : GuideAnimLogic.TabOffset(t);
+                _tabRoot.anchoredPosition = _tabBasePosition + new Vector2(0f, -rise);
+            }
+            if (_tabGroup != null) _tabGroup.alpha = finished ? 1f : GuideAnimLogic.TabAlpha(t);
+
+            for (int i = 0; i < _rowAnims.Count; i++)
+            {
+                RowAnim row = _rowAnims[i];
+                float rowT = finished ? 1f : GuideAnimLogic.RowProgress(_tabElapsed, i);
+                if (row.group != null) row.group.alpha = GuideAnimLogic.EaseOut(rowT);
+                if (row.augmentEntry != null)
+                    row.augmentEntry.SetIconScale(finished ? 1f : GuideAnimLogic.Bounce(rowT));
+            }
+        }
+
+        // 탭 연출의 대상(내용 루트와 보여줄 줄들)을 정하고 처음 상태로 돌려놓는다.
+        private void BeginTabAnimation(GuideTab tab)
+        {
+            // 이전 탭에서 옮겨 둔 위치와 투명도를 원래대로 되돌린다.
+            if (_tabRoot != null) _tabRoot.anchoredPosition = _tabBasePosition;
+            if (_tabGroup != null) _tabGroup.alpha = 1f;
+            foreach (RowAnim row in _rowAnims)
+            {
+                if (row.group != null) row.group.alpha = 1f;
+                if (row.augmentEntry != null) row.augmentEntry.SetIconScale(1f);
+            }
+            _rowAnims.Clear();
+
+            GameObject rootObject = GuideTabLogic.ShowsGameplayRoot(tab) ? gameplayRoot : listRoot;
+            _tabRoot = rootObject != null ? rootObject.GetComponent<RectTransform>() : null;
+            _tabGroup = rootObject != null ? GetOrAddGroup(rootObject) : null;
+            if (_tabRoot != null) _tabBasePosition = _tabRoot.anchoredPosition;
+
+            List<GameObject> rows = GuideTabLogic.ShowsAugmentRows(tab) ? _augmentRows
+                : GuideTabLogic.ShowsFairyRows(tab) ? _fairyRows : null;
+            if (rows != null)
+            {
+                foreach (GameObject row in rows)
+                {
+                    if (row == null) continue;
+                    _rowAnims.Add(new RowAnim
+                    {
+                        group = GetOrAddGroup(row),
+                        augmentEntry = row.GetComponent<AugmentGuideEntry>()
+                    });
+                }
+            }
+
+            _tabElapsed = 0f;
+            ApplyTab(false);
         }
 
         public void ShowGameplay() => ShowTab(GuideTab.Gameplay);
@@ -149,6 +294,8 @@ namespace SushiSurvival.UI
             // 탭을 바꾸면 목록 맨 위부터 보여준다.
             ScrollRect scroll = content != null ? content.GetComponentInParent<ScrollRect>() : null;
             if (scroll != null) scroll.verticalNormalizedPosition = 1f;
+
+            BeginTabAnimation(tab);
         }
 
         private static void Tint(Button button, bool selected)
