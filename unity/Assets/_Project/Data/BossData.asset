@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: BossData
   m_EditorClassIdentifier: 
   monsterName: "\uB864\uBC95\uC0AC"
-  maxHealth: 1800
+  maxHealth: 2700
   contactDamage: 15
   moveSpeed: 1.6
   knockbackResistance: 0.9
   xpGemDrop: 2
+  scalesWithTime: 0
+  gemUpgradeTime: 0
+  upgradedGemDrop: 1
   animatorController: {fileID: 9100000, guid: 6278c47283afc2c4c9e520c2ad3e61f0, type: 2}
   phaseOne:
     patternInterval: 4
@@ -32,7 +35,6 @@ MonoBehaviour:
     chargeSpeedScale: 4.5
     chargeRecovery: 0.9
     meteorLead: 0
-    summonCount: 4
     summonRadius: 4
   phaseTwo:
     patternInterval: 2.5
@@ -47,7 +49,6 @@ MonoBehaviour:
     chargeSpeedScale: 5.5
     chargeRecovery: 0.7
     meteorLead: 0.6
-    summonCount: 6
     summonRadius: 4
   phaseTwoThreshold: 0.5
   summonStages:
