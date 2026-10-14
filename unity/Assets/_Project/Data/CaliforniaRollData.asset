@@ -18,6 +18,7 @@ MonoBehaviour:
   moveSpeed: 1.5
   knockbackResistance: 0
   xpGemDrop: 0
+  xpVacuumDropChance: 0.004
   scalesWithTime: 1
   gemUpgradeTime: 180
   upgradedGemDrop: 1

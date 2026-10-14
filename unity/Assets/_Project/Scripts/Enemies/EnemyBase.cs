@@ -121,6 +121,9 @@ namespace SushiSurvival.Enemies
                     gemPool.Get(transform.position, Quaternion.identity);
             }
 
+            // 아주 가끔 경험치 흡입 아이템(자석)을 떨군다. 확률은 몬스터 데이터에서 정한다.
+            XPVacuumItem.TrySpawn(transform.position, monsterData.xpVacuumDropChance);
+
             if (GameManager.Instance != null)
                 GameManager.Instance.RegisterKill();
 
