@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using SushiSurvival.Core;
 using SushiSurvival.Pickups;
@@ -14,6 +15,9 @@ namespace SushiSurvival.Enemies
     {
         [Tooltip("잡몹 종류별 풀. 매 스폰마다 무작위로 하나를 고른다.")]
         [SerializeField] private GameObjectPool[] enemyPools;
+        [Tooltip("enemyPools와 같은 순서로, 각 풀이 지속 스폰에 섞이기 시작하는 시각(초). 비어 있거나 모자라면 처음부터 나온다. " +
+                 "예: 기본 잡몹 0, 캘리포니아롤 60 — 처음 1분은 기본 잡몹만 나온다.")]
+        [SerializeField] private float[] poolUnlockSeconds;
         [SerializeField] private XPGemPoolSet xpGemPools;
         [SerializeField] private float spawnRadius = 10f;
 
@@ -71,7 +75,8 @@ namespace SushiSurvival.Enemies
                 return;
             }
 
-            GameObjectPool pool = enemyPools[Random.Range(0, enemyPools.Length)];
+            List<int> available = SpawnPoolLogic.AvailableIndices(Elapsed, poolUnlockSeconds, enemyPools.Length);
+            GameObjectPool pool = enemyPools[available[Random.Range(0, available.Count)]];
 
             float angle = Random.Range(0f, Mathf.PI * 2f);
             Vector2 spawnPos = SpawnRingUtility.GetPositionOnRing(_player.position, spawnRadius, angle);

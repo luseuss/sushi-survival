@@ -8573,6 +8573,9 @@ MonoBehaviour:
   enemyPools:
   - {fileID: 1201815021}
   - {fileID: 45706925}
+  poolUnlockSeconds:
+  - 0
+  - 60
   xpGemPools: {fileID: 779189570}
   spawnRadius: 10
   spawnInterval: 1.5
