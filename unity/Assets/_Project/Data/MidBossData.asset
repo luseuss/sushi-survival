@@ -18,4 +18,5 @@ MonoBehaviour:
   moveSpeed: 1.2
   knockbackResistance: 0.7
   xpGemDrop: 2
+  xpVacuumDropChance: 0.25
   animatorController: {fileID: 0}

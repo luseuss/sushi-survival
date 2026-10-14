@@ -21,6 +21,11 @@ namespace SushiSurvival.Data
         public float knockbackResistance;
         public XPGemType xpGemDrop = XPGemType.Basic;
 
+        [Range(0f, 1f)]
+        [Tooltip("죽을 때 경험치 흡입 아이템(자석)을 떨어뜨릴 확률. 0.01 = 1%. 먹으면 필드의 경험치를 전부 빨아들인다. " +
+                 "필드에는 동시에 몇 개까지만 떠 있다.")]
+        public float xpVacuumDropChance;
+
         [Tooltip("켜면 경과 시간에 따라 체력이 불어난다. 잡몹만 켠다 — " +
                  "중형몹·보스는 설계된 고정 체력이라 배율이 곱해지면 안 된다.")]
         public bool scalesWithTime;
