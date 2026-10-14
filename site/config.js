@@ -3,13 +3,13 @@ window.SITE_CONFIG = {
   title: "와사비를 먹으면 강해지는 군요",
   tagline: "스시왕국의 용사들과 함께 5분을 버텨라 — 몰려오는 초밥 군단을 쓸어버리는 서바이벌 로그라이크",
 
-  version: "1.0",
-  fileSize: "약 477MB",
-  releaseDate: "2026-10-10",
+  version: "1.1",
+  fileSize: "약 508MB",
+  releaseDate: "2026-10-15",
 
   // GitHub Release에 올린 zip의 다운로드 주소. 비워 두면 버튼이 "곧 공개됩니다"로 잠긴다.
-  // 예: "https://github.com/<계정>/<저장소>/releases/download/v1.0/WasabiSurvival_v1.0_win64.zip"
-  downloadUrl: "https://github.com/luseuss/sushi-survival/releases/download/v1.0/WasabiSurvival_v1.0_win64.zip",
+  // 예: "https://github.com/<계정>/<저장소>/releases/download/v1.1/WasabiSurvival_v1.1_win64.zip"
+  downloadUrl: "https://github.com/luseuss/sushi-survival/releases/download/v1.1/WasabiSurvival_v1.1_win64.zip",
   // 전체 릴리스 목록 페이지(선택). 비워 두면 링크를 숨긴다.
   releasesUrl: "https://github.com/luseuss/sushi-survival/releases",
 
