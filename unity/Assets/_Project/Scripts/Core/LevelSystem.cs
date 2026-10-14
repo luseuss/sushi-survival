@@ -128,6 +128,12 @@ namespace SushiSurvival.Core
         }
 
         /// <summary>
+        /// 레벨업 카드가 강화할 무기를 바꾼다. 보스 씬에서 우산으로 되돌린 뒤처럼, SetPlayer 이후에
+        /// 활성 무기가 다른 컴포넌트로 바뀌었을 때 쓴다. 안 바꾸면 꺼진 무기(양산 Lv1)가 계속 강화 대상이 된다.
+        /// </summary>
+        public void SetWeapon(WeaponBase weapon) => _weapon = weapon;
+
+        /// <summary>
         /// 씬 전환(GameScene → BossScene) 직후, 이전 씬에서 쌓은 레벨·경험치·
         /// 증강·외부 버프(왕궁 와사비·호감도 대화)를 복원한다. SetPlayer로 새
         /// PlayerStats가 연결된 뒤에 불러야 한다. 최대체력 증강의 현재체력 보정은
