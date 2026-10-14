@@ -81,7 +81,7 @@ MonoBehaviour:
     portrait: {fileID: 21300000, guid: 023537795fdc4d1cbbeeb1214b6650ac, type: 3}
     standing: {fileID: 0}
     text: "\uBE44\uCF1C\uB77C \uB108\uAC19\uC740 \uB4E4\uB7EC\uB9AC \uCD08\uBC25\uC744
-      \uC0B0\uB300\uD574\uC990 \uC2DC\uAC04\uC740 \uC5C6\uB2E4"
+      \uC0C1\uB300\uD574\uC990 \uC2DC\uAC04\uC740 \uC5C6\uB2E4"
     background: {fileID: 0}
   - speakerName: "\uC544\uB378\uB9B0"
     portrait: {fileID: 21300000, guid: 9d869ea5b7b241978f2a32f14ee0556b, type: 3}
