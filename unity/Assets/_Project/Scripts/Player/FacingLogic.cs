@@ -25,6 +25,21 @@ namespace SushiSurvival.Player
             return moveInput.normalized;
         }
 
+
+        /// <summary>
+        /// 마우스 쪽을 향하는 시선. 플레이어 위치에서 마우스(월드 좌표)로 향하는 방향을 돌려준다. 마우스가 플레이어 바로
+        /// 위에 있어(deadZone 이내) 방향이 정해지지 않으면 지금 방향을 그대로 둔다.
+        /// </summary>
+        public static Vector2 ComputeMouseFacing(Vector2 currentFacing, Vector2 playerPosition,
+                                                 Vector2 mouseWorldPosition, float deadZone)
+        {
+            Vector2 toMouse = mouseWorldPosition - playerPosition;
+            if (toMouse.sqrMagnitude <= deadZone * deadZone || toMouse.sqrMagnitude < MinInputSqrMagnitude)
+                return currentFacing;
+
+            return toMouse.normalized;
+        }
+
         public static bool IsFacingRight(Vector2 facing) => facing.x >= 0f;
 
         /// <summary>

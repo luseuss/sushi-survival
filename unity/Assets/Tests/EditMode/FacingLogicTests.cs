@@ -92,5 +92,38 @@ namespace SushiSurvival.EditModeTests
                 Assert.AreEqual(right ? Vector2.right : Vector2.left, FacingLogic.HorizontalFacing(facing));
             }
         }
+
+        [Test]
+        public void ComputeMouseFacing_PointsFromPlayerToMouse()
+        {
+            Vector2 result = FacingLogic.ComputeMouseFacing(Vector2.down, new Vector2(1f, 1f), new Vector2(4f, 5f), 0.1f);
+
+            Assert.AreEqual(0.6f, result.x, 0.0001f);
+            Assert.AreEqual(0.8f, result.y, 0.0001f);
+        }
+
+        [Test]
+        public void ComputeMouseFacing_MouseLeftOfPlayer_FacesLeft()
+        {
+            Vector2 result = FacingLogic.ComputeMouseFacing(Vector2.right, Vector2.zero, new Vector2(-3f, 0.5f), 0.1f);
+
+            Assert.IsFalse(FacingLogic.IsFacingRight(result));
+        }
+
+        [Test]
+        public void ComputeMouseFacing_MouseInsideDeadZone_KeepsCurrentFacing()
+        {
+            Vector2 result = FacingLogic.ComputeMouseFacing(Vector2.left, Vector2.zero, new Vector2(0.05f, 0.05f), 0.15f);
+
+            Assert.AreEqual(Vector2.left, result);
+        }
+
+        [Test]
+        public void ComputeMouseFacing_ResultIsNormalized()
+        {
+            Vector2 result = FacingLogic.ComputeMouseFacing(Vector2.down, Vector2.zero, new Vector2(10f, -7f), 0.1f);
+
+            Assert.AreEqual(1f, result.magnitude, 0.0001f);
+        }
     }
 }
