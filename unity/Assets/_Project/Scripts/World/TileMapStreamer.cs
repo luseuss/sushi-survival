@@ -113,8 +113,12 @@ namespace SushiSurvival.World
         [SerializeField] private bool randomSeedEachRun = true;
         [SerializeField] private int seed = 12345;
 
+        [Tooltip("프레임마다 칠하거나 지우는 청크 수의 상한. 플레이어가 청크 경계를 넘을 때 5개를 한 프레임에 몰아서 처리하면 화면이 끊겨서 나눠 처리한다. 0 이하면 한 프레임에 전부 처리한다.")]
+        [SerializeField] private int chunkOpsPerFrame = 2;
+
         private readonly HashSet<Vector2Int> _loadedChunks = new HashSet<Vector2Int>();
-        private readonly List<Vector2Int> _toRemove = new List<Vector2Int>();
+        private readonly List<Vector2Int> _pendingFill = new List<Vector2Int>();
+        private readonly List<Vector2Int> _pendingClear = new List<Vector2Int>();
 
         private Tile[] _grassTiles;
         private Tile[] _grassDetailTiles;
@@ -193,36 +197,41 @@ namespace SushiSurvival.World
             if (followTarget == null) return;
 
             Vector2Int centerChunk = ChunkGrid.WorldToChunk(followTarget.position, chunkSize, tileSize);
-            if (_hasStreamedOnce && centerChunk == _lastCenterChunk) return;
+            if (!_hasStreamedOnce || centerChunk != _lastCenterChunk)
+            {
+                ChunkStreamLogic.Plan(centerChunk, chunkRadius, _loadedChunks, _pendingFill, _pendingClear);
 
-            Stream(centerChunk);
+                // 처음에는 화면이 비어 있으면 안 되므로 전부 한 번에 칠한다.
+                bool first = !_hasStreamedOnce;
+                _lastCenterChunk = centerChunk;
+                _hasStreamedOnce = true;
 
-            _lastCenterChunk = centerChunk;
-            _hasStreamedOnce = true;
+                if (first)
+                {
+                    ProcessPending(int.MaxValue);
+                    return;
+                }
+            }
+
+            ProcessPending(chunkOpsPerFrame > 0 ? chunkOpsPerFrame : int.MaxValue);
         }
 
-        private void Stream(Vector2Int centerChunk)
+        // 밀린 칠하기·지우기를 이번 프레임 몫만큼 처리한다. 가까운 청크부터 칠한다.
+        private void ProcessPending(int maxOps)
         {
-            List<Vector2Int> required = ChunkGrid.GetRequiredChunks(centerChunk, chunkRadius);
-            var requiredSet = new HashSet<Vector2Int>(required);
-
-            _toRemove.Clear();
-            foreach (Vector2Int loaded in _loadedChunks)
+            for (int i = 0; i < maxOps; i++)
             {
-                if (!requiredSet.Contains(loaded))
-                    _toRemove.Add(loaded);
-            }
+                if (!ChunkStreamLogic.TryTakeNext(_pendingFill, _pendingClear, out Vector2Int chunk, out bool isFill))
+                    return;
 
-            foreach (Vector2Int chunk in _toRemove)
-            {
-                ClearChunk(chunk);
-                _loadedChunks.Remove(chunk);
-            }
-
-            foreach (Vector2Int chunk in required)
-            {
-                if (_loadedChunks.Add(chunk))
-                    FillChunk(chunk);
+                if (isFill)
+                {
+                    if (_loadedChunks.Add(chunk)) FillChunk(chunk);
+                }
+                else
+                {
+                    if (_loadedChunks.Remove(chunk)) ClearChunk(chunk);
+                }
             }
         }
 
