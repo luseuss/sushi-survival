@@ -571,19 +571,19 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1049601377}
+  - {fileID: 239794391}
+  - {fileID: 887385866}
+  - {fileID: 262871686}
+  - {fileID: 812995557}
   - {fileID: 522093471}
   - {fileID: 760529369}
-  - {fileID: 239794391}
   - {fileID: 229743833}
   - {fileID: 804251860}
-  - {fileID: 812995557}
   - {fileID: 871366300}
   - {fileID: 662309028}
   - {fileID: 2019472732}
   - {fileID: 353362417}
   - {fileID: 1257074655}
-  - {fileID: 887385866}
-  - {fileID: 262871686}
   - {fileID: 1985112193}
   - {fileID: 101777304}
   - {fileID: 597605942}
