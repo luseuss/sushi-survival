@@ -78,7 +78,7 @@ namespace SushiSurvival.UI
             }
         }
 
-        // 입상이 있으면 입상에 말풍선까지, 미니 초상화에는 움직임만 입힌다. 입상이 없으면 미니 초상화에 말풍선도 붙인다.
+        // 입상이 있으면 입상에만 연출(움직임·말풍선)을 입힌다. 대화창 안 미니 프로필은 그림이 움직이지 않고, 입상이 없을 때만 말풍선을 붙인다.
         private void PlayExpression(ExpressionType expression, bool hasStanding)
         {
             Font font = bodyText != null ? bodyText.font : null;
@@ -87,7 +87,7 @@ namespace SushiSurvival.UI
                 ExpressionEffect.PlayOn(standingImage, expression, font, true);
 
             if (miniPortrait != null && miniPortrait.gameObject.activeSelf)
-                ExpressionEffect.PlayOn(miniPortrait, expression, font, !hasStanding);
+                ExpressionEffect.PlayOn(miniPortrait, expression, font, !hasStanding, animateImage: false);
         }
 
         // 연출 컴포넌트는 씬에 따로 배선하지 않고 필요할 때 붙인다.

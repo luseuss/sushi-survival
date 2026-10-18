@@ -27,18 +27,21 @@ namespace SushiSurvival.UI
         private Color _baseColor = Color.white;
         private float _bubbleClock = float.MaxValue;
 
-        /// <summary>target에 표정 연출을 재생한다. 평상시면 진행 중인 연출만 정리한다. target이 null이면 아무것도 안 한다.</summary>
-        public static void PlayOn(Image target, ExpressionType expression, Font font, bool showBubble)
+        /// <summary>
+        /// target에 표정 연출을 재생한다. 평상시면 진행 중인 연출만 정리한다. target이 null이면 아무것도 안 한다.
+        /// animateImage가 false면 그림은 움직이지 않고(위치·크기·기울기·색 그대로) 말풍선만 띄운다 — 대화창 안 작은 프로필용.
+        /// </summary>
+        public static void PlayOn(Image target, ExpressionType expression, Font font, bool showBubble, bool animateImage = true)
         {
             if (target == null) return;
 
             if (!target.TryGetComponent<ExpressionEffect>(out var effect))
                 effect = target.gameObject.AddComponent<ExpressionEffect>();
 
-            effect.Play(expression, font, showBubble);
+            effect.Play(expression, font, showBubble, animateImage);
         }
 
-        public void Play(ExpressionType expression, Font font, bool showBubble)
+        public void Play(ExpressionType expression, Font font, bool showBubble, bool animateImage = true)
         {
             Cache();
             ResetEffect();
@@ -50,10 +53,13 @@ namespace SushiSurvival.UI
 
             if (ExpressionLogic.Duration(expression) <= 0f) return;
 
-            _active = true;
-            _basePosition = _rect.anchoredPosition;
-            _baseScale = _rect.localScale;
-            _baseColor = _image.color;
+            if (animateImage)
+            {
+                _active = true;
+                _basePosition = _rect.anchoredPosition;
+                _baseScale = _rect.localScale;
+                _baseColor = _image.color;
+            }
 
             if (showBubble && font != null)
                 ShowBubble(expression, font);

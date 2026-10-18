@@ -116,7 +116,7 @@ namespace SushiSurvival.UI
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
 
-            ExpressionEffect.PlayOn(portraitImage, ExpressionType.Neutral, FontOf(flavorText), false);
+            ExpressionEffect.PlayOn(portraitImage, ExpressionType.Neutral, FontOf(flavorText), false, animateImage: false);
 
             if (flavorText != null)
                 flavorText.text = flavorMessage;
@@ -181,7 +181,7 @@ namespace SushiSurvival.UI
 
             // 이기면 기뻐하고, 지면 풀이 죽는다.
             ExpressionEffect.PlayOn(portraitImage, success ? ExpressionType.Happy : ExpressionType.Sad,
-                                    FontOf(resultText), true);
+                                    FontOf(resultText), true, animateImage: false);
 
             // flavorText를 지우지 않으면 resultText와 같은 자리에 겹쳐 보인다
             // (두 Text의 RectTransform이 같은 위치에 겹쳐 배치돼 있음).
