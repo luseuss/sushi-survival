@@ -19,11 +19,14 @@ namespace SushiSurvival.Weapons
         [Tooltip("공격속도 증강이 아무리 쌓여도 이 값보다 짧아지지 않는다(무한 연사 방지).")]
         [SerializeField] protected float minCooldown = 0.2f;
         [SerializeField] protected PlayerStats playerStats;
+        [Tooltip("레벨업 창의 무기 강화 카드에 쓰는 아이콘. 비우면 LevelSystem의 기본 아이콘을 쓴다.")]
+        [SerializeField] private Sprite upgradeIcon;
 
         private readonly WeaponCooldown _cooldown = new WeaponCooldown();
         private float _damageBonus = 1f;
 
         public int CurrentLevel => currentLevel;
+        public Sprite UpgradeIcon => upgradeIcon;
         public string WeaponName => weaponData != null ? weaponData.weaponName : string.Empty;
         public bool CanLevelUp => weaponData != null && currentLevel < weaponData.levels.Length;
 

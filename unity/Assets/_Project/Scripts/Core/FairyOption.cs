@@ -24,9 +24,11 @@ namespace SushiSurvival.Core
             _controller = controller;
             _choice = choice;
 
-            Sprite petIcon = choice.Kind == FairyChoiceKind.Summon
-                ? controller.IconOfKind(choice.KindIndex)
-                : null;
+            // 소환 카드는 그 펫의 그림을, 강화 카드는 강화할 요정(가진 펫)의 그림을 아이콘으로 쓴다.
+            int kind = choice.Kind == FairyChoiceKind.Summon
+                ? choice.KindIndex
+                : (choice.Index >= 0 && choice.Index < controller.Kinds.Count ? controller.Kinds[choice.Index] : -1);
+            Sprite petIcon = kind >= 0 ? controller.IconOfKind(kind) : null;
             Icon = petIcon != null ? petIcon : fallbackIcon;
         }
 
