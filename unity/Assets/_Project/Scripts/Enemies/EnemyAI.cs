@@ -42,8 +42,15 @@ namespace SushiSurvival.Enemies
         [Tooltip("플레이어와 겹치는 정도(월드 단위). 살짝 겹쳐 있어야 접촉 데미지가 계속 들어온다.")]
         [SerializeField] private float contactOverlap = 0.02f;
 
+        // 플레이어 콜라이더 중심은 물리 스텝마다 한 번만 읽어 모든 적이 나눠 쓴다(적마다 bounds를 부르면 네이티브 호출이 수천 번이다).
+        private static int _playerCenterStep = -1;
+        private static Vector2 _playerCenter;
+
         private Collider2D _ownCollider;
         private Collider2D _targetCollider;
+        // 콜라이더 반폭은 크기가 안 바뀌므로 켜질 때 한 번만 잰다.
+        private float _ownHalfWidth;
+        private float _targetHalfWidth;
         private Rigidbody2D _rigidbody;
         private EnemyBase _enemy;
         private Transform _target;
@@ -75,6 +82,8 @@ namespace SushiSurvival.Enemies
             var playerObj = GameObject.FindGameObjectWithTag("Player");
             _target = playerObj != null ? playerObj.transform : null;
             _targetCollider = playerObj != null ? playerObj.GetComponent<Collider2D>() : null;
+            _ownHalfWidth = _ownCollider != null ? _ownCollider.bounds.extents.x : 0f;
+            _targetHalfWidth = _targetCollider != null ? _targetCollider.bounds.extents.x : 0f;
 
             // 풀에서 재사용되므로 이전 판의 상태를 지운다.
             _separation = Vector2.zero;
@@ -115,7 +124,7 @@ namespace SushiSurvival.Enemies
             if (!blockAgainstMobs || _ownCollider == null || LockedDirection != Vector2.zero) return next;
 
             int count = Physics2D.OverlapCircleNonAlloc(current, mobBlockQueryRadius, MobBlockBuffer, enemyLayer);
-            float ownHalfWidth = _ownCollider.bounds.extents.x;
+            float ownHalfWidth = _ownHalfWidth;
             float resolveStep = mobOverlapResolveSpeed * Time.fixedDeltaTime;
 
             for (int i = 0; i < count; i++)
@@ -123,8 +132,10 @@ namespace SushiSurvival.Enemies
                 Collider2D other = MobBlockBuffer[i];
                 if (other == null || other.attachedRigidbody == _rigidbody) continue;
 
-                float minDistance = ownHalfWidth + other.bounds.extents.x;
-                next = MobBlockLogic.Resolve(current, next, other.bounds.center, minDistance, resolveStep);
+                // bounds는 호출마다 네이티브 계산이라 한 번만 읽는다.
+                Bounds otherBounds = other.bounds;
+                float minDistance = ownHalfWidth + otherBounds.extents.x;
+                next = MobBlockLogic.Resolve(current, next, otherBounds.center, minDistance, resolveStep);
             }
 
             return next;
@@ -138,10 +149,22 @@ namespace SushiSurvival.Enemies
         {
             if (_ownCollider == null || _targetCollider == null) return next;
 
-            float minDistance = _ownCollider.bounds.extents.x + _targetCollider.bounds.extents.x - contactOverlap;
-            Vector2 playerCenter = _targetCollider.bounds.center;
+            float minDistance = _ownHalfWidth + _targetHalfWidth - contactOverlap;
+            Vector2 playerCenter = PlayerCenterThisStep();
 
             return EnemyBlockLogic.Resolve(next, playerCenter, minDistance, _rigidbody.position - playerCenter);
+        }
+
+        private Vector2 PlayerCenterThisStep()
+        {
+            int step = Time.frameCount; // FixedUpdate는 한 프레임에 여러 번 돌 수 있지만 플레이어는 그 안에서 거의 안 움직여 프레임 단위로 충분하다.
+            if (_playerCenterStep != step)
+            {
+                _playerCenterStep = step;
+                _playerCenter = _targetCollider.bounds.center;
+            }
+
+            return _playerCenter;
         }
 
         private void UpdateSeparation()

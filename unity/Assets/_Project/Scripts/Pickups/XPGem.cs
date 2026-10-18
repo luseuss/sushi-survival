@@ -36,6 +36,12 @@ namespace SushiSurvival.Pickups
         // 지금 필드에 떠 있는(활성) 젬 전체. 흡입 아이템이 FindObjectsOfType 없이 한 번에 훑는다.
         private static readonly HashSet<XPGem> Active = new HashSet<XPGem>();
 
+        // 자석 범위는 프레임당 한 번만 계산해 모든 젬이 나눠 쓴다(젬이 수백 개라 젬마다 스탯을 훑으면 낭비다).
+        private static int _magnetFrame = -1;
+        private static float _magnetRadius;
+        private static Transform _cachedPlayer;
+        private static PlayerStats _cachedPlayerStats;
+
         private GameObjectPool _selfPool;
         private Transform _player;
         private PlayerStats _playerStats;
@@ -78,19 +84,32 @@ namespace SushiSurvival.Pickups
             _flightTime = 0f;
             transform.localScale = _baseScale;
 
-            var playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj == null)
+            // 플레이어는 한 판에 하나라 한 번 찾은 것을 재사용한다(젬이 풀에서 나올 때마다 태그 검색을 하지 않는다).
+            if (_cachedPlayer == null)
             {
-                _player = null;
-                _playerStats = null;
-                return;
+                var playerObj = GameObject.FindGameObjectWithTag("Player");
+                _cachedPlayer = playerObj != null ? playerObj.transform : null;
+                _cachedPlayerStats = playerObj != null ? playerObj.GetComponent<PlayerStats>() : null;
             }
 
-            _player = playerObj.transform;
-            _playerStats = playerObj.GetComponent<PlayerStats>();
+            _player = _cachedPlayer;
+            _playerStats = _cachedPlayerStats;
         }
 
         private void OnDisable() => Active.Remove(this);
+
+        private float MagnetRadiusThisFrame()
+        {
+            if (_magnetFrame != Time.frameCount)
+            {
+                _magnetFrame = Time.frameCount;
+                _magnetRadius = _playerStats != null
+                    ? _playerStats.GetValue(StatType.MagnetRange)
+                    : fallbackPickupRadius;
+            }
+
+            return _magnetRadius;
+        }
 
         /// <summary>플레이어를 향해 한 걸음 날아간다. 도착했으면(또는 너무 오래 날았으면) true.</summary>
         private bool FlyToPlayer()
@@ -120,9 +139,7 @@ namespace SushiSurvival.Pickups
                     transform.position, _player.position, speed * Time.deltaTime);
             }
 
-            float radius = _playerStats != null
-                ? _playerStats.GetValue(StatType.MagnetRange)
-                : fallbackPickupRadius;
+            float radius = MagnetRadiusThisFrame();
 
             // 자석 범위에 들어오면 그 자리에서 사라지지 않고 플레이어에게 빨려 들어간 뒤 경험치가 들어온다.
             if (!_collecting)

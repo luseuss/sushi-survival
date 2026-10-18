@@ -25,6 +25,9 @@ namespace SushiSurvival.Weapons
         [SerializeField] private float hitRadius = 0.3f;
         [SerializeField] private LayerMask enemyLayer;
 
+        // 우산마다 매 프레임 조회하므로 배열을 새로 만들지 않고 이 버퍼를 재사용한다(GC 부담을 줄인다).
+        private static readonly Collider2D[] HitBuffer = new Collider2D[32];
+
         private float _currentAngle;
         // 풀링된 적이 죽고 짧은 시간 안에 같은 자리에서 재사용되면 이전 생의
         // 마지막 타격 시각이 남아 있어 첫 타격이 한 번 씹힐 수 있다 — 재타격
@@ -80,10 +83,10 @@ namespace SushiSurvival.Weapons
         {
             for (int i = 0; i < count; i++)
             {
-                Collider2D[] hits = Physics2D.OverlapCircleAll(umbrellas[i].position, hitRadius, enemyLayer);
-                foreach (var hit in hits)
+                int hitCount = Physics2D.OverlapCircleNonAlloc(umbrellas[i].position, hitRadius, HitBuffer, enemyLayer);
+                for (int h = 0; h < hitCount; h++)
                 {
-                    if (!hit.TryGetComponent<EnemyBase>(out var enemy)) continue;
+                    if (!HitBuffer[h].TryGetComponent<EnemyBase>(out var enemy)) continue;
 
                     _lastHitTime.TryGetValue(enemy, out float last);
                     if (Time.time - last < reHitInterval) continue;
