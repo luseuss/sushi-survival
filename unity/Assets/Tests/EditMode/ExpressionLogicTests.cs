@@ -149,5 +149,42 @@ namespace SushiSurvival.EditModeTests
 
             Object.DestroyImmediate(set);
         }
+
+        [Test]
+        public void MissingExpression_FallsBackToTheSetsNeutralArt_NotTheLinesOwnSprite()
+        {
+            Sprite lineSprite = NewSprite();
+            Sprite neutralPortrait = NewSprite();
+            Sprite neutralStanding = NewSprite();
+
+            var set = ScriptableObject.CreateInstance<ExpressionSet>();
+            set.entries = new[]
+            {
+                new ExpressionSet.Entry
+                {
+                    expression = ExpressionType.Neutral, portrait = neutralPortrait, standing = neutralStanding,
+                },
+            };
+
+            Assert.AreSame(neutralPortrait, ExpressionSet.PortraitOrDefault(set, ExpressionType.Happy, lineSprite));
+            Assert.AreSame(neutralStanding, ExpressionSet.StandingOrDefault(set, ExpressionType.Surprised, lineSprite));
+
+            Object.DestroyImmediate(set);
+        }
+
+        [Test]
+        public void EmptySlot_StaysEmpty_EvenWithASet()
+        {
+            var set = ScriptableObject.CreateInstance<ExpressionSet>();
+            set.entries = new[]
+            {
+                new ExpressionSet.Entry { expression = ExpressionType.Neutral, portrait = NewSprite(), standing = NewSprite() },
+            };
+
+            Assert.IsNull(ExpressionSet.PortraitOrDefault(set, ExpressionType.Neutral, null));
+            Assert.IsNull(ExpressionSet.StandingOrDefault(set, ExpressionType.Happy, null));
+
+            Object.DestroyImmediate(set);
+        }
     }
 }

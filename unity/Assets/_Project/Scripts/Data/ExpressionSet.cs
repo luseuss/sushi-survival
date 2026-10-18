@@ -22,18 +22,34 @@ namespace SushiSurvival.Data
 
         public Entry[] entries;
 
-        /// <summary>표정에 맞는 초상화. 세트가 없거나 해당 표정 그림이 없으면 fallback.</summary>
+        /// <summary>
+        /// 표정에 맞는 초상화. 그 표정 그림이 없으면 세트의 평상시 그림, 그것도 없으면(세트가 없는 경우 포함) fallback.
+        /// fallback이 null이면 그 자리는 원래 비워 둔 칸이라 세트가 있어도 null을 그대로 돌려준다(화면 구성을 바꾸지 않는다).
+        /// </summary>
         public static Sprite PortraitOrDefault(ExpressionSet set, ExpressionType expression, Sprite fallback)
         {
+            if (fallback == null) return null;
+
             Entry entry = Find(set, expression);
-            return entry != null && entry.portrait != null ? entry.portrait : fallback;
+            if (entry != null && entry.portrait != null) return entry.portrait;
+
+            Entry neutral = expression == ExpressionType.Neutral ? null : Find(set, ExpressionType.Neutral);
+            return neutral != null && neutral.portrait != null ? neutral.portrait : fallback;
         }
 
-        /// <summary>표정에 맞는 입상. 세트가 없거나 해당 표정 그림이 없으면 fallback.</summary>
+        /// <summary>
+        /// 표정에 맞는 입상. 그 표정 그림이 없으면 세트의 평상시 그림, 그것도 없으면(세트가 없는 경우 포함) fallback.
+        /// fallback이 null이면 그 자리는 원래 비워 둔 칸이라 세트가 있어도 null을 그대로 돌려준다(화면 구성을 바꾸지 않는다).
+        /// </summary>
         public static Sprite StandingOrDefault(ExpressionSet set, ExpressionType expression, Sprite fallback)
         {
+            if (fallback == null) return null;
+
             Entry entry = Find(set, expression);
-            return entry != null && entry.standing != null ? entry.standing : fallback;
+            if (entry != null && entry.standing != null) return entry.standing;
+
+            Entry neutral = expression == ExpressionType.Neutral ? null : Find(set, ExpressionType.Neutral);
+            return neutral != null && neutral.standing != null ? neutral.standing : fallback;
         }
 
         private static Entry Find(ExpressionSet set, ExpressionType expression)

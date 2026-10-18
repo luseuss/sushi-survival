@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93c812e485a64d86ec564afe94082f8, type: 3}
+  m_Name: AdelineExpressions
+  m_EditorClassIdentifier: 
+  entries:
+  - expression: 0
+    portrait: {fileID: 21300000, guid: 7a58145bcbaa4d05c57b6afa4e4874f9, type: 3}
+    standing: {fileID: 21300000, guid: 7c7218cf916557fef01c5c46a8c6ef5d, type: 3}
+  - expression: 4
+    portrait: {fileID: 21300000, guid: e46bd926488aabe15a435027e29072d2, type: 3}
+    standing: {fileID: 21300000, guid: fa4c82c7f738e69fd976ae545b06cbc7, type: 3}
+  - expression: 3
+    portrait: {fileID: 21300000, guid: a2a5315224a1f296ff151edbf6129218, type: 3}
+    standing: {fileID: 21300000, guid: 973cec330cbe0e949a04004ca1811ec0, type: 3}
+  - expression: 5
+    portrait: {fileID: 21300000, guid: d89ff5310a3883218335f8644a348860, type: 3}
+    standing: {fileID: 21300000, guid: 35953d65d6ed198aed1199005ef77021, type: 3}

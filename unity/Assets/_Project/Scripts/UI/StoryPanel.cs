@@ -67,7 +67,7 @@ namespace SushiSurvival.UI
                 _standingAnimator.Show(standing);
             }
 
-            PlayExpression(line.expression, standing != null);
+            PlayExpression(line.expression, standing != null && standingImage != null);
 
             if (bodyText != null)
             {
