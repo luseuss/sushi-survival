@@ -19,7 +19,15 @@ namespace SushiSurvival.Companions
         [SerializeField] private LayerMask enemyLayer;
         [Tooltip("요정 프리팹(SpriteRenderer + Fairy). 비워두면 SpriteRenderer를 런타임에 만든다.")]
         [SerializeField] private Fairy fairyPrefab;
-        [SerializeField] private int maxFairies = 3;
+        [Header("호감도 대화에서 고르는 후보(카탈로그 번호)")]
+        [Tooltip("대표 성향이 저돌적일 때의 후보 3종. 기본: 참치초밥, 문어초밥, 새우초밥.")]
+        [SerializeField] private int[] boldCandidates = { 8, 3, 4 };
+        [Tooltip("대표 성향이 신중할 때의 후보 3종. 기본: 간장새우, 광어초밥, 계란초밥.")]
+        [SerializeField] private int[] carefulCandidates = { 0, 2, 1 };
+        [Tooltip("대표 성향이 다정할 때의 후보 3종. 기본: 연어초밥, 유부초밥, 장어초밥.")]
+        [SerializeField] private int[] kindCandidates = { 5, 6, 7 };
+        [Tooltip("세계관 대화를 건너뛰어 성향이 없을 때의 후보 3종. 기본: 계란초밥, 연어초밥, 간장새우.")]
+        [SerializeField] private int[] neutralCandidates = { 1, 5, 0 };
         [SerializeField] private FairyMotion motion = FairyMotion.Default;
 
         private readonly List<Fairy> _fairies = new List<Fairy>();
@@ -30,7 +38,7 @@ namespace SushiSurvival.Companions
         private PlayerStats _stats;
 
         public int Count => _fairies.Count;
-        public int MaxCount => maxFairies;
+        public int MaxCount => FairyChoiceLogic.FixedCount;
 
         public int MaxLevel
         {
@@ -76,7 +84,7 @@ namespace SushiSurvival.Companions
         /// <summary>kindIndex번 펫을 Lv1로 소환한다. 가득 찼거나 이미 가졌거나 잘못된 번호면 false.</summary>
         public bool Summon(int kindIndex)
         {
-            if (_fairies.Count >= maxFairies) return false;
+            if (_fairies.Count >= MaxCount) return false;
             if (_kinds.Contains(kindIndex)) return false;
 
             FairyData data = DataOf(kindIndex);
@@ -133,7 +141,23 @@ namespace SushiSurvival.Companions
 
         public List<FairyChoice> BuildChoices()
             => FairyChoiceLogic.Build(_kinds, Levels, catalog != null ? catalog.Length : 0,
-                                      maxFairies, MaxLevel, _random);
+                                      MaxCount, MaxLevel, _random);
+
+        /// <summary>이미 데려온 요정의 강화 후보. 레벨업 카드 풀에 섞는다.</summary>
+        public List<FairyChoice> BuildUpgradeChoices()
+            => FairyChoiceLogic.BuildUpgrades(Levels, MaxLevel);
+
+        /// <summary>성향에 맞는 펫 후보(카탈로그 번호). 호감도 대화에서 이 중 요정 수만큼 고른다.</summary>
+        public List<int> CandidatesFor(PlayerTrait trait)
+            => FairyCandidateLogic.ForTrait(trait, boldCandidates, carefulCandidates, kindCandidates,
+                                            neutralCandidates, catalog != null ? catalog.Length : 0);
+
+        /// <summary>선택지 버튼에 적는 "이름 — 역할".</summary>
+        public string LabelOfKind(int kindIndex)
+        {
+            FairyData data = DataOf(kindIndex);
+            return data != null ? $"{data.displayName} — {data.roleLine}" : string.Empty;
+        }
 
         public string NameOfKind(int kindIndex)
         {
