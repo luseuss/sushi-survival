@@ -296,14 +296,14 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1049601377}
-  - {fileID: 1240316976}
   - {fileID: 239794391}
-  - {fileID: 804251860}
-  - {fileID: 812995557}
-  - {fileID: 871366300}
-  - {fileID: 428371844}
   - {fileID: 887385866}
   - {fileID: 262871686}
+  - {fileID: 812995557}
+  - {fileID: 1240316976}
+  - {fileID: 804251860}
+  - {fileID: 871366300}
+  - {fileID: 428371844}
   - {fileID: 1985112193}
   - {fileID: 101777304}
   - {fileID: 4532256556133511263}
