@@ -164,6 +164,9 @@ namespace SushiSurvival.Enemies.Boss
                 while (weapon.CurrentLevel < RunResultCarrier.WeaponLevel && weapon.CanLevelUp)
                     weapon.LevelUp();
 
+                // 와사비로 변신한 무기의 추가 공격력도 이어 간다.
+                weapon.SetDamageBonus(RunResultCarrier.WeaponDamageBonus);
+
                 // 우산으로 바꿨다면 레벨업 카드의 강화 대상도 우산이어야 한다. SetPlayer 때 넘긴 건 꺼진
                 // 양산(Lv1)이라, 그대로 두면 이미 다 키운 무기의 강화 카드가 계속 뜬다.
                 if (levelSystem != null) levelSystem.SetWeapon(weapon);

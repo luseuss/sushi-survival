@@ -21,6 +21,7 @@ namespace SushiSurvival.Weapons
         [SerializeField] protected PlayerStats playerStats;
 
         private readonly WeaponCooldown _cooldown = new WeaponCooldown();
+        private float _damageBonus = 1f;
 
         public int CurrentLevel => currentLevel;
         public string WeaponName => weaponData != null ? weaponData.weaponName : string.Empty;
@@ -28,8 +29,13 @@ namespace SushiSurvival.Weapons
 
         protected WeaponLevelStats BaseStats => weaponData.levels[currentLevel - 1];
 
-        /// <summary>증강 배율이 적용된 최종 데미지.</summary>
-        protected float Damage => BaseStats.damage * StatMultiplier(StatType.AttackDamage);
+        /// <summary>와사비로 변신한 무기의 추가 공격력 배율. 1이면 없음. 보스 씬 이월에도 쓴다.</summary>
+        public float DamageBonus => _damageBonus;
+
+        public void SetDamageBonus(float bonus) => _damageBonus = Mathf.Max(0f, bonus);
+
+        /// <summary>증강 배율과 와사비 변신 보너스가 적용된 최종 데미지.</summary>
+        protected float Damage => BaseStats.damage * StatMultiplier(StatType.AttackDamage) * _damageBonus;
 
         /// <summary>증강 배율이 적용된 최종 사거리/반경.</summary>
         protected float Range => BaseStats.range * StatMultiplier(StatType.AttackRange);
