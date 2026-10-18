@@ -50,6 +50,9 @@ namespace SushiSurvival.UI
                 _typewriter.Play(question.questionText, charsPerSecond);
             }
 
+            Font font = questionText != null ? questionText.font : null;
+            ExpressionEffect.PlayOn(portraitImage, question.expression, font, true);
+
             for (int i = 0; i < choiceButtons.Length; i++)
             {
                 if (i < question.choices.Length)

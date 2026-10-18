@@ -20,6 +20,8 @@ namespace SushiSurvival.Data
     {
         [TextArea]
         public string questionText;
+        [Tooltip("질문을 던질 때의 표정. 평상시면 연출 없음.")]
+        public ExpressionType expression;
         [Tooltip("2~3개.")]
         public AffinityDialogueChoice[] choices;
     }
@@ -40,6 +42,8 @@ namespace SushiSurvival.Data
     [CreateAssetMenu(menuName = "SushiSurvival/Affinity Dialogue Data", fileName = "NewAffinityDialogueData")]
     public class AffinityDialogueData : ScriptableObject
     {
+        [Tooltip("표정별 그림 모음. question1의 표정에 맞는 초상화·입상으로 바뀐다. 비우면 기본 그림에 연출만 입힌다.")]
+        public ExpressionSet expressions;
         [Tooltip("question1 앞에 순서대로 재생되는 자기소개 나레이션. 비우면 곧바로 question1이 뜬다.")]
         public StoryLine[] introLines;
         public AffinityDialogueQuestion question1;

@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using SushiSurvival.Core;
+using SushiSurvival.Data;
 
 namespace SushiSurvival.UI
 {
@@ -115,6 +116,8 @@ namespace SushiSurvival.UI
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
 
+            ExpressionEffect.PlayOn(portraitImage, ExpressionType.Neutral, FontOf(flavorText), false);
+
             if (flavorText != null)
                 flavorText.text = flavorMessage;
 
@@ -176,6 +179,10 @@ namespace SushiSurvival.UI
             if (portraitImage != null)
                 portraitImage.sprite = portrait;
 
+            // 이기면 기뻐하고, 지면 풀이 죽는다.
+            ExpressionEffect.PlayOn(portraitImage, success ? ExpressionType.Happy : ExpressionType.Sad,
+                                    FontOf(resultText), true);
+
             // flavorText를 지우지 않으면 resultText와 같은 자리에 겹쳐 보인다
             // (두 Text의 RectTransform이 같은 위치에 겹쳐 배치돼 있음).
             if (flavorText != null)
@@ -235,6 +242,8 @@ namespace SushiSurvival.UI
 
             haloImage.gameObject.SetActive(false);
         }
+
+        private static Font FontOf(Text text) => text != null ? text.font : null;
 
         private IEnumerator RevealDefeat()
         {

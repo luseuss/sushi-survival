@@ -39,8 +39,13 @@ namespace SushiSurvival.Core
         public void Show(AffinityDialogueData data, Sprite portrait, Sprite standing, PlayerStats stats, PlayerHealth health,
                          Action<AugmentData, float> recordBuff, Action onComplete)
         {
+            // question1의 표정에 맞는 그림이 있으면 그 그림으로 바꾼다. 없으면 기본 그림에 연출만 입힌다.
+            ExpressionType expression = data?.question1 != null ? data.question1.expression : ExpressionType.Neutral;
+            Sprite questionPortrait = ExpressionSet.PortraitOrDefault(data?.expressions, expression, portrait);
+            Sprite questionStanding = ExpressionSet.StandingOrDefault(data?.expressions, expression, standing);
+
             PlayLines(data?.introLines,
-                () => ShowQuestion(data?.question1, portrait, standing, stats, health, recordBuff,
+                () => ShowQuestion(data?.question1, questionPortrait, questionStanding, stats, health, recordBuff,
                                    () => ShowFairyPick(portrait, standing, onComplete)));
         }
 
@@ -223,7 +228,12 @@ namespace SushiSurvival.Core
                     : source;
             }
 
-            return new AffinityDialogueQuestion { questionText = question.questionText, choices = reordered };
+            return new AffinityDialogueQuestion
+            {
+                questionText = question.questionText,
+                expression = question.expression,
+                choices = reordered,
+            };
         }
     }
 }
