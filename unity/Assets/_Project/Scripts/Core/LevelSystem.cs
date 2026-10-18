@@ -407,7 +407,11 @@ namespace SushiSurvival.Core
             var candidates = new List<IUpgradeOption>();
 
             if (_weapon != null && _weapon.CanLevelUp)
-                candidates.Add(new WeaponLevelUpOption(_weapon, weaponUpgradeIcon));
+            {
+                // 무기 자신의 아이콘(양산·라이플)이 있으면 그것을, 없으면 기본 아이콘을 쓴다.
+                Sprite icon = _weapon.UpgradeIcon != null ? _weapon.UpgradeIcon : weaponUpgradeIcon;
+                candidates.Add(new WeaponLevelUpOption(_weapon, icon));
+            }
 
             // 데려온 요정의 강화 카드도 같은 풀에 섞인다.
             if (fairyController != null)

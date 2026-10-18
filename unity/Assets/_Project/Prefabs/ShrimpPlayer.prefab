@@ -208,6 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb6c0c110d81304793621ed116baaf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  upgradeIcon: {fileID: 21300000, guid: c1f004c098d43bbbac70fb272ac65862, type: 3}
   weaponData: {fileID: 11400000, guid: b77dcefefb47f7344b9e259da98ca698, type: 2}
   attackAnimator: {fileID: 0}
   currentLevel: 1
