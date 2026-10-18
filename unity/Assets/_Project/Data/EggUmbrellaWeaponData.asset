@@ -18,7 +18,7 @@ MonoBehaviour:
   levels:
   - damage: 8
     cooldown: 0.3
-    range: 0.2
+    range: 0.4
     angleDegrees: 0
     pierceCount: 0
   - damage: 10

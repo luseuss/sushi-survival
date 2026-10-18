@@ -38,11 +38,13 @@ namespace SushiSurvival.Core
         [SerializeField] private RoyalWasabiController royalWasabiController;
         [Tooltip("꺼두면 레벨업 팝업에서 와사비 버튼이 숨겨진다.")]
         [SerializeField] private bool royalWasabiEnabled = true;
-        [Tooltip("와사비 성공 보상으로 소환·강화하는 요정 시스템. 비워두면 요정 대신 스탯 버프를 준다.")]
+        [Tooltip("요정 시스템. 레벨업 카드 풀에 요정 강화 카드를 섞는다. 비워두면 요정 카드는 나오지 않는다.")]
         [SerializeField] private FairyController fairyController;
-        [Tooltip("요정 선택 카드에 쓸 아이콘. 비워도 동작한다.")]
+        [Tooltip("요정 강화 카드에 쓸 아이콘. 비워도 동작한다.")]
         [SerializeField] private Sprite fairyIcon;
-        [Tooltip("아델린이 아닌 캐릭터의 와사비 성공 보상(스탯 버프) 대상 증강 4종.")]
+        [Tooltip("와사비로 무기가 변신하면 붙는 추가 공격력 배율. 1.25면 레벨업 변신보다 25% 더 강하다.")]
+        [SerializeField] private float wasabiDamageMultiplier = 1.25f;
+        [Tooltip("변신할 무기가 없는 캐릭터의 와사비 성공 보상(스탯 버프) 대상 증강 4종.")]
         [SerializeField] private AugmentData attackDamageAugment;
         [SerializeField] private AugmentData attackSpeedAugment;
         [SerializeField] private AugmentData moveSpeedAugment;
@@ -94,7 +96,6 @@ namespace SushiSurvival.Core
         private float _xpTowardNext;
         private int _pendingLevelUps;
         private bool _panelOpen;
-        private bool _fairyRewardPending;
 
         /// <summary>현재 요정들의 레벨(소환 순서). 요정 시스템이 없으면 빈 목록. 보스 씬 이월용.</summary>
         public IReadOnlyList<int> FairyLevels
@@ -246,7 +247,8 @@ namespace SushiSurvival.Core
                 _panelOpen = true;
                 Time.timeScale = 0f;
                 // 와사비를 막아 두면 null을 넘겨 패널이 버튼을 숨긴다.
-                panel.Show(options, OnOptionChosen, royalWasabiEnabled ? HandleRoyalWasabiRequested : null);
+                bool wasabiAvailable = royalWasabiEnabled && WasabiRewardLogic.ShowsButton(CurrentWasabiReward());
+                panel.Show(options, OnOptionChosen, wasabiAvailable ? HandleRoyalWasabiRequested : null);
                 return;
             }
 
@@ -269,66 +271,44 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            bool hasFairyReward = fairyController != null && fairyController.BuildChoices().Count > 0;
-            _fairyRewardPending = false;
-
             royalWasabiController.Show(_portrait, _royalSceneAnimator, () =>
             {
                 WasabiCount++;
-
-                if (hasFairyReward)
-                {
-                    _fairyRewardPending = true;
-                    return new[] { "요정의 힘을 얻었다!" };
-                }
-
-                // 요정 시스템이 없거나 모두 최대 레벨이면 성공이 헛되지 않게 스탯 버프를 준다.
-                return ApplyRoyalWasabiStatBuffs();
-            }, HandleRoyalWasabiFinished);
+                return ApplyWasabiReward();
+            }, ShowNext);
         }
 
-        private void HandleRoyalWasabiFinished()
+        /// <summary>지금 무기로 와사비를 받으면 무엇을 얻는지. 이미 변신했으면 None이라 버튼을 숨긴다.</summary>
+        private WasabiReward CurrentWasabiReward()
         {
-            if (_fairyRewardPending)
-            {
-                _fairyRewardPending = false;
-                ShowFairyChoice();
-                return;
-            }
-
-            ShowNext();
+            bool canTransform = _weapon is EggFanWeapon || (_weapon is ShrimpRifleWeapon rifle && !rifle.IsShotgun);
+            bool alreadyTransformed = _weapon is RotatingUmbrellaWeapon ||
+                                      (_weapon is ShrimpRifleWeapon shotgun && shotgun.IsShotgun);
+            return WasabiRewardLogic.Decide(canTransform, alreadyTransformed);
         }
 
         /// <summary>
-        /// 와사비 성공 직후 "요정 소환/강화"를 레벨업 카드로 고르게 한다. _panelOpen과 timeScale 0은
-        /// 와사비 연출 때부터 그대로 이어지고, 선택이 끝나면 기존 대기 레벨업 큐(ShowNext)로 합류한다.
+        /// 와사비 성공 보상. 무기를 바로 변신시키고(레벨은 그대로 이어 간다) 레벨업 변신보다 강한 추가 공격력을 붙인다.
+        /// 변신할 무기가 없거나 변신에 실패하면 스탯 버프로 대신한다. 결과 화면에 한 줄씩 보여줄 설명을 돌려준다.
         /// </summary>
-        private void ShowFairyChoice()
+        private string[] ApplyWasabiReward()
         {
-            var options = new List<IUpgradeOption>();
-            if (fairyController != null)
-            {
-                foreach (FairyChoice choice in fairyController.BuildChoices())
-                    options.Add(new FairyOption(fairyController, choice, fairyIcon));
-            }
+            if (CurrentWasabiReward() != WasabiReward.WeaponTransform)
+                return ApplyRoyalWasabiStatBuffs();
 
-            if (options.Count == 0)
-            {
-                ShowNext();
-                return;
-            }
+            var lines = new List<string>();
+            if (_weapon is EggFanWeapon)
+                lines.AddRange(ConvertToUmbrella());
+            else if (_weapon is ShrimpRifleWeapon)
+                lines.AddRange(ConvertToShotgun());
 
-            panel.Show(options, OnFairyChosen, null);
-        }
+            // 변신이 일어나지 않았으면(필요한 컴포넌트가 없는 경우 등) 성공이 헛되지 않게 스탯 버프를 준다.
+            if (CurrentWasabiReward() != WasabiReward.None)
+                return ApplyRoyalWasabiStatBuffs();
 
-        private void OnFairyChosen(IUpgradeOption option)
-        {
-            option.Apply();
-
-            panel.Hide();
-            _panelOpen = false;
-
-            ShowNext();
+            _weapon.SetDamageBonus(wasabiDamageMultiplier);
+            lines.Add($"와사비의 힘으로 공격력 +{WasabiRewardLogic.BonusPercent(wasabiDamageMultiplier)}%");
+            return lines.ToArray();
         }
 
         /// <summary>아델린 전용 — 계란 양산을 회전 우산으로 바꾼다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>

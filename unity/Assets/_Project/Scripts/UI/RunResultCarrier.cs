@@ -23,6 +23,8 @@ namespace SushiSurvival.Core
         public static int WeaponLevel;
         // 와사비 알현 성공으로 무기가 바뀐 상태인지(아델린 회전 우산, 카마리온 샷건).
         public static bool WasabiWeaponConverted;
+        // 와사비로 변신한 무기의 추가 공격력 배율(1이면 없음). 레벨업으로 변신한 무기는 1이다.
+        public static float WeaponDamageBonus = 1f;
         // 와사비를 받은 횟수. 보스 씬의 결과 화면에도 GameScene에서 받은 와사비가 이어져 보이도록 넘긴다.
         public static int WasabiCount;
         // 요정 한 마리당 하나씩, 소환 순서대로의 레벨. 보스 씬에서 같은 요정을 되살린다.
