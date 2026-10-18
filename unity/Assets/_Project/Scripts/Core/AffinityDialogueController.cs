@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using SushiSurvival.Companions;
 using SushiSurvival.Data;
 using SushiSurvival.Player;
 using SushiSurvival.UI;
@@ -24,6 +26,9 @@ namespace SushiSurvival.Core
         [Range(0f, 1f)]
         [SerializeField] private float buffRatio = 0.125f;
 
+        [Tooltip("성향에 맞는 펫 후보를 정하고 고른 펫을 데려오는 요정 시스템. 비워 두면 같은 씬에서 찾는다.")]
+        [SerializeField] private FairyController fairyController;
+
         private Coroutine _lineRoutine;
 
         /// <param name="recordBuff">
@@ -35,7 +40,8 @@ namespace SushiSurvival.Core
                          Action<AugmentData, float> recordBuff, Action onComplete)
         {
             PlayLines(data?.introLines,
-                () => ShowQuestion(data?.question1, portrait, standing, stats, health, recordBuff, onComplete));
+                () => ShowQuestion(data?.question1, portrait, standing, stats, health, recordBuff,
+                                   () => ShowFairyPick(portrait, standing, onComplete)));
         }
 
         /// <summary>보스전 직전 나레이션만 재생한다. 증강 선택은 없다.</summary>
@@ -132,6 +138,54 @@ namespace SushiSurvival.Core
 
                 panel.Hide();
                 onComplete?.Invoke();
+            });
+        }
+
+        // 증강 선택 뒤에 이어서, 대표 성향의 후보 3종 중 요정 수만큼 한 마리씩 고른다. 같은 대화 패널을 재사용한다.
+        private void ShowFairyPick(Sprite portrait, Sprite standing, Action onComplete)
+        {
+            FairyController fairies = fairyController != null ? fairyController : FindObjectOfType<FairyController>();
+            if (fairies == null || panel == null)
+            {
+                onComplete?.Invoke();
+                return;
+            }
+
+            PlayerTrait trait = PlayerTraitState.Dominant;
+            List<int> candidates = fairies.CandidatesFor(trait);
+            PickNextFairy(fairies, candidates, trait, 1, FairyChoiceLogic.FixedCount, portrait, standing, onComplete);
+        }
+
+        private void PickNextFairy(FairyController fairies, List<int> candidates, PlayerTrait trait, int number, int total,
+                                   Sprite portrait, Sprite standing, Action onComplete)
+        {
+            if (number > total || candidates.Count == 0 || fairies.Count >= fairies.MaxCount)
+            {
+                panel.Hide();
+                onComplete?.Invoke();
+                return;
+            }
+
+            var choices = new AffinityDialogueChoice[candidates.Count];
+            for (int i = 0; i < choices.Length; i++)
+                choices[i] = new AffinityDialogueChoice { choiceText = fairies.LabelOfKind(candidates[i]) };
+
+            var question = new AffinityDialogueQuestion
+            {
+                questionText = FairyCandidateLogic.PromptText(trait, number, total),
+                choices = choices,
+            };
+
+            panel.Show(portrait, standing, question, chosen =>
+            {
+                int picked = Array.IndexOf(choices, chosen);
+                if (picked >= 0)
+                {
+                    fairies.Summon(candidates[picked]);
+                    candidates.RemoveAt(picked);
+                }
+
+                PickNextFairy(fairies, candidates, trait, number + 1, total, portrait, standing, onComplete);
             });
         }
 

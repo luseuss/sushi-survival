@@ -429,6 +429,13 @@ namespace SushiSurvival.Core
             if (_weapon != null && _weapon.CanLevelUp)
                 candidates.Add(new WeaponLevelUpOption(_weapon, weaponUpgradeIcon));
 
+            // 데려온 요정의 강화 카드도 같은 풀에 섞인다.
+            if (fairyController != null)
+            {
+                foreach (FairyChoice choice in fairyController.BuildUpgradeChoices())
+                    candidates.Add(new FairyOption(fairyController, choice, fairyIcon));
+            }
+
             foreach (var augment in augments)
             {
                 if (augment == null) continue;

@@ -25,6 +25,9 @@ namespace SushiSurvival.Companions
         /// <summary>레벨업 카드가 세 장이라 선택지도 그 이상 만들지 않는다.</summary>
         public const int MaxChoices = 3;
 
+        /// <summary>데려가는 요정 수. 호감도 대화에서 이 수만큼 고르고, 이후로는 늘지 않는다.</summary>
+        public const int FixedCount = 2;
+
         /// <summary>
         /// 빈 자리가 있으면 아직 안 가진 펫 중 무작위 최대 3종을 소환 후보로, 가득 차면 최대 레벨 미만인
         /// 요정마다 강화 후보를 돌려준다(둘은 섞지 않는다). 후보가 없으면 빈 목록.
@@ -55,6 +58,24 @@ namespace SushiSurvival.Companions
             }
 
             for (int i = 0; i < count && choices.Count < MaxChoices; i++)
+            {
+                if (levels[i] >= maxLevel) continue;
+
+                choices.Add(new FairyChoice { Kind = FairyChoiceKind.Upgrade, Index = i, KindIndex = -1 });
+            }
+
+            return choices;
+        }
+
+        /// <summary>
+        /// 이미 데려온 요정 중 최대 레벨 미만인 요정마다 강화 후보를 하나씩 돌려준다. 레벨업 카드 풀에 섞인다.
+        /// </summary>
+        public static List<FairyChoice> BuildUpgrades(IReadOnlyList<int> levels, int maxLevel)
+        {
+            var choices = new List<FairyChoice>();
+            int count = levels != null ? levels.Count : 0;
+
+            for (int i = 0; i < count; i++)
             {
                 if (levels[i] >= maxLevel) continue;
 
