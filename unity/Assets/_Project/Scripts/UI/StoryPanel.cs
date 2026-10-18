@@ -50,10 +50,13 @@ namespace SushiSurvival.UI
             if (nameText != null)
                 nameText.text = hasName ? line.speakerName : string.Empty;
 
+            Sprite portrait = ExpressionSet.PortraitOrDefault(line.expressions, line.expression, line.portrait);
+            Sprite standing = ExpressionSet.StandingOrDefault(line.expressions, line.expression, line.standing);
+
             if (miniPortrait != null)
             {
-                miniPortrait.sprite = line.portrait;
-                miniPortrait.gameObject.SetActive(line.portrait != null);
+                miniPortrait.sprite = portrait;
+                miniPortrait.gameObject.SetActive(portrait != null);
             }
 
             if (standingImage != null)
@@ -61,8 +64,10 @@ namespace SushiSurvival.UI
                 if (_standingAnimator == null)
                     _standingAnimator = GetOrAdd<StandingAnimator>(standingImage.gameObject);
 
-                _standingAnimator.Show(line.standing);
+                _standingAnimator.Show(standing);
             }
+
+            PlayExpression(line.expression, standing != null);
 
             if (bodyText != null)
             {
@@ -71,6 +76,18 @@ namespace SushiSurvival.UI
 
                 _typewriter.Play(line.text, charsPerSecond);
             }
+        }
+
+        // 입상이 있으면 입상에 말풍선까지, 미니 초상화에는 움직임만 입힌다. 입상이 없으면 미니 초상화에 말풍선도 붙인다.
+        private void PlayExpression(ExpressionType expression, bool hasStanding)
+        {
+            Font font = bodyText != null ? bodyText.font : null;
+
+            if (hasStanding)
+                ExpressionEffect.PlayOn(standingImage, expression, font, true);
+
+            if (miniPortrait != null && miniPortrait.gameObject.activeSelf)
+                ExpressionEffect.PlayOn(miniPortrait, expression, font, !hasStanding);
         }
 
         // 연출 컴포넌트는 씬에 따로 배선하지 않고 필요할 때 붙인다.

@@ -15,6 +15,10 @@ namespace SushiSurvival.Data
         public Sprite standing;
         [TextArea]
         public string text;
+        [Tooltip("이 줄에서 짓는 표정. 평상시가 아니면 초상화·입상에 표정 연출(움직임·색·말풍선)이 붙는다.")]
+        public ExpressionType expression;
+        [Tooltip("표정별 그림 모음. 비우면 위 초상화·입상 그림에 연출만 입힌다.")]
+        public ExpressionSet expressions;
         [Tooltip("이 줄에서 바뀔 배경. 비우면 직전 배경을 유지한다.")]
         public Sprite background;
     }
