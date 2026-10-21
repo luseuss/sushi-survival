@@ -16,6 +16,9 @@ GameObject:
   - component: {fileID: 6583734508533315117}
   - component: {fileID: 1108281474064982475}
   - component: {fileID: -1469184766798522211}
+  - component: {fileID: 3300000000000000021}
+  - component: {fileID: 3300000000000000022}
+  - component: {fileID: 3300000000000000023}
   m_Layer: 6
   m_Name: CaliforniaRoll
   m_TagString: Untagged
@@ -229,3 +232,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3dc5fee2692bfb49bb962ecc9b26399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &3300000000000000021
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3ea293a8719148ed97adbc852ed5abb6, type: 2}
+  m_CullingMode: 2
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3300000000000000022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4df7373db5941de8172c838e03666d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stateName: Mob_Walk
+--- !u!114 &3300000000000000023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c24f2491cb47467ca0d54e9eca6fab14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artFacesRight: 1
+  deadZone: 0.15
