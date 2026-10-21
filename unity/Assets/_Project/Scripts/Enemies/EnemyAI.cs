@@ -70,6 +70,9 @@ namespace SushiSurvival.Enemies
         /// </summary>
         public Vector2 LockedDirection { get; set; }
 
+        /// <summary>마지막으로 쫓아 간 방향(단위 벡터). 그림을 가는 방향에 맞춰 뒤집는 데 쓴다. 다른 몹에게 막혀 비껴 가거나 넉백을 받아도 바뀌지 않는다.</summary>
+        public Vector2 ChaseDirection { get; private set; }
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
@@ -103,6 +106,7 @@ namespace SushiSurvival.Enemies
             Vector2 chaseDirection = LockedDirection != Vector2.zero
                 ? LockedDirection
                 : ((Vector2)_target.position - _rigidbody.position).normalized;
+            ChaseDirection = chaseDirection;
             Vector2 chase = chaseDirection
                             * (monsterData.moveSpeed * MoveScale);
             Vector2 separation = _separation * (monsterData.moveSpeed * separationStrength);
