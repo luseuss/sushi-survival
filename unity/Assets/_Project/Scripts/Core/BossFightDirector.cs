@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using SushiSurvival.Audio;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -200,6 +201,9 @@ namespace SushiSurvival.Enemies.Boss
         {
             // 다른 컴포넌트의 Start가 끝나길 한 프레임 기다린다.
             yield return null;
+
+            // 보스 등장 곡으로 바꾼다. 이어지는 전투도 같은 곡이 계속 흐른다.
+            AudioManager.PlayBgm(BgmId.Boss, 0.8f);
 
             Time.timeScale = 0f;
 

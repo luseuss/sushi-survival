@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using System.Collections.Generic;
 using UnityEngine;
 using SushiSurvival.Core;
@@ -29,6 +30,7 @@ namespace SushiSurvival.Weapons
         private static readonly Collider2D[] HitBuffer = new Collider2D[32];
 
         private float _currentAngle;
+        private int _lastLap;
         // 풀링된 적이 죽고 짧은 시간 안에 같은 자리에서 재사용되면 이전 생의
         // 마지막 타격 시각이 남아 있어 첫 타격이 한 번 씹힐 수 있다 — 재타격
         // 간격(기본 0.3초)이 짧아 실전 영향은 미미해서 지금은 정리하지 않는다.
@@ -40,6 +42,14 @@ namespace SushiSurvival.Weapons
 
             float rotationSpeed = rotationSpeedDegreesPerSecond * StatMultiplier(StatType.AttackSpeed);
             _currentAngle += rotationSpeed * Time.deltaTime;
+
+            // 한 바퀴 돌 때마다 우산 도는 소리를 낸다.
+            int lap = Mathf.FloorToInt(_currentAngle / 360f);
+            if (lap != _lastLap)
+            {
+                _lastLap = lap;
+                AudioManager.PlaySfx(SfxId.UmbrellaSpin);
+            }
 
             int count = UmbrellaCountForLevel();
             float radius = Range;

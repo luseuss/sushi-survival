@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -176,6 +177,7 @@ namespace SushiSurvival.Enemies.Boss
             {
                 if (animator != null)
                     animator.SetTrigger(CastMeteorHash);
+                AudioManager.PlaySfx(SfxId.BossMeteorWarning);
 
                 yield return new WaitForSeconds(castDuration);
 
@@ -205,6 +207,8 @@ namespace SushiSurvival.Enemies.Boss
                 animator.SetBool(IsMovingHash, false);
                 animator.SetTrigger(CastSummonHash);
             }
+
+            AudioManager.PlaySfx(SfxId.BossSummon);
 
             yield return new WaitForSeconds(castDuration);
 
@@ -266,6 +270,7 @@ namespace SushiSurvival.Enemies.Boss
                 yield return new WaitForSeconds(remainingWindup);
 
             // ③ 돌진
+            AudioManager.PlaySfx(SfxId.BossCharge);
             _ai.LockedDirection = direction;
             _ai.MoveScale = values.chargeSpeedScale;
 

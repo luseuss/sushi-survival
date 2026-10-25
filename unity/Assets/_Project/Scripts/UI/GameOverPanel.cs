@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using UnityEngine;
 using UnityEngine.UI;
 using SushiSurvival.Core;
@@ -13,6 +14,9 @@ namespace SushiSurvival.UI
             if (exitButton != null)
                 exitButton.onClick.AddListener(OnExitClicked);
         }
+
+        // 게임오버 창이 뜨는 순간(어느 쪽에서 켜든) 패배 곡으로 바꾼다.
+        private void OnEnable() => AudioManager.PlayBgm(BgmId.Defeat, 0.2f);
 
         public void Show()
         {

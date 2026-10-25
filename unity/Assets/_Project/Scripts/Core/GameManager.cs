@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using SushiSurvival.Data;
 using SushiSurvival.Enemies;
 using SushiSurvival.Player;
@@ -219,6 +220,7 @@ namespace SushiSurvival.Core
             ElapsedTime = 0f;
             KillCount = 0;
             CurrentState = RunState.Playing;
+            AudioManager.PlayBgm(BgmId.Battle);
             Debug.Log($"[GameManager] 런 시작: {_activeCharacterName}");
         }
 
@@ -286,6 +288,9 @@ namespace SushiSurvival.Core
             RunResultCarrier.Level = levelSystem.CurrentLevel;
             RunResultCarrier.KillCount = KillCount;
             RunResultCarrier.Augments = AugmentTally.Summarize(levelSystem.PickedAugments);
+
+            // 승리·패배 짧은 곡으로 바꾼다(같은 곡이 이미 나오고 있으면 그대로 둔다).
+            AudioManager.PlayBgm(outcome == RunOutcome.Victory ? BgmId.Victory : BgmId.Defeat, 0.2f);
 
             CurrentState = RunState.Result;
             Time.timeScale = 0f;
