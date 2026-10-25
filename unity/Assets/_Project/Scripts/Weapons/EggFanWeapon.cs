@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using System.Collections;
 using UnityEngine;
 using SushiSurvival.Player;
@@ -60,6 +61,8 @@ namespace SushiSurvival.Weapons
 
         private void Hit()
         {
+            AudioManager.PlaySfx(SfxId.WeaponSwing);
+
             float range = Range;
 
             // 양산 그림은 좌우로만 뒤집히므로 판정도 좌우 방향으로 맞춘다(FacingLogic.HorizontalFacing 참고).

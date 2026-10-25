@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -39,7 +40,18 @@ namespace SushiSurvival.UI
             }
         }
 
-        private void Awake() => _button = GetComponent<Button>();
+        private void Awake()
+        {
+            _button = GetComponent<Button>();
+            _button.onClick.AddListener(PlayClickSound);
+        }
+
+        private void OnDestroy()
+        {
+            if (_button != null) _button.onClick.RemoveListener(PlayClickSound);
+        }
+
+        private static void PlayClickSound() => AudioManager.PlaySfx(SfxId.ButtonClick);
 
         private void OnDisable()
         {

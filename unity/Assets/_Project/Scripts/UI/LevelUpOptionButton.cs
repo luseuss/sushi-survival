@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -90,6 +91,8 @@ namespace SushiSurvival.UI
         private void HandleClick()
         {
             if (_option == null) return;
+
+            AudioManager.PlaySfx(SfxId.CardSelect);
 
             _onChosen?.Invoke(_option);
         }

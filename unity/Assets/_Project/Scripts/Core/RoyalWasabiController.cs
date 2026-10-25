@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using System;
 using UnityEngine;
 using SushiSurvival.UI;
@@ -33,6 +34,10 @@ namespace SushiSurvival.Core
 
             // "와사비를 받으러 왔습니다" 대사를 먼저 보여준 뒤에야 가위바위보로
             // 넘어간다 — 결과 확인용 패널을 도입부 연출로도 재사용한다.
+            // 왕궁 음악으로 바꾼다. 알현이 끝나면 원래 나오던 곡(보스전이면 보스 곡)으로 돌아간다.
+            BgmId previousBgm = AudioManager.CurrentBgm;
+            AudioManager.PlayBgm(BgmId.RoyalPalace, 0.6f);
+
             panel.ShowFlavor(portrait, sceneAnimator, () =>
             {
                 // panel.Hide()가 아니라 HideDialogueBox() — 왕궁 배경은
@@ -42,12 +47,14 @@ namespace SushiSurvival.Core
                 rpsPanel.Show(success =>
                 {
                     rpsPanel.Hide();
+                    AudioManager.PlaySfx(success ? SfxId.RpsWin : SfxId.RpsLose);
 
                     string[] appliedLines = success ? onSuccess?.Invoke() : null;
 
                     panel.ShowResult(success, portrait, appliedLines, () =>
                     {
                         panel.Hide();
+                        AudioManager.PlayBgm(previousBgm != BgmId.None ? previousBgm : BgmId.Battle, 0.8f);
                         onComplete?.Invoke();
                     });
                 }, HandleReveal);

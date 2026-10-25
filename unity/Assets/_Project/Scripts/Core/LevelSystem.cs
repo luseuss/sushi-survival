@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -223,6 +224,7 @@ namespace SushiSurvival.Core
             CurrentLevel += progress.LevelsGained;
             _pendingLevelUps += progress.LevelsGained;
             Debug.Log($"[LevelSystem] 레벨업! 현재 Lv{CurrentLevel} (대기 {_pendingLevelUps})");
+            AudioManager.PlaySfx(SfxId.LevelUp);
 
             if (!_panelOpen)
                 ShowNext();

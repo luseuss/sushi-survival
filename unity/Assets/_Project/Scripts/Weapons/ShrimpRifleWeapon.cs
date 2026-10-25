@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using UnityEngine;
 using SushiSurvival.Core;
 using SushiSurvival.Player;
@@ -57,6 +58,8 @@ namespace SushiSurvival.Weapons
 
             Vector2 direction = facing.CurrentFacing;
             Vector3 spawnPos = muzzle != null ? muzzle.position : transform.position;
+
+            AudioManager.PlaySfx(IsShotgun ? SfxId.ShotgunShoot : SfxId.WeaponShoot);
 
             if (!IsShotgun)
             {

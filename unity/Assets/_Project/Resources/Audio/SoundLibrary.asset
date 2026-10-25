@@ -1,0 +1,210 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52a29344355ec1b47937aede832d93fd, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: 
+  sfx:
+  - id: 1
+    clips:
+    - {fileID: 8300000, guid: 858f2048f1604ac48ac740853245790c, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+    cooldown: 0.1
+  - id: 2
+    clips:
+    - {fileID: 8300000, guid: f249896fc250767439bc0ccb8753e93a, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+    cooldown: 0.05
+  - id: 3
+    clips: []
+    volume: 1
+    pitchMin: 0.92
+    pitchMax: 1.08
+    cooldown: 0.04
+  - id: 4
+    clips: []
+    volume: 1
+    pitchMin: 0.92
+    pitchMax: 1.08
+    cooldown: 0.05
+  - id: 5
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 6
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 7
+    clips: []
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.2
+    cooldown: 0.03
+  - id: 8
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 9
+    clips:
+    - {fileID: 8300000, guid: 7570a13ab99cca2479f1e8462bc05109, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 10
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 11
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 12
+    clips:
+    - {fileID: 8300000, guid: dc87d5f062a517942a068652fefb84a8, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 13
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 14
+    clips:
+    - {fileID: 8300000, guid: f6d20bf82e42c5b40bc2d828cb2607eb, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 15
+    clips:
+    - {fileID: 8300000, guid: 69884d44b92cf9d40a53e6a60f1692d9, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 16
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 17
+    clips:
+    - {fileID: 8300000, guid: 94ea1eb59878c22429d39ecc8f09aa44, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 18
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.08
+  - id: 19
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 20
+    clips:
+    - {fileID: 8300000, guid: 94ea1eb59878c22429d39ecc8f09aa44, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 21
+    clips: []
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 22
+    clips:
+    - {fileID: 8300000, guid: d96510835f57c5b46942c8f9cf0444cc, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 23
+    clips:
+    - {fileID: 8300000, guid: ea630f0661c5f814c8610204972839e8, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+    cooldown: 0.05
+  - id: 24
+    clips:
+    - {fileID: 8300000, guid: 129ffad1657a04a44bc1b15f2b15a963, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+    cooldown: 0.2
+  - id: 25
+    clips:
+    - {fileID: 8300000, guid: 56c712f108ffc6b49a9a93901b0bee91, type: 3}
+    volume: 1
+    pitchMin: 0.95
+    pitchMax: 1.05
+    cooldown: 0.1
+  bgm:
+  - id: 1
+    clip: {fileID: 0}
+    volume: 1
+    loop: 1
+  - id: 2
+    clip: {fileID: 0}
+    volume: 1
+    loop: 1
+  - id: 3
+    clip: {fileID: 0}
+    volume: 1
+    loop: 1
+  - id: 4
+    clip: {fileID: 8300000, guid: ffbab6d065d004c4d93ed32dcc7f4c28, type: 3}
+    volume: 1
+    loop: 1
+  - id: 5
+    clip: {fileID: 8300000, guid: c75a2fce1922ff64eaef7a7a858ed8d2, type: 3}
+    volume: 1
+    loop: 1
+  - id: 6
+    clip: {fileID: 8300000, guid: cc03f705975fb7f4dba9560c63d9416f, type: 3}
+    volume: 1
+    loop: 0
+  - id: 7
+    clip: {fileID: 8300000, guid: bd42ccdae047fb84286527a644d04739, type: 3}
+    volume: 1
+    loop: 0
+  - id: 8
+    clip: {fileID: 8300000, guid: 4c5374e457b0e7d4baec0de99b893aa1, type: 3}
+    volume: 1
+    loop: 1
