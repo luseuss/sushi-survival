@@ -263,10 +263,35 @@ namespace SushiSurvival.Audio
                 return;
             }
 
-            if (_library == null || !_library.TryGetBgm(id, out BgmEntry entry) || entry.clip == null) return;
+            BgmEntry entry = null;
+            if (_library != null) _library.TryGetBgm(id, out entry);
+
+            // 로컬에 외부 음원이 있으면 그 곡을 쓴다. 볼륨·반복은 라이브러리 항목을 따르고, 항목이 없으면 기본값(1, 반복).
+            AudioClip external = ExternalBgm(id);
+            if (external != null)
+            {
+                PlayBgmClip(external, entry != null ? entry.volume : 1f, entry == null || entry.loop, fadeSeconds, 0f);
+                _currentBgmId = id;
+                return;
+            }
+
+            if (entry == null || entry.clip == null) return;
 
             PlayBgmClip(entry.clip, entry.volume, entry.loop, fadeSeconds, entry.startTime);
             _currentBgmId = id;
+        }
+
+        // 외부 음원은 한 번만 찾아 두고(없으면 없다고 기억) 이후엔 다시 뒤지지 않는다.
+        private readonly System.Collections.Generic.Dictionary<BgmId, AudioClip> _externalBgm =
+            new System.Collections.Generic.Dictionary<BgmId, AudioClip>();
+
+        private AudioClip ExternalBgm(BgmId id)
+        {
+            if (_externalBgm.TryGetValue(id, out AudioClip cached)) return cached;
+
+            AudioClip clip = Resources.Load<AudioClip>(AudioLogic.ExternalBgmPath(id));
+            _externalBgm[id] = clip;
+            return clip;
         }
 
         private void PlayBgmClip(AudioClip clip, float volume, bool loop, float fadeSeconds, float startTime = 0f)

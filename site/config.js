@@ -20,7 +20,9 @@ window.SITE_CONFIG = {
 
   // 크레딧. 비워 두면 섹션이 숨겨진다.
   // 예: { role: "기획", name: "이름" }
-  credits: [],
+  credits: [
+    { role: "음악 (스토리 장면)", name: "Original music by Marllon Silva (xDeviruchi)" }
+  ],
 
   // 문의 링크. label과 url이 모두 있어야 나타난다. 예: { label: "이메일", url: "mailto:..." }
   contact: { label: "", url: "" }
