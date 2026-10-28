@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,6 +20,9 @@ namespace SushiSurvival.UI
 
         private void Start()
         {
+            // 타이틀 배경음악. 스토리·캐릭터 선택·전투가 같은 곡을 쓰면 끊기지 않고 이어진다.
+            AudioManager.PlayBgm(BgmId.Title, 0.5f);
+
             if (backgroundVideo != null)
                 PlayBackgroundVideo();
         }

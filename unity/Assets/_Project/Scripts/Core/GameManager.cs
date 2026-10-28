@@ -78,6 +78,7 @@ namespace SushiSurvival.Core
             else
             {
                 CurrentState = RunState.CharacterSelect;
+                AudioManager.PlayBgm(BgmId.CharacterSelect, 0.5f);
 
                 if (characterSelectPanel != null)
                 {

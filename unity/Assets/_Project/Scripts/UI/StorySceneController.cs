@@ -1,3 +1,4 @@
+using SushiSurvival.Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -54,6 +55,8 @@ namespace SushiSurvival.UI
         {
             // 판마다 처음부터. "다시 하기"는 IntroScene → StoryScene을 거치므로 여기서 비우면 된다.
             PlayerTraitState.Reset();
+
+            AudioManager.PlayBgm(BgmId.Story, 0.5f);
 
             // 결과 화면 등에서 정지된 채 넘어오는 경우를 막는다.
             Time.timeScale = 1f;
