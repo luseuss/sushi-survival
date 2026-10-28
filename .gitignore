@@ -48,7 +48,3 @@ desktop.ini
 /files/
 /files.zip
 
-# 라이선스상 저장소에 올리지 않는 외부 음원(로컬 전용). 설명은 README.txt
-unity/Assets/_Project/Resources/Audio/External/*
-!unity/Assets/_Project/Resources/Audio/External/README.txt
-!unity/Assets/_Project/Resources/Audio/External/README.txt.meta
