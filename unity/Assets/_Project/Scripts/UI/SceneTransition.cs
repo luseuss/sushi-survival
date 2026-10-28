@@ -23,6 +23,7 @@ namespace SushiSurvival.UI
 
         private const string LensShaderResourcePath = "Shaders/LensDistortion";
         private static readonly int DistortionId = Shader.PropertyToID("_Distortion");
+        private static readonly int BlurId = Shader.PropertyToID("_Blur");
         private static readonly int AspectId = Shader.PropertyToID("_Aspect");
         private bool _busy;
 
@@ -98,6 +99,7 @@ namespace SushiSurvival.UI
             if (_lens != null)
             {
                 _lens.SetFloat(DistortionId, 0f);
+                _lens.SetFloat(BlurId, 0f);
                 _lens.SetFloat(AspectId, Screen.height > 0 ? (float)Screen.width / Screen.height : 1.7778f);
             }
             _blackout.color = new Color(0f, 0f, 0f, 0f);
@@ -109,7 +111,11 @@ namespace SushiSurvival.UI
                 float t = SceneTransitionLogic.Progress(elapsed, SceneTransitionLogic.OutDuration);
                 float zoom = SceneTransitionLogic.ZoomScale(t);
                 _snapshot.rectTransform.localScale = new Vector3(zoom, zoom, 1f);
-                if (_lens != null) _lens.SetFloat(DistortionId, SceneTransitionLogic.LensDistortion(t));
+                if (_lens != null)
+                {
+                    _lens.SetFloat(DistortionId, SceneTransitionLogic.LensDistortion(t));
+                    _lens.SetFloat(BlurId, SceneTransitionLogic.Blur(t));
+                }
                 _blackout.color = new Color(0f, 0f, 0f, SceneTransitionLogic.OutAlpha(t));
                 yield return null;
             }

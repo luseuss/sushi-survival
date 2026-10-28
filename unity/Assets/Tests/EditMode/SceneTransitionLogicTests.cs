@@ -46,6 +46,30 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
+        public void Blur_StartsSharp_AndEndsAtMax_AndNeverDecreases()
+        {
+            Assert.AreEqual(0f, SceneTransitionLogic.Blur(0f), Eps);
+            Assert.AreEqual(SceneTransitionLogic.MaxBlur, SceneTransitionLogic.Blur(1f), Eps);
+
+            float previous = -1f;
+            for (int i = 0; i <= 10; i++)
+            {
+                float blur = SceneTransitionLogic.Blur(i / 10f);
+                Assert.GreaterOrEqual(blur, previous - Eps);
+                previous = blur;
+            }
+        }
+
+        [Test]
+        public void Blur_BuildsUpEarlierThanDistortion()
+        {
+            // 절반 지점에서 블러는 최대의 약 35%, 왜곡은 25%라 블러가 먼저 눈에 띈다.
+            float blurShare = SceneTransitionLogic.Blur(0.5f) / SceneTransitionLogic.MaxBlur;
+            float distortionShare = SceneTransitionLogic.LensDistortion(0.5f) / SceneTransitionLogic.MaxDistortion;
+            Assert.Greater(blurShare, distortionShare);
+        }
+
+        [Test]
         public void In_StartsBlack_AndEndsClear()
         {
             Assert.AreEqual(1f, SceneTransitionLogic.InAlpha(0f), Eps);

@@ -20,6 +20,9 @@ namespace SushiSurvival.Core
         /// <summary>나가는 연출이 끝날 때의 렌즈 왜곡 세기(셰이더 _Distortion). 0이면 왜곡 없음.</summary>
         public const float MaxDistortion = 2.0f;
 
+        /// <summary>나가는 연출이 끝날 때의 방사형 블러 세기(셰이더 _Blur). 0이면 선명.</summary>
+        public const float MaxBlur = 0.12f;
+
         public static float Progress(float elapsed, float duration)
         {
             if (duration <= 0f) return 1f;
@@ -45,6 +48,9 @@ namespace SushiSurvival.Core
 
         /// <summary>나가는 동안 렌즈 왜곡 세기: 0 → MaxDistortion. 처음엔 잔잔하다가 끝으로 갈수록 급격히 빨려 든다.</summary>
         public static float LensDistortion(float t) => MaxDistortion * EaseIn(t);
+
+        /// <summary>나가는 동안 방사형 블러 세기: 0 → MaxBlur. 왜곡보다 일찍 번지기 시작해 빨려 드는 속도감을 만든다.</summary>
+        public static float Blur(float t) => MaxBlur * Mathf.Pow(Mathf.Clamp01(t), 1.5f);
 
         /// <summary>나가는 동안 화면을 덮는 검은색의 투명도: 0 → 1.</summary>
         public static float OutAlpha(float t) => EaseIn(t);
