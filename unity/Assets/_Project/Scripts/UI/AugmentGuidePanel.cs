@@ -17,8 +17,9 @@ namespace SushiSurvival.UI
     /// </summary>
     public class AugmentGuidePanel : MonoBehaviour
     {
-        private static readonly Color SelectedTabColor = new Color(0.55f, 0.35f, 0.15f, 1f);
-        private static readonly Color IdleTabColor = new Color(0.1f, 0.1f, 0.1f, 0.9f);
+        // 탭 버튼 이미지는 그림 자체 색을 살려야 하므로, 선택은 원본 색(흰색), 비선택은 살짝 어둡게만 곱한다.
+        private static readonly Color SelectedTabColor = Color.white;
+        private static readonly Color IdleTabColor = new Color(0.6f, 0.6f, 0.6f, 1f);
 
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private Button openButton;
