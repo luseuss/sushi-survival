@@ -45,9 +45,14 @@ namespace SushiSurvival.UI
             surface.Play();
         }
 
+        // 시작 버튼: 타이틀 화면이 커지며 어두워졌다가 스토리 장면이 밝아지며 나타난다(SceneTransition).
         private void OnStartClicked()
         {
-            SceneManager.LoadScene("StoryScene");
+            if (SceneTransition.IsBusy) return;
+
+            // 연출 중 다시 눌러도 두 번 시작되지 않게 막는다.
+            if (startButton != null) startButton.interactable = false;
+            SceneTransition.Go("StoryScene");
         }
     }
 }
