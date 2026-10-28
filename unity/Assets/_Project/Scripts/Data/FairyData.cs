@@ -15,6 +15,8 @@ namespace SushiSurvival.Data
         [Tooltip("대기 애니메이션 프레임. 시트를 슬라이스한 순서대로.")]
         public Sprite[] frames;
         public float framesPerSecond = 8f;
+        [Tooltip("설명창에서 이 펫을 고르면 오른쪽에 반복 재생할 영상. 비우면 대기 애니메이션을 보여준다.")]
+        public UnityEngine.Video.VideoClip guideVideo;
         [Tooltip("그림이 오른쪽을 보고 있으면 체크. 안 하면 왼쪽을 본다고 보고, 오른쪽으로 갈 때 뒤집는다.")]
         public bool facesRight;
         [Tooltip("그림이 작을 때 키우는 배율(25px 프레임은 월드 0.25유닛).")]

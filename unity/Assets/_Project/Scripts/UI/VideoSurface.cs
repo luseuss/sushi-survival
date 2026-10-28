@@ -36,6 +36,32 @@ namespace SushiSurvival.UI
             return surface;
         }
 
+        /// <summary>영상 없이 빈 표면을 만든다. ChangeClip으로 영상을 끼운다(설명창처럼 영상이 자주 바뀌는 곳).</summary>
+        public static VideoSurface CreateEmpty(Transform parent, bool loop, string objectName)
+            => Create(parent, null, loop, objectName);
+
+        /// <summary>
+        /// 재생할 영상을 바꾸고 처음부터 재생한다. null이면 멈추고 화면에서 숨긴다(아래 원래 화면이 보인다).
+        /// 영상이 준비되고 첫 프레임이 나올 때까지는 이전 화면이 그대로 보인다.
+        /// </summary>
+        public void ChangeClip(VideoClip clip)
+        {
+            if (_player == null) return;
+
+            _playWhenPrepared = false;
+            _showOnNextFrame = false;
+            if (_image != null) _image.enabled = false;
+            if (_player.isPlaying) _player.Stop();
+
+            _failed = false;
+            _prepared = false;
+            _player.clip = clip;
+            if (clip == null) return;
+
+            _playWhenPrepared = true;
+            _player.Prepare();
+        }
+
         private void Init(VideoClip clip, bool loop)
         {
             _image = gameObject.AddComponent<RawImage>();
@@ -57,7 +83,7 @@ namespace SushiSurvival.UI
             _player.frameReady += OnFrameReady;
             _player.errorReceived += OnError;
 
-            _player.Prepare();
+            if (clip != null) _player.Prepare();
         }
 
         private void OnDestroy()

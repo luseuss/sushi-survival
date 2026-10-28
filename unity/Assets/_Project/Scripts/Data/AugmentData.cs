@@ -11,6 +11,8 @@ namespace SushiSurvival.Data
         [Tooltip("카드 제목 아래에 적을 설명. 비우면 스탯과 한 번에 오르는 값으로 자동 생성한다(예: 공격력 +20%).")]
         public string description;
         public Sprite icon;
+        [Tooltip("설명창에서 이 증강을 고르면 오른쪽에 반복 재생할 영상. 비우면 큰 아이콘을 보여준다.")]
+        public UnityEngine.Video.VideoClip guideVideo;
         public StatType statType;
         [Tooltip("한 번 고를 때마다 더해지는 값. 배율 스탯이면 0.2 = +20%.")]
         public float valuePerPick;

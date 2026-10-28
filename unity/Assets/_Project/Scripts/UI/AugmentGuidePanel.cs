@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.Video;
+using SushiSurvival.Companions;
 using SushiSurvival.Core;
 using SushiSurvival.Data;
 
@@ -9,10 +11,10 @@ namespace SushiSurvival.UI
 {
     /// <summary>
     /// 캐릭터 선택 화면 위에 띄우는 설명창. 열기 버튼은 캐릭터 선택 화면이 떠 있는 동안만 보이고, 누르면
-    /// "게임플레이", "증강", "와사비·요정" 세 탭이 있는 설명창이 나온다. 닫기 버튼이나 ESC로 닫는다.
-    /// - 게임플레이: 씬에 직접 쓴 내용(조작·한 줄 요약 등)을 담은 오브젝트를 켜고 끈다.
-    /// - 증강: 증강 목록(처음 열 때 한 번만 만든다).
-    /// - 와사비·요정: 와사비 도전 설명 몇 줄 + 펫 목록(카탈로그에서 만든다).
+    /// "게임플레이", "증강", "와사비·요정" 세 탭이 있는 두루마리 설명창이 나온다. 닫기 버튼이나 ESC로 닫는다.
+    /// - 게임플레이: 씬에 직접 쓴 내용(조작·한 줄 요약 등)과 오른쪽 영상 박스.
+    /// - 증강 / 와사비·요정: 왼쪽 4×4 칸에 항목이 늘어서고, 칸에 마우스를 올리면(또는 방향키·클릭) 오른쪽 영상 박스와
+    ///   설명이 그 항목으로 바뀐다. 격자 화면은 GuideBoard가 런타임에 만든다.
     /// 설명창 루트와 열기 버튼은 꺼질 수 있으므로, 이 컴포넌트는 항상 켜져 있는 오브젝트에 붙인다.
     /// </summary>
     public class AugmentGuidePanel : MonoBehaviour
@@ -37,19 +39,23 @@ namespace SushiSurvival.UI
         [Header("게임플레이 탭")]
         [Tooltip("조작·한 줄 요약·일러스트 등 씬에 직접 쓴 내용을 묶은 오브젝트. 게임플레이 탭에서만 켜진다.")]
         [SerializeField] private GameObject gameplayRoot;
+        [Tooltip("게임플레이 탭의 영상 박스에 재생할 영상. 비우면 검은 바탕만 보인다.")]
+        [SerializeField] private VideoClip gameplayVideo;
 
-        [Header("목록 탭(증강·와사비·요정)")]
-        [Tooltip("스크롤 목록 전체(ScrollRect 오브젝트). 게임플레이 탭에서는 꺼진다. 비워두면 켜고 끄지 않는다.")]
+        [Header("격자 화면 (증강·와사비·요정 탭)")]
+        [Tooltip("옛 스크롤 목록 오브젝트. 새 격자 화면을 쓰므로 항상 꺼 둔다. 이 오브젝트의 부모(두루마리)에 격자를 만든다.")]
         [SerializeField] private GameObject listRoot;
-        [SerializeField] private Transform content;
+        [SerializeField] private Sprite slotFrameSprite;
+        [SerializeField] private Sprite slotFrameSelectedSprite;
+        [SerializeField] private Sprite videoFrameSprite;
+        [SerializeField] private GuideLayout layout = new GuideLayout();
 
         [Header("증강 탭")]
-        [Tooltip("설명창에 보여줄 증강. 위에서부터 이 순서대로 나온다.")]
+        [Tooltip("설명창에 보여줄 증강. 왼쪽 위 칸부터 이 순서대로 놓인다.")]
         [SerializeField] private AugmentData[] augments;
-        [SerializeField] private AugmentGuideEntry augmentEntryPrefab;
 
         [Header("와사비·요정 탭")]
-        [Tooltip("목록 맨 위에 나오는 와사비 도전 설명. 한 줄에 한 항목.")]
+        [Tooltip("와사비 도전 칸에 나오는 설명. 한 줄에 한 항목.")]
         [TextArea(1, 3)]
         [SerializeField] private string[] fairyIntroLines =
         {
@@ -58,15 +64,16 @@ namespace SushiSurvival.UI
             "무기는 강화 3레벨에서도 저절로 변신하지만, 와사비로 일찍 변신한 무기가 더 강합니다. 이미 변신했다면 와사비 버튼은 나오지 않습니다.",
             "요정은 시작 대화에서 성향에 맞는 후보 중 2마리를 골라 함께 싸우고, 레벨업 카드로 최대 4레벨까지 강화합니다."
         };
+        [Tooltip("와사비 도전 칸의 제목.")]
+        [SerializeField] private string wasabiGuideTitle = "와사비 도전";
+        [Tooltip("와사비 도전 칸의 아이콘. 비우면 아이콘 없이 나온다.")]
+        [SerializeField] private Sprite wasabiGuideIcon;
         [Tooltip("소개할 펫 종류. FairyController의 카탈로그와 같은 에셋을 같은 순서로 넣는다.")]
         [SerializeField] private FairyData[] fairyCatalog;
-        [SerializeField] private FairyGuideEntry fairyEntryPrefab;
-        [Tooltip("설명 줄에 쓰는 글자 프리팹. 비워두면 설명 줄을 만들지 않는다.")]
-        [SerializeField] private Text headerPrefab;
 
-        private readonly List<GameObject> _augmentRows = new List<GameObject>();
-        private readonly List<GameObject> _fairyRows = new List<GameObject>();
-        private bool _built;
+        private GuideBoard _board;
+        private readonly List<GuideItem> _augmentItems = new List<GuideItem>();
+        private readonly List<GuideItem> _fairyItems = new List<GuideItem>();
         private bool _selectWasVisible;
 
         // 연출 상태. 설명창은 일시정지 중에도 열리므로 시간은 전부 unscaled로 센다.
@@ -76,16 +83,14 @@ namespace SushiSurvival.UI
         private float _closeElapsed;
         private bool _closing;
 
-        private RectTransform _tabRoot;
-        private CanvasGroup _tabGroup;
-        private Vector2 _tabBasePosition;
         private float _tabElapsed = float.MaxValue;
-        private readonly List<RowAnim> _rowAnims = new List<RowAnim>();
+        private readonly List<TabTarget> _tabTargets = new List<TabTarget>();
 
-        private sealed class RowAnim
+        private sealed class TabTarget
         {
+            public RectTransform rect;
             public CanvasGroup group;
-            public AugmentGuideEntry augmentEntry;
+            public Vector2 basePosition;
         }
 
         private void Awake()
@@ -131,11 +136,42 @@ namespace SushiSurvival.UI
                     openButton.gameObject.SetActive(showButton);
             }
 
-            if (!open) return;
+            if (!open || _closing) return;
 
             Keyboard keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && !_closing)
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+            {
                 Close();
+                return;
+            }
+
+            HandleNavigation(keyboard);
+        }
+
+        // 방향키·게임패드 십자키로 격자의 칸을 옮긴다(마우스 없이도 볼 수 있게).
+        private void HandleNavigation(Keyboard keyboard)
+        {
+            if (_board == null) return;
+
+            int dx = 0, dy = 0;
+            if (keyboard != null)
+            {
+                if (keyboard.leftArrowKey.wasPressedThisFrame) dx = -1;
+                else if (keyboard.rightArrowKey.wasPressedThisFrame) dx = 1;
+                else if (keyboard.upArrowKey.wasPressedThisFrame) dy = -1;
+                else if (keyboard.downArrowKey.wasPressedThisFrame) dy = 1;
+            }
+
+            Gamepad pad = Gamepad.current;
+            if (pad != null && dx == 0 && dy == 0)
+            {
+                if (pad.dpad.left.wasPressedThisFrame) dx = -1;
+                else if (pad.dpad.right.wasPressedThisFrame) dx = 1;
+                else if (pad.dpad.up.wasPressedThisFrame) dy = -1;
+                else if (pad.dpad.down.wasPressedThisFrame) dy = 1;
+            }
+
+            if (dx != 0 || dy != 0) _board.Navigate(dx, dy);
         }
 
         /// <summary>설명창을 열고 게임플레이 탭부터 보여준다.</summary>
@@ -143,7 +179,7 @@ namespace SushiSurvival.UI
         {
             if (panelRoot == null) return;
 
-            BuildRows();
+            EnsureBoard();
             _closing = false;
             _openElapsed = 0f;
             ShowGameplay();
@@ -171,6 +207,7 @@ namespace SushiSurvival.UI
         {
             _closing = false;
             _openElapsed = float.MaxValue;
+            if (_board != null) _board.StopVideo();
             if (panelRoot != null)
             {
                 ApplyPanel(1f, 1f);
@@ -209,68 +246,54 @@ namespace SushiSurvival.UI
                 ApplyPanel(GuideAnimLogic.OpenScale(openT), GuideAnimLogic.OpenAlpha(openT));
             }
 
-            if (_tabElapsed < GuideAnimLogic.TabTotalDuration)
+            if (_tabElapsed < GuideAnimLogic.TabDuration)
             {
                 _tabElapsed += dt;
-                ApplyTab(_tabElapsed >= GuideAnimLogic.TabTotalDuration);
+                ApplyTab(_tabElapsed >= GuideAnimLogic.TabDuration);
             }
         }
 
+        // 탭 내용(게임플레이 내용 / 격자 화면)이 아래에서 올라오며 나타난다.
         private void ApplyTab(bool finished)
         {
             float t = GuideAnimLogic.Progress(_tabElapsed, GuideAnimLogic.TabDuration);
-            if (_tabRoot != null)
-            {
-                float rise = finished ? 0f : GuideAnimLogic.TabOffset(t);
-                _tabRoot.anchoredPosition = _tabBasePosition + new Vector2(0f, -rise);
-            }
-            if (_tabGroup != null) _tabGroup.alpha = finished ? 1f : GuideAnimLogic.TabAlpha(t);
+            float rise = finished ? 0f : GuideAnimLogic.TabOffset(t);
+            float alpha = finished ? 1f : GuideAnimLogic.TabAlpha(t);
 
-            for (int i = 0; i < _rowAnims.Count; i++)
+            foreach (TabTarget target in _tabTargets)
             {
-                RowAnim row = _rowAnims[i];
-                float rowT = finished ? 1f : GuideAnimLogic.RowProgress(_tabElapsed, i);
-                if (row.group != null) row.group.alpha = GuideAnimLogic.EaseOut(rowT);
-                if (row.augmentEntry != null)
-                    row.augmentEntry.SetIconScale(finished ? 1f : GuideAnimLogic.Bounce(rowT));
+                if (target.rect != null) target.rect.anchoredPosition = target.basePosition + new Vector2(0f, -rise);
+                if (target.group != null) target.group.alpha = alpha;
             }
         }
 
-        // 탭 연출의 대상(내용 루트와 보여줄 줄들)을 정하고 처음 상태로 돌려놓는다.
         private void BeginTabAnimation(GuideTab tab)
         {
             // 이전 탭에서 옮겨 둔 위치와 투명도를 원래대로 되돌린다.
-            if (_tabRoot != null) _tabRoot.anchoredPosition = _tabBasePosition;
-            if (_tabGroup != null) _tabGroup.alpha = 1f;
-            foreach (RowAnim row in _rowAnims)
+            foreach (TabTarget target in _tabTargets)
             {
-                if (row.group != null) row.group.alpha = 1f;
-                if (row.augmentEntry != null) row.augmentEntry.SetIconScale(1f);
+                if (target.rect != null) target.rect.anchoredPosition = target.basePosition;
+                if (target.group != null) target.group.alpha = 1f;
             }
-            _rowAnims.Clear();
+            _tabTargets.Clear();
 
-            GameObject rootObject = GuideTabLogic.ShowsGameplayRoot(tab) ? gameplayRoot : listRoot;
-            _tabRoot = rootObject != null ? rootObject.GetComponent<RectTransform>() : null;
-            _tabGroup = rootObject != null ? GetOrAddGroup(rootObject) : null;
-            if (_tabRoot != null) _tabBasePosition = _tabRoot.anchoredPosition;
-
-            List<GameObject> rows = GuideTabLogic.ShowsAugmentRows(tab) ? _augmentRows
-                : GuideTabLogic.ShowsFairyRows(tab) ? _fairyRows : null;
-            if (rows != null)
-            {
-                foreach (GameObject row in rows)
-                {
-                    if (row == null) continue;
-                    _rowAnims.Add(new RowAnim
-                    {
-                        group = GetOrAddGroup(row),
-                        augmentEntry = row.GetComponent<AugmentGuideEntry>()
-                    });
-                }
-            }
+            AddTabTarget(gameplayRoot != null && GuideTabLogic.ShowsGameplayRoot(tab) ? gameplayRoot.GetComponent<RectTransform>() : null);
+            AddTabTarget(_board != null ? _board.Root : null);
 
             _tabElapsed = 0f;
             ApplyTab(false);
+        }
+
+        private void AddTabTarget(RectTransform rect)
+        {
+            if (rect == null) return;
+
+            _tabTargets.Add(new TabTarget
+            {
+                rect = rect,
+                group = GetOrAddGroup(rect.gameObject),
+                basePosition = rect.anchoredPosition
+            });
         }
 
         public void ShowGameplay() => ShowTab(GuideTab.Gameplay);
@@ -281,21 +304,25 @@ namespace SushiSurvival.UI
 
         private void ShowTab(GuideTab tab)
         {
-            if (gameplayRoot != null) gameplayRoot.SetActive(GuideTabLogic.ShowsGameplayRoot(tab));
-            if (listRoot != null) listRoot.SetActive(GuideTabLogic.ShowsList(tab));
+            EnsureBoard();
 
-            bool augmentRows = GuideTabLogic.ShowsAugmentRows(tab);
-            bool fairyRows = GuideTabLogic.ShowsFairyRows(tab);
-            foreach (GameObject row in _augmentRows) row.SetActive(augmentRows);
-            foreach (GameObject row in _fairyRows) row.SetActive(fairyRows);
+            if (gameplayRoot != null) gameplayRoot.SetActive(GuideTabLogic.ShowsGameplayRoot(tab));
+            // 옛 스크롤 목록은 새 격자 화면으로 대체돼 항상 꺼 둔다.
+            if (listRoot != null) listRoot.SetActive(false);
 
             Tint(gameplayTabButton, tab == GuideTab.Gameplay);
             Tint(augmentTabButton, tab == GuideTab.Augments);
             Tint(fairyTabButton, tab == GuideTab.Fairy);
 
-            // 탭을 바꾸면 목록 맨 위부터 보여준다.
-            ScrollRect scroll = content != null ? content.GetComponentInParent<ScrollRect>() : null;
-            if (scroll != null) scroll.verticalNormalizedPosition = 1f;
+            if (_board != null)
+            {
+                switch (tab)
+                {
+                    case GuideTab.Gameplay: _board.ShowVideoOnly(gameplayVideo); break;
+                    case GuideTab.Augments: _board.ShowGrid(_augmentItems); break;
+                    default: _board.ShowGrid(_fairyItems); break;
+                }
+            }
 
             BeginTabAnimation(tab);
         }
@@ -306,41 +333,80 @@ namespace SushiSurvival.UI
                 image.color = selected ? SelectedTabColor : IdleTabColor;
         }
 
-        private void BuildRows()
+        // 격자 화면은 처음 열 때 한 번만 만든다. 두루마리(옛 목록의 부모) 위에 깔린다.
+        private void EnsureBoard()
         {
-            if (_built || content == null) return;
-            _built = true;
+            if (_board != null) return;
 
-            if (augmentEntryPrefab != null && augments != null)
+            Transform parent = listRoot != null && listRoot.transform.parent != null
+                ? listRoot.transform.parent
+                : (panelRoot != null ? panelRoot.transform : transform);
+
+            _board = GuideBoard.Create(parent, ResolveFont(), slotFrameSprite, slotFrameSelectedSprite,
+                                       videoFrameSprite, layout);
+            BuildItems();
+        }
+
+        private Font ResolveFont()
+        {
+            Text sample = closeButton != null ? closeButton.GetComponentInChildren<Text>(true) : null;
+            if (sample != null && sample.font != null) return sample.font;
+
+            return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        }
+
+        private void BuildItems()
+        {
+            _augmentItems.Clear();
+            _fairyItems.Clear();
+
+            if (augments != null)
             {
                 foreach (AugmentData data in augments)
                 {
                     if (data == null) continue;
-                    AugmentGuideEntry entry = Instantiate(augmentEntryPrefab, content);
-                    entry.Bind(data);
-                    _augmentRows.Add(entry.gameObject);
+
+                    string effect = string.IsNullOrEmpty(data.description)
+                        ? UpgradeDescriptionLogic.DescribeAugment(data.statType, data.valuePerPick)
+                        : data.description;
+                    string limit = UpgradeDescriptionLogic.DescribeAugmentLimit(data.statType, data.valuePerPick, data.maxCap);
+
+                    _augmentItems.Add(new GuideItem
+                    {
+                        title = data.augmentName,
+                        body = string.IsNullOrEmpty(limit) ? effect : effect + "\n" + limit,
+                        icon = data.icon,
+                        video = data.guideVideo
+                    });
                 }
             }
 
-            if (headerPrefab != null && fairyIntroLines != null)
+            // 와사비 도전 설명이 첫 칸에 오고, 그 뒤로 펫이 이어진다.
+            _fairyItems.Add(new GuideItem
             {
-                foreach (string line in fairyIntroLines)
-                {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-                    Text text = Instantiate(headerPrefab, content);
-                    text.text = line;
-                    _fairyRows.Add(text.gameObject);
-                }
-            }
+                title = wasabiGuideTitle,
+                body = fairyIntroLines != null ? string.Join("\n", fairyIntroLines) : string.Empty,
+                icon = wasabiGuideIcon
+            });
 
-            if (fairyEntryPrefab != null && fairyCatalog != null)
+            if (fairyCatalog != null)
             {
                 foreach (FairyData data in fairyCatalog)
                 {
                     if (data == null) continue;
-                    FairyGuideEntry entry = Instantiate(fairyEntryPrefab, content);
-                    entry.Bind(data);
-                    _fairyRows.Add(entry.gameObject);
+
+                    string stats = data.levels != null && data.levels.Length > 0
+                        ? FairyDescriptionLogic.DescribeStats(data.levels[0])
+                        : string.Empty;
+
+                    _fairyItems.Add(new GuideItem
+                    {
+                        title = data.displayName,
+                        body = string.IsNullOrEmpty(stats) ? data.roleLine : data.roleLine + "\n" + stats,
+                        frames = data.frames,
+                        framesPerSecond = data.framesPerSecond,
+                        video = data.guideVideo
+                    });
                 }
             }
         }
