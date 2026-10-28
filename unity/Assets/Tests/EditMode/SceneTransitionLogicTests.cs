@@ -35,6 +35,17 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
+        public void LensDistortion_StartsFlat_RampsUp_AndEndsAtMax()
+        {
+            Assert.AreEqual(0f, SceneTransitionLogic.LensDistortion(0f), Eps);
+            Assert.AreEqual(SceneTransitionLogic.MaxDistortion, SceneTransitionLogic.LensDistortion(1f), Eps);
+
+            // 처음 절반은 잔잔하고(최대의 4분의 1 이하) 뒤로 갈수록 급격히 세진다.
+            Assert.LessOrEqual(SceneTransitionLogic.LensDistortion(0.5f), SceneTransitionLogic.MaxDistortion * 0.26f);
+            Assert.Greater(SceneTransitionLogic.LensDistortion(0.9f), SceneTransitionLogic.LensDistortion(0.5f));
+        }
+
+        [Test]
         public void In_StartsBlack_AndEndsClear()
         {
             Assert.AreEqual(1f, SceneTransitionLogic.InAlpha(0f), Eps);

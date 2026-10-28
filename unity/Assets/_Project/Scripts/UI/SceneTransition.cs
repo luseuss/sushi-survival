@@ -18,7 +18,12 @@ namespace SushiSurvival.UI
         private Canvas _canvas;
         private RawImage _snapshot;
         private Image _blackout;
+        private Material _lens;
         private Texture2D _capture;
+
+        private const string LensShaderResourcePath = "Shaders/LensDistortion";
+        private static readonly int DistortionId = Shader.PropertyToID("_Distortion");
+        private static readonly int AspectId = Shader.PropertyToID("_Aspect");
         private bool _busy;
 
         /// <summary>전환 중인지. 중복으로 시작하지 않게 막는 데 쓴다.</summary>
@@ -49,6 +54,14 @@ namespace SushiSurvival.UI
 
             _snapshot = CreateFullScreen<RawImage>("Snapshot");
             _snapshot.color = Color.white;
+
+            // 빨려 들어가는 렌즈 왜곡. 셰이더를 못 찾으면 왜곡 없이 줌+페이드만 한다.
+            Shader lensShader = Resources.Load<Shader>(LensShaderResourcePath);
+            if (lensShader != null)
+            {
+                _lens = new Material(lensShader);
+                _snapshot.material = _lens;
+            }
             _blackout = CreateFullScreen<Image>("Blackout");
             _blackout.color = new Color(0f, 0f, 0f, 0f);
 
@@ -82,6 +95,11 @@ namespace SushiSurvival.UI
             _snapshot.texture = _capture;
             _snapshot.enabled = _capture != null;
             _snapshot.rectTransform.localScale = Vector3.one;
+            if (_lens != null)
+            {
+                _lens.SetFloat(DistortionId, 0f);
+                _lens.SetFloat(AspectId, Screen.height > 0 ? (float)Screen.width / Screen.height : 1.7778f);
+            }
             _blackout.color = new Color(0f, 0f, 0f, 0f);
             _canvas.enabled = true;
 
@@ -91,6 +109,7 @@ namespace SushiSurvival.UI
                 float t = SceneTransitionLogic.Progress(elapsed, SceneTransitionLogic.OutDuration);
                 float zoom = SceneTransitionLogic.ZoomScale(t);
                 _snapshot.rectTransform.localScale = new Vector3(zoom, zoom, 1f);
+                if (_lens != null) _lens.SetFloat(DistortionId, SceneTransitionLogic.LensDistortion(t));
                 _blackout.color = new Color(0f, 0f, 0f, SceneTransitionLogic.OutAlpha(t));
                 yield return null;
             }

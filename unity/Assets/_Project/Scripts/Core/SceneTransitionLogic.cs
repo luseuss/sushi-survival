@@ -17,6 +17,9 @@ namespace SushiSurvival.Core
         /// <summary>나가는 연출이 끝날 때까지 화면이 커지는 배율.</summary>
         public const float MaxZoom = 1.15f;
 
+        /// <summary>나가는 연출이 끝날 때의 렌즈 왜곡 세기(셰이더 _Distortion). 0이면 왜곡 없음.</summary>
+        public const float MaxDistortion = 2.0f;
+
         public static float Progress(float elapsed, float duration)
         {
             if (duration <= 0f) return 1f;
@@ -39,6 +42,9 @@ namespace SushiSurvival.Core
 
         /// <summary>나가는 동안 옛 화면의 배율: 1 → MaxZoom.</summary>
         public static float ZoomScale(float t) => Mathf.Lerp(1f, MaxZoom, EaseIn(t));
+
+        /// <summary>나가는 동안 렌즈 왜곡 세기: 0 → MaxDistortion. 처음엔 잔잔하다가 끝으로 갈수록 급격히 빨려 든다.</summary>
+        public static float LensDistortion(float t) => MaxDistortion * EaseIn(t);
 
         /// <summary>나가는 동안 화면을 덮는 검은색의 투명도: 0 → 1.</summary>
         public static float OutAlpha(float t) => EaseIn(t);
