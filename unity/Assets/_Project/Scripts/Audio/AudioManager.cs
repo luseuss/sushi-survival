@@ -204,6 +204,13 @@ namespace SushiSurvival.Audio
             return source;
         }
 
+        // 재생을 시작한 소리를 startTime(초) 지점으로 옮긴다. 0이면 그대로 둔다.
+        private static void SeekTo(AudioSource source, float startTime)
+        {
+            float start = AudioLogic.ClampStartTime(startTime, source.clip.length);
+            if (start > 0f) source.time = start;
+        }
+
         // ---------- 효과음 ----------
 
         private void PlaySfxById(SfxId id)
@@ -218,7 +225,7 @@ namespace SushiSurvival.Audio
             if (clip == null) return;
 
             _lastPlayed[id] = now;
-            PlayOnVoice(clip, entry.volume, AudioLogic.PickPitch(entry.pitchMin, entry.pitchMax, UnityEngine.Random.value));
+            PlayOnVoice(clip, entry.volume, AudioLogic.PickPitch(entry.pitchMin, entry.pitchMax, UnityEngine.Random.value), entry.startTime);
         }
 
         private void PlaySfxClip(AudioClip clip, float volume, float pitch)
@@ -228,7 +235,7 @@ namespace SushiSurvival.Audio
             PlayOnVoice(clip, volume, pitch);
         }
 
-        private void PlayOnVoice(AudioClip clip, float entryVolume, float pitch)
+        private void PlayOnVoice(AudioClip clip, float entryVolume, float pitch, float startTime = 0f)
         {
             for (int i = 0; i < SfxVoiceCount; i++)
                 _voicePlaying[i] = _sfxVoices[i].isPlaying;
@@ -242,6 +249,7 @@ namespace SushiSurvival.Audio
             voice.pitch = pitch;
             voice.volume = AudioLogic.EffectiveVolume(MasterVolume, SfxVolume, entryVolume, Muted);
             voice.Play();
+            SeekTo(voice, startTime);
             _voiceStartTimes[index] = Time.unscaledTime;
         }
 
@@ -257,11 +265,11 @@ namespace SushiSurvival.Audio
 
             if (_library == null || !_library.TryGetBgm(id, out BgmEntry entry) || entry.clip == null) return;
 
-            PlayBgmClip(entry.clip, entry.volume, entry.loop, fadeSeconds);
+            PlayBgmClip(entry.clip, entry.volume, entry.loop, fadeSeconds, entry.startTime);
             _currentBgmId = id;
         }
 
-        private void PlayBgmClip(AudioClip clip, float volume, bool loop, float fadeSeconds)
+        private void PlayBgmClip(AudioClip clip, float volume, bool loop, float fadeSeconds, float startTime = 0f)
         {
             if (clip == null) return;
 
@@ -289,6 +297,7 @@ namespace SushiSurvival.Audio
             next.FadeSeconds = fadeSeconds;
             next.Source.volume = 0f;
             next.Source.Play();
+            SeekTo(next.Source, startTime);
             _currentClip = clip;
             _currentBgmId = BgmId.None;
         }

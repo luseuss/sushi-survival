@@ -103,5 +103,16 @@ namespace SushiSurvival.EditModeTests
         {
             Assert.AreEqual(-1, AudioLogic.PickVoice(new bool[0], new float[0]));
         }
+
+        [TestCase(0f, 2f, 0f)]
+        [TestCase(-1f, 2f, 0f)]
+        [TestCase(0.15f, 2f, 0.15f)]
+        [TestCase(1.99f, 2f, 1.99f)]
+        [TestCase(2f, 2f, 0f)]
+        [TestCase(5f, 2f, 0f)]
+        public void ClampStartTime_IgnoresInvalidValues(float start, float length, float expected)
+        {
+            Assert.AreEqual(expected, AudioLogic.ClampStartTime(start, length), 0.0001f);
+        }
     }
 }

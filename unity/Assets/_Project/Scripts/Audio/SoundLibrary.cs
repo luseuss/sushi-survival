@@ -18,6 +18,9 @@ namespace SushiSurvival.Audio
         public float pitchMax = 1f;
         [Tooltip("같은 효과음을 다시 낼 수 있기까지의 최소 간격(초). 광역 공격으로 몹 수십 마리가 한꺼번에 맞아도 소리가 겹쳐 터지지 않게 한다.")]
         public float cooldown = 0.05f;
+        [Min(0f)]
+        [Tooltip("소리 파일의 앞부분을 이 시간(초)만큼 건너뛰고 재생한다. 파일을 자르지 않고 앞의 무음이나 군더더기만 덜어낼 때 쓴다. 0이면 처음부터. 파일보다 길면 무시한다.")]
+        public float startTime;
     }
 
     [Serializable]
@@ -28,6 +31,9 @@ namespace SushiSurvival.Audio
         [Range(0f, 1f)]
         public float volume = 1f;
         public bool loop = true;
+        [Min(0f)]
+        [Tooltip("곡의 앞부분을 이 시간(초)만큼 건너뛰고 시작한다. 반복(Loop)할 때는 처음 한 번만 적용되고, 되돌아올 때는 곡의 맨 처음부터 다시 흐른다.")]
+        public float startTime;
     }
 
     /// <summary>

@@ -33,6 +33,13 @@ namespace SushiSurvival.Audio
             return Mathf.Lerp(low, high, Mathf.Clamp01(roll));
         }
 
+        /// <summary>
+        /// 소리를 시작할 위치(초). 음수는 0, 파일 길이 이상이면(건너뛸 곳이 없으니) 0으로 처음부터 재생한다 — 잘못된 값 때문에
+        /// 소리가 아예 안 나는 일이 없게 한다.
+        /// </summary>
+        public static float ClampStartTime(float startTime, float clipLength)
+            => startTime <= 0f || startTime >= clipLength ? 0f : startTime;
+
         /// <summary>현재 값에서 목표 값 쪽으로 fadeSeconds에 1을 오갈 속도로 한 걸음 옮긴다. fadeSeconds가 0 이하면 바로 목표 값.</summary>
         public static float FadeToward(float current, float target, float fadeSeconds, float deltaTime)
         {
