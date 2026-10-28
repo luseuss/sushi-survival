@@ -46,6 +46,10 @@ namespace SushiSurvival.Enemies.Boss
         [Header("UI - 패배 시")]
         [SerializeField] private SushiSurvival.UI.GameOverPanel gameOverPanel;
 
+        [Header("UI - 승리 시")]
+        [Tooltip("보스를 잡은 뒤 결과창보다 먼저 뜨는 창. 비우면 바로 결과창으로 간다.")]
+        [SerializeField] private SushiSurvival.UI.GameClearPanel gameClearPanel;
+
         [Header("연출 설정")]
         [Tooltip("등장 배너를 띄우는 시간(초, 실시간).")]
         [SerializeField] private float introBannerSeconds = 1.5f;
@@ -381,6 +385,14 @@ namespace SushiSurvival.Enemies.Boss
             }
 
             yield return new WaitForSecondsRealtime(deathSeconds);
+
+            // 게임 클리어 창을 먼저 띄운다. 나가기 버튼(GameClearPanel)이 승리 결과로 넘겨준다.
+            if (gameClearPanel != null)
+            {
+                Time.timeScale = 0f;
+                gameClearPanel.Show();
+                yield break;
+            }
 
             // 보스 처치 성공 -> 승리(Victory)로 런 종료 처리
             if (GameManager.Instance != null)
