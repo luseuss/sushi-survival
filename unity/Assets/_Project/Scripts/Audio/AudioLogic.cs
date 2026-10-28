@@ -49,6 +49,12 @@ namespace SushiSurvival.Audio
         }
 
         /// <summary>
+        /// 저장소에 올리지 않는 외부 음원(라이선스상 원본 재배포 금지)을 두는 Resources 경로. 이 이름의 파일이 있으면
+        /// SoundLibrary에 연결된 곡 대신 이 곡을 쓴다. 예: Resources/Audio/External/Bgm_Story.mp3
+        /// </summary>
+        public static string ExternalBgmPath(BgmId id) => "Audio/External/Bgm_" + id;
+
+        /// <summary>
         /// 동시에 낼 수 있는 소리 칸(voice) 중 어디에 새 소리를 넣을지. 비어 있는(재생 중이 아닌) 칸이 있으면 그중 첫 번째,
         /// 모두 재생 중이면 가장 오래전에 시작한 칸을 가로챈다. startTimes[i]는 칸 i의 시작 시각, playing[i]는 재생 중 여부.
         /// </summary>
