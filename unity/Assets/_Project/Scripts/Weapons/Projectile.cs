@@ -24,19 +24,24 @@ namespace SushiSurvival.Weapons
         private GameObjectPool _pool;
         private SpriteRenderer _renderer;
         private Sprite _defaultSprite;
+        private Color _defaultColor = Color.white;
 
         private void Awake()
         {
             _renderer = GetComponentInChildren<SpriteRenderer>();
-            if (_renderer != null) _defaultSprite = _renderer.sprite;
+            if (_renderer == null) return;
+            _defaultSprite = _renderer.sprite;
+            _defaultColor = _renderer.color;
         }
 
         /// <summary>
-        /// 이번 발사의 투사체 그림. null이면 프리팹 기본 그림으로 되돌린다(풀에서 재사용되므로 매번 정해 준다).
+        /// 이번 발사의 투사체 그림과 색조. sprite가 null이면 프리팹 기본 그림·색으로 되돌린다(풀에서 재사용되므로 매번 정해 준다).
         /// </summary>
-        public void SetSprite(Sprite sprite)
+        public void SetLook(Sprite sprite, Color tint)
         {
-            if (_renderer != null) _renderer.sprite = sprite != null ? sprite : _defaultSprite;
+            if (_renderer == null) return;
+            _renderer.sprite = sprite != null ? sprite : _defaultSprite;
+            _renderer.color = sprite != null ? tint : _defaultColor;
         }
 
         public void Initialize(Vector2 direction, float damage, int pierceCount, GameObjectPool pool)

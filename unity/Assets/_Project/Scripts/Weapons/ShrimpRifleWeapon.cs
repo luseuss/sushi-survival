@@ -32,7 +32,12 @@ namespace SushiSurvival.Weapons
         [Tooltip("샷건 산탄의 그림.")]
         [SerializeField] private Sprite shotgunBulletSprite;
         [Tooltip("샷건 그림을 그릴 때의 크기 배율(소총 그림 대비). 샷건 그림이 100px라 0.5면 소총과 같은 크기로 보인다.")]
-        [SerializeField] private float shotgunVisualScale = 0.5f;
+        [SerializeField] private float shotgunVisualScale = 0.7f;
+        [Tooltip("샷건 그림일 때 캐릭터로부터의 거리(소총은 WeaponVisual의 값). 작을수록 몸에 붙는다.")]
+        [SerializeField] private float shotgunOrbitDistance = 0.2f;
+        [SerializeField] private WeaponVisual weaponVisual;
+        [Tooltip("샷건 산탄 그림에 곱하는 색. 흰색보다 어둡게 하면 칙칙해진다.")]
+        [SerializeField] private Color shotgunBulletTint = new Color(0.75f, 0.75f, 0.75f, 1f);
 
         private GameObjectPool _projectilePool;
 
@@ -51,6 +56,7 @@ namespace SushiSurvival.Weapons
             if (alreadyShotgun || weaponRenderer == null || shotgunSprite == null) return;
             weaponRenderer.sprite = shotgunSprite;
             weaponRenderer.transform.localScale *= shotgunVisualScale;
+            if (weaponVisual != null) weaponVisual.OrbitDistance = shotgunOrbitDistance;
         }
 
         public override string DescribeUpgrade(string statText)
@@ -102,7 +108,7 @@ namespace SushiSurvival.Weapons
 
             if (projectileObj.TryGetComponent<Projectile>(out var projectile))
             {
-                projectile.SetSprite(IsShotgun ? shotgunBulletSprite : null);
+                projectile.SetLook(IsShotgun ? shotgunBulletSprite : null, shotgunBulletTint);
                 projectile.Initialize(direction, damage, BaseStats.pierceCount, _projectilePool);
             }
             else
