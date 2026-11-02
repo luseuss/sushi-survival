@@ -20,6 +20,10 @@ namespace SushiSurvival.Weapons
                  "왼쪽을 향하면 180. 라이플 아트는 총구가 왼쪽이라 180이다.")]
         [SerializeField] private float spriteAngleOffset;
         [SerializeField] private FacingController facing;
+
+        /// <summary>RotateToFacing에서 캐릭터로부터의 거리. 무기가 바뀔 때 코드로 조정한다.</summary>
+        public float OrbitDistance { get => orbitDistance; set => orbitDistance = value; }
+
         [SerializeField] private SpriteRenderer spriteRenderer;
 
         private void LateUpdate()
