@@ -25,6 +25,15 @@ namespace SushiSurvival.Weapons
         [Tooltip("산탄 한 발의 피해 = 소총 피해 × 이 값. 다 맞으면 소총 한 발보다 세지만 멀면 몇 발만 맞는다.")]
         [SerializeField] private float shotgunDamageRatio = 0.5f;
 
+        [Header("샷건 그림 (비우면 소총 그림 그대로)")]
+        [Tooltip("무기 그림을 그리는 SpriteRenderer(WeaponVisual).")]
+        [SerializeField] private SpriteRenderer weaponRenderer;
+        [SerializeField] private Sprite shotgunSprite;
+        [Tooltip("샷건 산탄의 그림.")]
+        [SerializeField] private Sprite shotgunBulletSprite;
+        [Tooltip("샷건 그림을 그릴 때의 크기 배율(소총 그림 대비). 샷건 그림이 100px라 0.5면 소총과 같은 크기로 보인다.")]
+        [SerializeField] private float shotgunVisualScale = 0.5f;
+
         private GameObjectPool _projectilePool;
 
         /// <summary>샷건으로 바뀐 상태인지. 보스 씬 이월에도 쓴다.</summary>
@@ -34,7 +43,15 @@ namespace SushiSurvival.Weapons
         public bool ReadyToEvolve =>
             !IsShotgun && ShotgunProgressionLogic.ShouldEvolve(currentLevel, shotgunFromLevel);
 
-        public void EnableShotgun() => IsShotgun = true;
+        public void EnableShotgun()
+        {
+            bool alreadyShotgun = IsShotgun;
+            IsShotgun = true;
+
+            if (alreadyShotgun || weaponRenderer == null || shotgunSprite == null) return;
+            weaponRenderer.sprite = shotgunSprite;
+            weaponRenderer.transform.localScale *= shotgunVisualScale;
+        }
 
         public override string DescribeUpgrade(string statText)
         {
@@ -84,7 +101,10 @@ namespace SushiSurvival.Weapons
             GameObject projectileObj = _projectilePool.Get(spawnPos, Quaternion.Euler(0f, 0f, rotation));
 
             if (projectileObj.TryGetComponent<Projectile>(out var projectile))
+            {
+                projectile.SetSprite(IsShotgun ? shotgunBulletSprite : null);
                 projectile.Initialize(direction, damage, BaseStats.pierceCount, _projectilePool);
+            }
             else
                 Debug.LogError($"{projectileObj.name}: Projectile 컴포넌트가 없어 발사할 수 없습니다.");
         }
