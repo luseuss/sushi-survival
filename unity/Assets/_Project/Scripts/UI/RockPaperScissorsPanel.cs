@@ -22,6 +22,8 @@ namespace SushiSurvival.UI
         [SerializeField] private Text promptText;
         [Tooltip("왕이 낸 손을 보여주는 텍스트. 비워두면 표시하지 않는다.")]
         [SerializeField] private Text opponentHandText;
+        [Tooltip("대결 중 대사창 옆에 보여 줄 캐릭터 프로필. 비워두면 표시하지 않는다.")]
+        [SerializeField] private Image portraitImage;
 
         [SerializeField] private string promptMessage = "가위바위보!";
         [SerializeField] private string drawMessage = "비겼다! 다시 승부!";
@@ -71,6 +73,12 @@ namespace SushiSurvival.UI
 
             if (promptText != null) promptText.text = promptMessage;
             if (opponentHandText != null) opponentHandText.text = string.Empty;
+        }
+
+        /// <summary>대결 중 보여 줄 캐릭터 프로필. Show보다 먼저 불러도 된다.</summary>
+        public void SetPortrait(Sprite portrait)
+        {
+            if (portraitImage != null) portraitImage.sprite = portrait;
         }
 
         public void Hide() => Root.SetActive(false);

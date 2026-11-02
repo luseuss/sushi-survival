@@ -11670,6 +11670,7 @@ MonoBehaviour:
   scissorsButton: {fileID: 927835451}
   promptText: {fileID: 2070778401}
   opponentHandText: {fileID: 482517049}
+  portraitImage: {fileID: 878112054}
   promptMessage: "\uAC00\uC704\uBC14\uC704\uBCF4!"
   drawMessage: "\uBE44\uACBC\uB2E4! \uB2E4\uC2DC \uC2B9\uBD80!"
   revealDelay: 0.4

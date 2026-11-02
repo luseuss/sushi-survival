@@ -44,6 +44,7 @@ namespace SushiSurvival.Core
                 // 가위바위보 도중에도 계속 보여야 한다.
                 panel.HideDialogueBox();
 
+                rpsPanel.SetPortrait(portrait);
                 rpsPanel.Show(success =>
                 {
                     rpsPanel.Hide();
