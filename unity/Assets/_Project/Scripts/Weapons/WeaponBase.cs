@@ -26,7 +26,7 @@ namespace SushiSurvival.Weapons
         private float _damageBonus = 1f;
 
         public int CurrentLevel => currentLevel;
-        public Sprite UpgradeIcon => upgradeIcon;
+        public virtual Sprite UpgradeIcon => upgradeIcon;
         public string WeaponName => weaponData != null ? weaponData.weaponName : string.Empty;
         public bool CanLevelUp => weaponData != null && currentLevel < weaponData.levels.Length;
 

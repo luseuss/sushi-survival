@@ -327,6 +327,7 @@ GameObject:
   - component: {fileID: 101777304}
   - component: {fileID: 101777306}
   - component: {fileID: 101777305}
+  - component: {fileID: 891000001}
   m_Layer: 5
   m_Name: PausePanel
   m_TagString: Untagged
@@ -16473,7 +16474,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -50}
+  m_AnchoredPosition: {x: 0, y: -190}
   m_SizeDelta: {x: 433.35, y: 82.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1507853897
@@ -16510,7 +16511,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -220}
+  m_AnchoredPosition: {x: 0, y: -300}
   m_SizeDelta: {x: 1000, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1507853899
@@ -19363,7 +19364,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 16302fe6a7425ae1300857731b428ed3, type: 3}
   - {fileID: 21300000, guid: 943107f15e84babcdc8efb2322f08cec, type: 3}
   framesPerSecond: 20
-  loop: 1
+  loop: 0
 --- !u!114 &880000002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19429,7 +19430,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 968e53c8f813e75202d1d65b34f01e8d, type: 3}
   - {fileID: 21300000, guid: 719c03b0735ab88401527a161b35d83d, type: 3}
   framesPerSecond: 25
-  loop: 1
+  loop: 0
 --- !u!1 &890000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -19581,3 +19582,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &891000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101777303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02073a68c16daf87522d9f2d1524c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstRowY: 40
+  rowSpacing: 60
+  fontSize: 33
