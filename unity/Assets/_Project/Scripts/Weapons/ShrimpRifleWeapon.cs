@@ -36,6 +36,8 @@ namespace SushiSurvival.Weapons
         [Tooltip("샷건 그림일 때 캐릭터로부터의 거리(소총은 WeaponVisual의 값). 작을수록 몸에 붙는다.")]
         [SerializeField] private float shotgunOrbitDistance = 0.2f;
         [SerializeField] private WeaponVisual weaponVisual;
+        [Tooltip("샷건으로 바뀐 뒤 레벨업 창의 무기 강화 카드에 쓰는 아이콘. 비우면 소총 아이콘 그대로.")]
+        [SerializeField] private Sprite shotgunUpgradeIcon;
         [Tooltip("샷건 산탄 그림에 곱하는 색. 흰색보다 어둡게 하면 칙칙해진다.")]
         [SerializeField] private Color shotgunBulletTint = new Color(0.75f, 0.75f, 0.75f, 1f);
 
@@ -47,6 +49,8 @@ namespace SushiSurvival.Weapons
         /// <summary>소총이 샷건으로 바뀔 레벨에 닿았는데 아직 안 바뀐 상태인지.</summary>
         public bool ReadyToEvolve =>
             !IsShotgun && ShotgunProgressionLogic.ShouldEvolve(currentLevel, shotgunFromLevel);
+
+        public override Sprite UpgradeIcon => IsShotgun && shotgunUpgradeIcon != null ? shotgunUpgradeIcon : base.UpgradeIcon;
 
         public void EnableShotgun()
         {
