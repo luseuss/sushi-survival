@@ -22,6 +22,22 @@ namespace SushiSurvival.Weapons
         private int _enemiesHit;
         private float _lifeTimer;
         private GameObjectPool _pool;
+        private SpriteRenderer _renderer;
+        private Sprite _defaultSprite;
+
+        private void Awake()
+        {
+            _renderer = GetComponentInChildren<SpriteRenderer>();
+            if (_renderer != null) _defaultSprite = _renderer.sprite;
+        }
+
+        /// <summary>
+        /// 이번 발사의 투사체 그림. null이면 프리팹 기본 그림으로 되돌린다(풀에서 재사용되므로 매번 정해 준다).
+        /// </summary>
+        public void SetSprite(Sprite sprite)
+        {
+            if (_renderer != null) _renderer.sprite = sprite != null ? sprite : _defaultSprite;
+        }
 
         public void Initialize(Vector2 direction, float damage, int pierceCount, GameObjectPool pool)
         {

@@ -219,6 +219,10 @@ MonoBehaviour:
   shotgunPelletCount: 5
   shotgunSpreadDegrees: 40
   shotgunDamageRatio: 0.5
+  weaponRenderer: {fileID: 4102852640409364864}
+  shotgunSprite: {fileID: 21300000, guid: 5872e9a0f1d0c2007a633d83d2095442, type: 3}
+  shotgunBulletSprite: {fileID: 21300000, guid: 14af06ff862c003c623df2b29794f49c, type: 3}
+  shotgunVisualScale: 0.5
 --- !u!114 &6343328608926914217
 MonoBehaviour:
   m_ObjectHideFlags: 0
