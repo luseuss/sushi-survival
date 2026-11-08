@@ -1,0 +1,207 @@
+/* 와사비를 먹으면 강해지는 군요 — 소개 사이트.
+   분위기는 게임 메인화면(밝은 픽셀 왕국 + 걷는 캐릭터), 구성과 움직임은 큰 구역 + 스크롤 등장. */
+:root {
+  --gold: #f5c542;
+  --gold-dark: #3a2a00;
+  --ink: #2b1d0c;
+  --text: #3b2a14;
+  --muted: #7a6a52;
+  --green: #2f7d4a;
+  --cream: #fffaf0;
+  --bar: rgba(30, 24, 40, 0.86);
+  --bar-h: 56px;
+  --gh: max(9.93vw, 64px); /* 땅 띠 높이(띠 그림의 비율을 유지) */
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--text);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; line-height: 1.2; color: var(--ink); }
+section[id], div[id="about"] { scroll-margin-top: var(--bar-h); }
+
+/* ---------- 상단 고정 바 ---------- */
+.topbar {
+  position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--bar-h);
+  display: flex; align-items: center; gap: 28px; padding: 0 max(16px, 3vw);
+  background: transparent; transition: background 0.25s, box-shadow 0.25s;
+}
+.topbar.solid { background: var(--bar); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
+.brand img { display: block; height: 36px; width: auto; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35)); }
+.nav { display: flex; gap: 22px; }
+.nav a { color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
+.nav a:hover { color: var(--gold); }
+.nav-download {
+  margin-left: auto; text-decoration: none; background: var(--gold); color: var(--gold-dark);
+  font-weight: 800; font-size: 14px; padding: 7px 18px; border: 2px solid var(--gold-dark); border-radius: 4px;
+  box-shadow: 0 3px 0 var(--gold-dark); transition: transform 0.1s, box-shadow 0.1s;
+}
+.nav-download:hover { transform: translateY(1px); box-shadow: 0 2px 0 var(--gold-dark); }
+.nav-download:active { transform: translateY(3px); box-shadow: none; }
+.nav-download[aria-disabled="true"], .cta[aria-disabled="true"] { background: #cfc7b8; color: #6b6354; pointer-events: none; border-color: #6b6354; box-shadow: 0 3px 0 #6b6354; }
+
+/* ---------- 첫 화면 ---------- */
+.hero {
+  position: relative; min-height: 100vh; min-height: 100svh; overflow: hidden; isolation: isolate;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  background: #6fb6ff;
+}
+.hero-bg {
+  position: absolute; inset: -8% 0 0 0; z-index: -1;
+  background: url("assets/img/kingdom.jpg") center bottom / cover no-repeat;
+  transform: translateY(calc(var(--py, 0) * 0.25px)); will-change: transform;
+}
+.hero-inner { padding: calc(var(--bar-h) + 12px) 20px calc(var(--gh) + 56px); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.logo-wrap { margin: 0; line-height: 0; }
+.logo {
+  height: min(40vh, 400px); width: auto; max-width: 78vw;
+  filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.22));
+  animation: bob 3.4s ease-in-out infinite;
+}
+.tagline { margin: 0; max-width: 30em; color: #fff; font-weight: 700; font-size: clamp(14px, 1.6vw, 18px); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.65); }
+.download { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 6px; }
+.cta {
+  display: inline-block; text-decoration: none; background: var(--gold); color: var(--gold-dark);
+  font-weight: 900; font-size: clamp(18px, 2.4vw, 24px); padding: 12px 44px; border: 3px solid var(--gold-dark); border-radius: 5px;
+  box-shadow: 0 5px 0 var(--gold-dark); transition: transform 0.1s, box-shadow 0.1s;
+}
+.cta:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--gold-dark); }
+.cta:active { transform: translateY(5px); box-shadow: none; }
+.download-meta { margin: 0; color: #fff; font-size: 14px; font-weight: 700; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); }
+.download-sub { margin: 0; font-size: 13px; }
+.download-sub a { color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); }
+
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* 땅: 게임 메인화면처럼 풀밭+흙이 계속 왼쪽으로 흐르고 캐릭터는 제자리 걸음 */
+.ground { position: absolute; left: 0; right: 0; bottom: 0; height: var(--gh); overflow: hidden; z-index: 1; }
+.ground-flow {
+  position: absolute; inset: 0 auto 0 0; width: 200%;
+  background: url("assets/img/meadow.png") repeat-x left top / 50% 100%;
+  animation: flow 14s linear infinite;
+}
+@keyframes flow { to { transform: translateX(-50%); } }
+.ground-text {
+  position: absolute; left: 0; right: 0; bottom: 8%; margin: 0; text-align: center;
+  color: #e9d3b0; font-size: 12px; letter-spacing: 1px; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+.walkers { position: absolute; left: 4%; bottom: calc(var(--gh) * 0.62); z-index: 2; display: flex; align-items: flex-end; gap: 1.8vw; }
+.walkers img { height: clamp(64px, 9.5vw, 132px); width: auto; image-rendering: pixelated; }
+
+/* ---------- 기능 구역 ---------- */
+.feature { position: relative; padding: clamp(40px, 6vw, 88px) 0 calc(var(--gh) * 0.28); overflow: hidden; }
+.feature::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--gh) * 0.28);
+  background: url("assets/img/meadow.png") repeat-x left top / auto 100%;
+}
+.feature.sky { background: linear-gradient(#9fd4ff, #eaf7ff 72%, #cfeec0); }
+.feature.sun { background: linear-gradient(#ffe7a8, #fff6dc 72%, #cfeec0); }
+.feature-inner {
+  position: relative; max-width: 1100px; margin: 0 auto; padding: 0 max(20px, 4vw);
+  display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: end; column-gap: clamp(20px, 5vw, 72px);
+}
+.feature.right .art { order: 2; }
+.art { position: relative; align-self: end; }
+.art::before {
+  content: ""; position: absolute; left: 50%; top: 52%; width: 86%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  border-radius: 50%; background: rgba(255, 255, 255, 0.55);
+}
+.art img { position: relative; display: block; width: min(100%, 440px); height: auto; margin: 0 auto; }
+.text { align-self: center; padding-bottom: clamp(28px, 5vw, 64px); }
+.label { margin: 0 0 6px; color: var(--green); letter-spacing: 3px; font-size: 13px; font-weight: 800; }
+.text h2 { font-size: clamp(26px, 3.6vw, 42px); margin-bottom: 10px; }
+.text p { margin: 0 0 10px; font-size: clamp(15px, 1.5vw, 18px); max-width: 30em; }
+.text .end { margin-top: 14px; color: var(--muted); font-size: 12px; letter-spacing: 1px; }
+
+/* ---------- 캐릭터 ---------- */
+.characters { padding: clamp(40px, 6vw, 80px) max(20px, 4vw) calc(var(--gh) * 0.28); text-align: center; background: linear-gradient(#bfe3ff, #eaf7ff 60%, #cfeec0); position: relative; }
+.characters::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--gh) * 0.28); background: url("assets/img/meadow.png") repeat-x left top / auto 100%; }
+.section-title { font-size: clamp(26px, 3.4vw, 38px); margin-bottom: 18px; }
+.cast { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 3vw, 40px); align-items: end; }
+.cast figure { margin: 0; }
+.cast img { display: block; width: min(100%, 340px); height: auto; margin: 0 auto; transition: transform 0.25s; }
+.cast figure:hover img { transform: translateY(-6px) scale(1.03); }
+.cast figcaption { padding: 6px 0 clamp(28px, 4vw, 52px); }
+.cast strong { display: block; font-size: clamp(17px, 2vw, 22px); color: var(--ink); }
+.cast span { display: block; font-size: 14px; }
+.cast em { display: block; font-style: normal; font-size: 13px; color: var(--muted); }
+.cast .locked img { filter: grayscale(1) brightness(0.85); opacity: 0.85; }
+
+/* ---------- 스크린샷·실행 방법·크레딧 ---------- */
+.plain, .howto, .credits { max-width: 1000px; margin: 0 auto; padding: clamp(36px, 5vw, 64px) max(20px, 4vw); }
+.howto, .credits, .plain { text-align: left; }
+.howto .section-title, .credits .section-title, .plain .section-title { text-align: center; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.gallery figure { margin: 0; }
+.gallery img { width: 100%; height: auto; border-radius: 6px; border: 3px solid #7a5a2a; display: block; }
+.gallery figcaption { text-align: center; font-size: 13px; color: var(--muted); padding-top: 4px; }
+
+.steps { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; text-align: center; }
+.steps .n {
+  display: grid; place-items: center; width: 42px; height: 42px; margin: 0 auto 8px; border-radius: 50%;
+  background: var(--gold); color: var(--gold-dark); border: 3px solid var(--gold-dark); font-weight: 900; font-size: 18px;
+}
+.steps strong { display: block; font-size: 18px; color: var(--ink); }
+.steps p { margin: 4px 0 0; font-size: 15px; }
+code { background: #efe3c8; padding: 1px 6px; border-radius: 3px; font-size: 0.92em; }
+
+.notice { background: #fff3d1; border-left: 5px solid var(--gold); border-radius: 4px; padding: 10px 16px; margin-bottom: 26px; font-size: 15px; }
+.notice p { margin: 0; }
+
+.two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
+.two-col h3 { font-size: 18px; margin-bottom: 8px; }
+.keys { display: grid; grid-template-columns: 5.5em 1fr; gap: 6px 10px; margin: 0; font-size: 15px; }
+.keys dt { font-weight: 800; color: var(--ink); }
+.keys dd { margin: 0; }
+kbd { display: inline-block; min-width: 1.7em; text-align: center; margin-right: 3px; padding: 0 6px; background: #fff; border: 2px solid #7a5a2a; border-bottom-width: 4px; border-radius: 4px; font-family: inherit; font-weight: 800; font-size: 13px; }
+
+.credit-list { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0; font-size: 15px; }
+.credit-list dt { font-weight: 800; color: var(--ink); }
+.credit-list dd { margin: 0; }
+
+footer { background: #1e1828; color: #cfc7d8; text-align: center; padding: 26px 16px 34px; font-size: 14px; }
+footer p { margin: 4px 0; }
+footer a { color: var(--gold); }
+
+/* ---------- 스크롤 등장 (JS가 켜져 있을 때만 숨겼다가 보여 줌) ---------- */
+.js .reveal { opacity: 0; transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); transform: translateY(26px); }
+.js .reveal.from-left { transform: translateX(-70px); }
+.js .reveal.from-right { transform: translateX(70px); }
+.js .reveal.in { opacity: 1; transform: none; }
+
+/* ---------- 휴대폰 ---------- */
+@media (max-width: 760px) {
+  :root { --bar-h: 50px; }
+  .nav { display: none; }
+  .brand img { height: 32px; }
+  .hero-inner { padding-bottom: calc(var(--gh) + 70px); }
+  .feature-inner { grid-template-columns: 1fr; row-gap: 0; }
+  .feature.right .art { order: 0; }
+  .art { order: 0; }
+  .art img { width: min(72vw, 340px); }
+  .text { text-align: center; padding: 18px 0 34px; }
+  .text p { margin-left: auto; margin-right: auto; }
+  .js .reveal.from-left, .js .reveal.from-right { transform: translateY(30px); }
+  .cast { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+  .cast span, .cast em { font-size: 11px; }
+  .steps, .two-col { grid-template-columns: 1fr; }
+  .walkers { left: 2%; }
+}
+
+/* 동작 줄이기 설정이 켜진 기기에서는 움직임을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .logo, .ground-flow { animation: none; }
+  .hero-bg { transform: none; }
+  .js .reveal, .js .reveal.from-left, .js .reveal.from-right { opacity: 1; transform: none; transition: none; }
+}
