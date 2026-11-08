@@ -19,6 +19,12 @@ namespace SushiSurvival.UI
         private bool _playWhenPrepared;
         private bool _showOnNextFrame;
 
+        /// <summary>반복하지 않는 영상이 끝까지 재생됐을 때.</summary>
+        public event System.Action Finished;
+
+        /// <summary>영상의 첫 프레임이 화면에 나타난 순간.</summary>
+        public event System.Action Shown;
+
         /// <summary>parent 아래에 parent를 꽉 채우는 영상 표면을 만든다.</summary>
         public static VideoSurface Create(Transform parent, VideoClip clip, bool loop, string objectName)
         {
@@ -82,6 +88,7 @@ namespace SushiSurvival.UI
             _player.prepareCompleted += OnPrepared;
             _player.frameReady += OnFrameReady;
             _player.errorReceived += OnError;
+            _player.loopPointReached += OnLoopPoint;
 
             if (clip != null) _player.Prepare();
         }
@@ -93,6 +100,13 @@ namespace SushiSurvival.UI
             _player.prepareCompleted -= OnPrepared;
             _player.frameReady -= OnFrameReady;
             _player.errorReceived -= OnError;
+            _player.loopPointReached -= OnLoopPoint;
+        }
+
+        // 반복 영상은 한 바퀴마다 이 이벤트가 오므로, 반복하지 않는 영상일 때만 끝난 것으로 본다.
+        private void OnLoopPoint(VideoPlayer source)
+        {
+            if (!source.isLooping) Finished?.Invoke();
         }
 
         /// <summary>처음부터 재생한다. 아직 준비 중이면 준비되는 즉시 시작한다.</summary>
@@ -147,6 +161,7 @@ namespace SushiSurvival.UI
             _showOnNextFrame = false;
             _image.texture = source.texture;
             _image.enabled = true;
+            Shown?.Invoke();
         }
 
         private void OnError(VideoPlayer source, string message)
