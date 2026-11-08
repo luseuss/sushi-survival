@@ -8,6 +8,7 @@ namespace SushiSurvival.UI
 {
     public class IntroSceneController : MonoBehaviour
     {
+        [Tooltip("로고와 따로 있는 '게임 시작' 버튼.")]
         [SerializeField] private Button startButton;
         [Tooltip("타이틀 배경으로 반복 재생할 영상. 비워두면 기존 배경 그림만 보인다.")]
         [SerializeField] private VideoClip backgroundVideo;
@@ -20,8 +21,8 @@ namespace SushiSurvival.UI
 
         private void Start()
         {
-            // 타이틀 배경음악. 스토리·캐릭터 선택·전투가 같은 곡을 쓰면 끊기지 않고 이어진다.
-            AudioManager.PlayBgm(BgmId.Title, 0.5f);
+            // 타이틀도 스토리 장면과 같은 곡을 쓴다. 같은 곡이면 장면이 바뀌어도 끊기지 않고 이어진다.
+            AudioManager.PlayBgm(BgmId.Story, 0.5f);
 
             if (backgroundVideo != null)
                 PlayBackgroundVideo();
