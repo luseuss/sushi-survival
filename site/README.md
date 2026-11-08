@@ -10,7 +10,8 @@ site/
 ├─ config.js      ★ 바꿔 쓰는 값은 전부 여기 (다운로드 주소, 버전, 스크린샷, 크레딧, 문의)
 ├─ .nojekyll      GitHub Pages가 파일을 건드리지 않게 하는 표식
 └─ assets/
-   ├─ characters/ 캐릭터 일러스트(게임의 캐릭터 선택 화면 그림)
+   ├─ img/        왕국 배경·땅 띠·로고·걷는 캐릭터 GIF·공유용 이미지(og.jpg)
+   ├─ characters/ 캐릭터 입상(게임 대화창 그림, 표정별 webp)
    └─ screenshots/ (직접 만들어서 게임 화면을 넣는다)
 ```
 

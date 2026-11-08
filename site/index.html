@@ -5,95 +5,161 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>와사비를 먹으면 강해지는 군요</title>
   <meta name="description" content="스시왕국의 용사들과 함께 5분을 버티는 PC 서바이벌 로그라이크. Windows용 무료 다운로드.">
+  <meta name="theme-color" content="#1e1828">
   <meta property="og:title" content="와사비를 먹으면 강해지는 군요">
   <meta property="og:description" content="스시왕국의 용사들과 함께 5분을 버티는 PC 서바이벌 로그라이크.">
-  <meta property="og:image" content="assets/characters/adeline.png">
+  <meta property="og:image" content="assets/img/og.jpg">
+  <link rel="icon" href="assets/img/logo.webp">
   <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.className = "js";</script>
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-inner">
-      <p class="eyebrow">PC · Windows · 서바이벌 로그라이크</p>
-      <h1 id="title">와사비를 먹으면 강해지는 군요</h1>
-      <p class="tagline" id="tagline">스시왕국의 용사들과 함께 5분을 버텨라</p>
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#top" aria-label="맨 위로"><img src="assets/img/logo.webp" alt="" width="44" height="35"></a>
+    <nav class="nav" aria-label="구역 이동">
+      <a href="#about">소개</a>
+      <a href="#characters">캐릭터</a>
+      <a href="#howto">실행 방법</a>
+    </nav>
+    <a id="nav-download" class="nav-download" href="#download" aria-disabled="true">다운로드</a>
+  </header>
 
-      <div class="download">
-        <a id="download-button" class="button" href="#download" aria-disabled="true">다운로드</a>
+  <section class="hero" id="top">
+    <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <h1 class="logo-wrap">
+        <img class="logo" src="assets/img/logo.webp" alt="와사비를 먹으면 강해지는 군요" width="900" height="724" id="title-logo">
+      </h1>
+      <p class="tagline" id="tagline">스시왕국의 용사들과 함께 5분을 버텨라</p>
+      <div class="download" id="download">
+        <a id="download-button" class="cta" href="#download" aria-disabled="true">다운로드</a>
         <p class="download-meta" id="download-meta"></p>
         <p class="download-sub"><a id="releases-link" href="#" hidden>이전 버전 보기</a></p>
       </div>
     </div>
-    <img class="hero-art" src="assets/characters/adeline.png" alt="아델린 — 스시왕국 9대 왕녀" width="640" height="1080">
-  </header>
+
+    <div class="walkers" aria-hidden="true">
+      <img src="assets/img/soy.gif" alt="" width="50" height="50">
+      <img src="assets/img/egg.gif" alt="" width="50" height="50">
+      <img src="assets/img/tofu.gif" alt="" width="50" height="50">
+    </div>
+    <div class="ground" aria-hidden="true">
+      <div class="ground-flow"></div>
+      <p class="ground-text">이동 WASD / 좌스틱 · 공격 자동</p>
+    </div>
+  </section>
 
   <main>
-    <section id="about">
-      <h2>게임 소개</h2>
-      <p class="lead">한 판은 약 5~7분. 몰려오는 초밥 군단을 자동 공격으로 쓸어버리고, 경험치로 레벨업하며, 5분이 되면 나타나는 보스를 쓰러뜨리면 승리합니다.</p>
-      <ul class="features">
-        <li>
-          <h3>자동 공격 + 위치 선정</h3>
-          <p>이동만 하면 무기는 알아서 공격합니다. 적을 피하고 모으는 위치 선정이 승부를 가릅니다.</p>
-        </li>
-        <li>
-          <h3>레벨업 3택 1</h3>
-          <p>레벨이 오를 때마다 증강과 무기 강화 중 하나를 고릅니다. 같은 캐릭터도 선택에 따라 전혀 다른 판이 됩니다.</p>
-        </li>
-        <li>
-          <h3>무기가 변한다</h3>
-          <p>아델린의 양산은 3레벨에 몸 주위를 도는 회전 우산으로, 카마리온의 소총은 샷건으로 바뀝니다.</p>
-        </li>
-        <li>
-          <h3>와사비 알현 — 가위바위보 도박</h3>
-          <p>레벨업 카드를 포기하고 왕에게 와사비를 빌러 갈 수 있습니다. 가위바위보에 이기면 보조 펫을 얻습니다.</p>
-        </li>
-        <li>
-          <h3>초밥 펫 9종</h3>
-          <p>참치, 연어, 광어, 문어, 장어… 펫마다 사거리·연사·관통이 달라서 어떤 펫을 데려가느냐가 달라집니다. 최대 3마리까지 함께합니다.</p>
-        </li>
-        <li>
-          <h3>보스전</h3>
-          <p>5분에 나타나는 마녀풍 셰프 보스는 체력이 줄 때마다 부하를 소환하고 돌진해 옵니다.</p>
-        </li>
-      </ul>
+    <div id="about"></div>
+
+    <section class="feature sky">
+      <div class="feature-inner">
+        <div class="art reveal from-left"><img src="assets/characters/adeline_base.webp" alt="아델린" width="560" height="720"></div>
+        <div class="text reveal from-right">
+          <p class="label">FEATURE 01</p>
+          <h2>자동 공격 + 위치 선정</h2>
+          <p>한 판은 약 5~7분. 이동만 하면 무기는 알아서 공격합니다. 적을 피하고 모으는 위치 선정이 승부를 가릅니다.</p>
+          <p class="end">// END OF FEATURE</p>
+        </div>
+      </div>
     </section>
 
-    <section id="characters">
-      <h2>캐릭터</h2>
-      <div class="characters">
-        <figure>
-          <img src="assets/characters/adeline.png" alt="아델린" loading="lazy" width="640" height="1080">
-          <figcaption><strong>아델린</strong><span>스시왕국 9대 왕녀 · 근접 양산 → 회전 우산</span></figcaption>
+    <section class="feature sun right">
+      <div class="feature-inner">
+        <div class="art reveal from-right"><img src="assets/characters/kamarion_base.webp" alt="카마리온" width="560" height="720" loading="lazy"></div>
+        <div class="text reveal from-left">
+          <p class="label">FEATURE 02</p>
+          <h2>레벨업 3택 1</h2>
+          <p>레벨이 오를 때마다 증강과 무기 강화 중 하나를 고릅니다. 같은 캐릭터도 선택에 따라 전혀 다른 판이 됩니다.</p>
+          <p class="end">// END OF FEATURE</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature sky">
+      <div class="feature-inner">
+        <div class="art reveal from-left"><img src="assets/characters/adeline_angry.webp" alt="아델린" width="560" height="720" loading="lazy"></div>
+        <div class="text reveal from-right">
+          <p class="label">FEATURE 03</p>
+          <h2>무기가 변한다</h2>
+          <p>아델린의 양산은 3레벨에 몸 주위를 도는 회전 우산으로, 카마리온의 소총은 샷건으로 바뀝니다.</p>
+          <p class="end">// END OF FEATURE</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature sun right">
+      <div class="feature-inner">
+        <div class="art reveal from-right"><img src="assets/characters/kamarion_shy.webp" alt="카마리온" width="560" height="720" loading="lazy"></div>
+        <div class="text reveal from-left">
+          <p class="label">FEATURE 04</p>
+          <h2>와사비 알현 — 가위바위보 도박</h2>
+          <p>레벨업 카드를 포기하고 왕에게 와사비를 빌러 갈 수 있습니다. 가위바위보에 이기면 보조 펫을 얻습니다.</p>
+          <p class="end">// END OF FEATURE</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature sky">
+      <div class="feature-inner">
+        <div class="art reveal from-left"><img src="assets/characters/adeline_happy.webp" alt="아델린" width="560" height="720" loading="lazy"></div>
+        <div class="text reveal from-right">
+          <p class="label">FEATURE 05</p>
+          <h2>초밥 펫 9종</h2>
+          <p>참치, 연어, 광어, 문어, 장어… 펫마다 사거리·연사·관통이 달라서 어떤 펫을 데려가느냐가 달라집니다. 최대 3마리까지 함께합니다.</p>
+          <p class="end">// END OF FEATURE</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature sun right">
+      <div class="feature-inner">
+        <div class="art reveal from-right"><img src="assets/characters/kamarion_angry.webp" alt="카마리온" width="560" height="720" loading="lazy"></div>
+        <div class="text reveal from-left">
+          <p class="label">FEATURE 06</p>
+          <h2>보스전</h2>
+          <p>5분에 나타나는 마녀풍 셰프 보스는 체력이 줄 때마다 부하를 소환하고 돌진해 옵니다.</p>
+          <p class="end">// END OF FEATURE</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="characters" id="characters">
+      <h2 class="section-title reveal">캐릭터</h2>
+      <div class="cast">
+        <figure class="reveal" data-happy="assets/characters/adeline_happy.webp">
+          <img src="assets/characters/adeline_base.webp" alt="아델린" width="560" height="720" loading="lazy">
+          <figcaption><strong>아델린</strong><span>스시왕국 9대 왕녀</span><em>근접 양산 → 회전 우산</em></figcaption>
         </figure>
-        <figure>
-          <img src="assets/characters/kamarion.png" alt="카마리온" loading="lazy" width="640" height="1080">
-          <figcaption><strong>카마리온</strong><span>최고의 대장장이 · 간장 소총 → 샷건</span></figcaption>
+        <figure class="reveal" data-happy="assets/characters/kamarion_happy.webp">
+          <img src="assets/characters/kamarion_base.webp" alt="카마리온" width="560" height="720" loading="lazy">
+          <figcaption><strong>카마리온</strong><span>최고의 대장장이</span><em>간장 소총 → 샷건</em></figcaption>
         </figure>
-        <figure class="locked">
-          <img src="assets/characters/inari.png" alt="이나리" loading="lazy" width="640" height="1080">
-          <figcaption><strong>이나리</strong><span>유부마을 수호령 · 준비 중</span></figcaption>
+        <figure class="reveal locked" data-happy="assets/characters/inari_happy.webp">
+          <img src="assets/characters/inari_base.webp" alt="이나리" width="560" height="720" loading="lazy">
+          <figcaption><strong>이나리</strong><span>유부마을 수호령</span><em>준비 중</em></figcaption>
         </figure>
       </div>
     </section>
 
-    <section id="screenshots" hidden>
-      <h2>스크린샷</h2>
+    <section id="screenshots" class="plain" hidden>
+      <h2 class="section-title">스크린샷</h2>
       <div class="gallery" id="gallery"></div>
     </section>
 
-    <section id="howto">
-      <h2>실행 방법</h2>
+    <section class="howto" id="howto">
+      <h2 class="section-title reveal">실행 방법</h2>
       <ol class="steps">
-        <li><strong>다운로드</strong> 위의 버튼으로 zip 파일을 받습니다.</li>
-        <li><strong>압축 풀기</strong> 원하는 폴더에 모두 풀어 주세요. 압축을 풀지 않고 zip 안에서 실행하면 동작하지 않습니다.</li>
-        <li><strong>실행</strong> <code>WasabiSurvival.exe</code>를 더블클릭합니다.</li>
+        <li class="reveal"><span class="n">1</span><strong>다운로드</strong><p>위의 버튼으로 zip 파일을 받습니다.</p></li>
+        <li class="reveal"><span class="n">2</span><strong>압축 풀기</strong><p>원하는 폴더에 모두 풀어 주세요. 압축을 풀지 않고 zip 안에서 실행하면 동작하지 않습니다.</p></li>
+        <li class="reveal"><span class="n">3</span><strong>실행</strong><p><code>WasabiSurvival.exe</code>를 더블클릭합니다.</p></li>
       </ol>
 
-      <div class="notice">
+      <div class="notice reveal">
         <p><strong>Windows가 "PC를 보호했습니다"라고 알려 주나요?</strong> 개인이 만든 앱이라 인증서 서명이 없어서 나오는 안내입니다. <em>추가 정보 → 실행</em>을 누르면 실행됩니다.</p>
       </div>
 
-      <div class="two-col">
+      <div class="two-col reveal">
         <div>
           <h3>조작</h3>
           <dl class="keys">
@@ -113,8 +179,8 @@
       </div>
     </section>
 
-    <section id="credits" hidden>
-      <h2>크레딧</h2>
+    <section id="credits" class="credits" hidden>
+      <h2 class="section-title">크레딧</h2>
       <dl class="credit-list" id="credit-list"></dl>
     </section>
   </main>
