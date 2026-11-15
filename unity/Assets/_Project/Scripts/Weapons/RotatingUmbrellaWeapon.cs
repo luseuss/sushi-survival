@@ -57,6 +57,9 @@ namespace SushiSurvival.Weapons
         [SerializeField] private float hitRadius = 0.3f;
         [SerializeField] private LayerMask enemyLayer;
 
+        /// <summary>클릭으로 회전이 시작될 때마다 알린다(연습 플레이가 "스킬을 써 봤는지" 확인하는 데 쓴다).</summary>
+        public event System.Action SpinStarted;
+
         // 우산마다 매 프레임 조회하므로 배열을 새로 만들지 않고 이 버퍼를 재사용한다(GC 부담을 줄인다).
         private static readonly Collider2D[] HitBuffer = new Collider2D[32];
 
@@ -158,6 +161,8 @@ namespace SushiSurvival.Weapons
                 JuiceDirector.Instance.Shake(shakeMagnitude, shakeSeconds);
 
             if (_bar != null) _bar.SetFill(0f);
+
+            SpinStarted?.Invoke();
         }
 
         // 레벨별 바퀴 수. 배열이 비어 있으면 1바퀴, 값이 1 미만이어도 최소 1바퀴로 본다.
