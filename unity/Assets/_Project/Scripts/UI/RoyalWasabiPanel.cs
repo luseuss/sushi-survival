@@ -45,8 +45,8 @@ namespace SushiSurvival.UI
         [SerializeField] private string failureMessage = "오늘은 빈손으로 돌아왔다...";
 
         [Header("딤 오버레이")]
-        [Tooltip("평소 딤 색(어둡고 붉은 조명).")]
-        [SerializeField] private Color dimColor = new Color(0.3f, 0f, 0f, 0.45f);
+        [Tooltip("평소 딤 색. 화면이 붉게 물들지 않게 검정을 쓴다.")]
+        [SerializeField] private Color dimColor = new Color(0f, 0f, 0f, 0.45f);
         [Tooltip("공개 순간 잠깐 밝아지는 색.")]
         [SerializeField] private Color flashColor = new Color(1f, 0.9f, 0.7f, 0.6f);
         [SerializeField] private float flashSeconds = 0.15f;

@@ -9012,7 +9012,7 @@ MonoBehaviour:
     \uC54C\uD604\uD569\uB2C8\uB2E4..."
   successMessage: "\uBE5B\uB098\uB294 \uC640\uC0AC\uBE44\uB97C \uD558\uC0AC\uBC1B\uC558\uB2E4!"
   failureMessage: "\uC624\uB298\uC740 \uBE48\uC190\uC73C\uB85C \uB3CC\uC544\uC654\uB2E4..."
-  dimColor: {r: 0.3, g: 0, b: 0, a: 0.45}
+  dimColor: {r: 0, g: 0, b: 0, a: 0.45}
   flashColor: {r: 1, g: 0.9, b: 0.7, a: 0.6}
   flashSeconds: 0.15
   desaturateColor: {r: 0.3, g: 0.3, b: 0.3, a: 0.55}
