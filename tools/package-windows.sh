@@ -16,8 +16,7 @@ VERSION="${1:-$(grep -m1 '^  bundleVersion:' unity/ProjectSettings/ProjectSettin
 ZIP="unity/Build/WasabiSurvival_v${VERSION}_win64.zip"
 
 rm -f "$ZIP"
-# Windows 10 이상에 들어 있는 bsdtar가 표준 zip을 만든다(경로 구분자가 /라서 어디서 풀어도 안전).
-tar -a -c -f "$ZIP" -C "$BUILD_DIR" .
+# 표준 deflate zip을 만든다(윈도우 탐색기의 기본 압축 풀기로도 열린다). Git Bash의 GNU tar는 zip을 못 만들고
+# 확장자만 .zip인 tar를 만들어서(v1.0~v1.6이 그랬다) 쓰지 않는다. 자세한 내용은 tools/make_zip.py 맨 위.
+python tools/make_zip.py "$BUILD_DIR" "$ZIP"
 
-SIZE_MB=$(du -m "$ZIP" | cut -f1)
-echo "만들었습니다: $ZIP (${SIZE_MB}MB)"
