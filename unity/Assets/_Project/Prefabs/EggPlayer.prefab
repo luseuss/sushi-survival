@@ -705,6 +705,8 @@ MonoBehaviour:
   - {fileID: 5486540132371675448}
   umbrellaCountByLevel: 04000000040000000500000005000000
   spinCooldown: 2
+  cooldownBarFrame: {fileID: 21300000, guid: a7e2ea0d28a56e0428f6132ae46ef7d6, type: 3}
+  cooldownBarFill: {fileID: 21300000, guid: 6699107eb2b098e4c2f44fd0230f4b2b, type: 3}
   rotationSpeedDegreesPerSecond: 720
   spriteAngleOffset: 90
   hitRadius: 0.3
