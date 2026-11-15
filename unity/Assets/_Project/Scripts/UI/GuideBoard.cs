@@ -26,6 +26,8 @@ namespace SushiSurvival.UI
         private readonly List<GuideSlot> _slots = new List<GuideSlot>();
 
         private GameObject _videoFrameObject;
+        private GameObject _videoAreaObject;
+        private Image _standing;
         private Image _fallbackIcon;
         private VideoSurface _video;
         private Text _title;
@@ -123,6 +125,7 @@ namespace SushiSurvival.UI
             // 영상 영역은 틀보다 먼저 그려져야 틀 테두리가 영상을 덮는다.
             var innerObject = new GameObject("VideoArea", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
             innerObject.transform.SetParent(_root, false);
+            _videoAreaObject = innerObject;
             innerObject.transform.SetSiblingIndex(_videoFrameObject.transform.GetSiblingIndex());
             SetCentered((RectTransform)innerObject.transform, _layout.videoFrameCenter, _layout.videoInnerSize);
 
@@ -140,6 +143,15 @@ namespace SushiSurvival.UI
             _fallbackIcon.preserveAspect = true;
             _fallbackIcon.raycastTarget = false;
             _fallbackIcon.enabled = false;
+
+            // 게임플레이 탭에서 영상 박스 대신 보이는 캐릭터 입상. 평소에는 꺼 둔다.
+            var standingObject = new GameObject("Standing", typeof(RectTransform), typeof(Image));
+            standingObject.transform.SetParent(_root, false);
+            SetCentered((RectTransform)standingObject.transform, _layout.standingCenter, Vector2.one * _layout.standingHeight);
+            _standing = standingObject.GetComponent<Image>();
+            _standing.preserveAspect = true;
+            _standing.raycastTarget = false;
+            _standing.enabled = false;
 
             _title = CreateText("Title", font, _layout.titleCenter, _layout.titleSize, _layout.titleFontSize, false);
             _body = CreateText("Body", font, _layout.bodyCenter, _layout.bodySize, _layout.bodyFontSize, true);
@@ -201,10 +213,39 @@ namespace SushiSurvival.UI
                 _slotIcons[i].enabled = icon != null;
             }
 
+            SetVideoBoxVisible(true);
+            _standing.enabled = false;
+
             _title.gameObject.SetActive(true);
             _body.gameObject.SetActive(true);
             _selected = -1;
             Select(0);
+        }
+
+        // 영상 틀·영상 영역을 켜거나 끈다(입상을 보여 줄 때는 끈다).
+        private void SetVideoBoxVisible(bool visible)
+        {
+            if (_videoFrameObject != null) _videoFrameObject.SetActive(visible);
+            if (_videoAreaObject != null) _videoAreaObject.SetActive(visible);
+        }
+
+        /// <summary>
+        /// 격자와 영상 박스 없이 캐릭터 입상 한 장만 보인다(게임플레이 탭). 그림이 없으면 영상 박스를 그대로 보여 준다.
+        /// </summary>
+        public void ShowStandingOnly(Sprite standing, VideoClip fallbackVideo)
+        {
+            if (standing == null)
+            {
+                SetVideoBoxVisible(true);
+                _standing.enabled = false;
+                ShowVideoOnly(fallbackVideo);
+                return;
+            }
+
+            ShowVideoOnly(null);
+            SetVideoBoxVisible(false);
+            _standing.sprite = standing;
+            _standing.enabled = true;
         }
 
         /// <summary>격자 없이 영상 박스만 보인다(게임플레이 탭). 영상이 없으면 검은 바탕만 남는다.</summary>
@@ -218,6 +259,9 @@ namespace SushiSurvival.UI
                 _slotFrames[i].gameObject.SetActive(false);
                 _slotIcons[i].enabled = false;
             }
+
+            SetVideoBoxVisible(true);
+            _standing.enabled = false;
 
             _title.gameObject.SetActive(false);
             _body.gameObject.SetActive(false);

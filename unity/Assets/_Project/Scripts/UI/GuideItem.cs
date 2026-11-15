@@ -37,6 +37,12 @@ namespace SushiSurvival.UI
         [Tooltip("영상 영역 뒤에 깔리는 색(영상 준비 전·영상이 없을 때 보인다).")]
         public Color videoBackdropColor = new Color(0.1f, 0.07f, 0.05f, 1f);
 
+        [Header("게임플레이 탭의 캐릭터 입상")]
+        [Tooltip("입상 그림의 중심(오른쪽 칸 전체를 쓴다).")]
+        public Vector2 standingCenter = new Vector2(434f, -30f);
+        [Tooltip("입상 그림의 높이. 가로는 그림 비율대로 정해진다.")]
+        public float standingHeight = 620f;
+
         [Header("오른쪽 설명 글")]
         public Vector2 titleCenter = new Vector2(434f, -90f);
         public Vector2 titleSize = new Vector2(502f, 56f);
