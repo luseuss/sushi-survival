@@ -29,6 +29,9 @@ namespace SushiSurvival.UI
 
         public static LevelUpPanel Instance { get; private set; }
 
+        /// <summary>카드 선택 팝업이 지금 화면에 떠 있는지. 연습 안내 띠가 팝업 글자를 가리지 않게 자리를 옮길 때 쓴다.</summary>
+        public bool IsOpen => (root != null ? root : gameObject).activeInHierarchy;
+
         private GameObject GetRoot()
         {
             if (this == null) return null;
