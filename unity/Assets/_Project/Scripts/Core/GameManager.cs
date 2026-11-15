@@ -382,7 +382,7 @@ namespace SushiSurvival.Core
                     RunResultCarrier.WeaponDamageBonus = weapon.DamageBonus;
                     RunResultCarrier.WasabiWeaponConverted =
                         weapon is SushiSurvival.Weapons.RotatingUmbrellaWeapon ||
-                        (weapon is SushiSurvival.Weapons.ShrimpRifleWeapon rifle && rifle.IsShotgun);
+                        (weapon is SushiSurvival.Weapons.ShrimpRifleWeapon rifle && rifle.HasShotgunSkill);
                 }
             }
 

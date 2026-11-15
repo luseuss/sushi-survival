@@ -167,7 +167,7 @@ namespace SushiSurvival.Enemies.Boss
                 }
                 else if (RunResultCarrier.WasabiWeaponConverted && weapon is ShrimpRifleWeapon rifle)
                 {
-                    rifle.EnableShotgun();
+                    rifle.UnlockShotgunSkill();
                 }
 
                 while (weapon.CurrentLevel < RunResultCarrier.WeaponLevel && weapon.CanLevelUp)

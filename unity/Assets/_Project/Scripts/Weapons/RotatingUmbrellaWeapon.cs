@@ -1,8 +1,6 @@
 using SushiSurvival.Audio;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using SushiSurvival.Core;
 using SushiSurvival.Enemies;
 
@@ -98,7 +96,7 @@ namespace SushiSurvival.Weapons
                 _cooldownTimer = Mathf.Max(0f, _cooldownTimer - Time.deltaTime);
                 UpdateBar();
 
-                if (ClickedThisFrame())
+                if (SkillInput.ClickedThisFrame())
                     _clickBuffered = UmbrellaSkillLogic.IsReady(_cooldownTimer)
                                      || UmbrellaSkillLogic.ShouldBuffer(_cooldownTimer, clickBufferSeconds);
 
@@ -220,16 +218,6 @@ namespace SushiSurvival.Weapons
 
             float ratio = _isSpinning ? 0f : UmbrellaSkillLogic.FillRatio(_cooldownTimer, _cooldownDuration);
             _bar.SetFill(ratio);
-        }
-
-        // 마우스 왼쪽 버튼을 이번 프레임에 눌렀는지. 레벨업·일시정지 창이 떠 있거나 화면 위 버튼을 누르는 중이면 무시한다.
-        private static bool ClickedThisFrame()
-        {
-            Mouse mouse = Mouse.current;
-            if (mouse == null || !mouse.leftButton.wasPressedThisFrame) return false;
-
-            bool overUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-            return UmbrellaSkillLogic.ClickAccepted(Time.timeScale, overUi);
         }
 
         // 우산은 쿨타임마다 한 번 쏘는 무기가 아니라 이 메서드는 쓰이지 않는다

@@ -90,9 +90,17 @@ namespace SushiSurvival.Weapons
             Attack();
 
             float cooldown = CooldownLogic.ApplyAttackSpeed(
-                BaseStats.cooldown, StatMultiplier(StatType.AttackSpeed), minCooldown);
+                BaseCooldown, StatMultiplier(StatType.AttackSpeed), minCooldown);
             _cooldown.Reset(cooldown);
         }
+
+        /// <summary>
+        /// 공격 사이의 기본 대기 시간(공격속도 배율 적용 전). 무기가 일정 시간 다르게 쏠 때(예: 스킬 중 더 빠르게) 고쳐 쓴다.
+        /// </summary>
+        protected virtual float BaseCooldown => BaseStats.cooldown;
+
+        /// <summary>다음 공격 대기를 비워 바로 쏘게 한다(스킬을 켜는 순간 첫 발이 바로 나가게 할 때).</summary>
+        protected void ResetAttackCooldown() => _cooldown.Reset(0f);
 
         /// <summary>true면 공격 모션을 짧게(반만) 재생한다. 한 번만 때리는 무기가 모션도 한 번만 휘두르게 할 때 쓴다.</summary>
         protected virtual bool UseShortAttackMotion => false;
