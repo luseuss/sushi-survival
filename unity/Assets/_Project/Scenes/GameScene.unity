@@ -8616,8 +8616,8 @@ MonoBehaviour:
   - 60
   xpGemPools: {fileID: 779189570}
   spawnRadius: 10
-  spawnInterval: 1
-  endSpawnInterval: 0.6
+  spawnInterval: 0.8
+  endSpawnInterval: 0.5
   startBatchSize: 1
   endBatchSize: 2
   rampSeconds: 270
