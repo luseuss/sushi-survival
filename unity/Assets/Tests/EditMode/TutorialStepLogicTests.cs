@@ -54,6 +54,13 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
+        public void WasabiWarning_TellsToPressTheWasabiButton()
+        {
+            StringAssert.Contains("와사비", TutorialStepLogic.WasabiWarning);
+            StringAssert.Contains("버튼", TutorialStepLogic.WasabiWarning);
+        }
+
+        [Test]
         public void Instruction_EveryStepHasText_AndMentionsItsAction()
         {
             foreach (TutorialStep step in System.Enum.GetValues(typeof(TutorialStep)))

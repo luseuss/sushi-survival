@@ -41,6 +41,7 @@ namespace SushiSurvival.Core
         private bool _active;
         private bool _finished;
         private bool _sawPopup;
+        private bool _warningOpen;
         private int _killsAtStart;
         private int _shownKills = -1;
         private float _doneAt;
@@ -130,6 +131,7 @@ namespace SushiSurvival.Core
         {
             _step = step;
             _sawPopup = false;
+            _warningOpen = false;
             _shownKills = -1;
             _overlay.SetStep(TutorialStepLogic.Number(step), TutorialStepLogic.TotalSteps,
                              TutorialStepLogic.Instruction(step, 0));
@@ -197,6 +199,7 @@ namespace SushiSurvival.Core
         // 카드를 골라 버렸다면 한 번 더 레벨업 창을 띄워 다시 안내한다.
         private void UpdateWasabi()
         {
+            if (_warningOpen) return;
             if (!ShowLevelUpPopup()) return;
             if (_levelSystem.IsShowingPopup) return;
 
@@ -206,9 +209,17 @@ namespace SushiSurvival.Core
                 return;
             }
 
-            _sawPopup = false;
-            _overlay.SetStep(TutorialStepLogic.Number(_step), TutorialStepLogic.TotalSteps,
-                             "카드 말고 '와사비' 버튼을 눌러 봐요! 한 번 더 기회를 줄게요.");
+            // 와사비 대신 카드를 골랐다: 경고창으로 알리고, 확인을 누르면 레벨업 창을 다시 띄워 준다.
+            _warningOpen = true;
+            Time.timeScale = 0f;
+            _overlay.ShowWarning(TutorialStepLogic.WasabiWarning, OnWarningConfirmed);
+        }
+
+        private void OnWarningConfirmed()
+        {
+            Time.timeScale = 1f;
+            _warningOpen = false;
+            _sawPopup = false; // 다음 Update에서 레벨업 창을 다시 띄운다.
         }
 
         // 레벨업 팝업을 띄우고 떠 있는 것을 확인했으면 true. 아직이면 띄우기를 시도한다(적이 있어 시간이 흐르는 중에도 된다).

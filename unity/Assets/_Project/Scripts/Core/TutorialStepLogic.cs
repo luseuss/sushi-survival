@@ -50,6 +50,9 @@ namespace SushiSurvival.Core
         /// <summary>처치 수가 목표에 닿았는지.</summary>
         public static bool KillGoalReached(int kills) => kills >= KillGoal;
 
+        /// <summary>와사비 단계에서 와사비 대신 카드를 골랐을 때 경고창에 보여 줄 글.</summary>
+        public const string WasabiWarning = "와사비를 선택하지 않았어요!\n카드 말고 '와사비를 하사받으러 간다' 버튼을 눌러 주세요.";
+
         /// <summary>단계별 안내 글. 공격 단계는 처치 수(kills)를 보여 준다.</summary>
         public static string Instruction(TutorialStep step, int kills)
         {

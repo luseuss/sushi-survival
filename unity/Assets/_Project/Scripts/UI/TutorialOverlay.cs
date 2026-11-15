@@ -21,6 +21,8 @@ namespace SushiSurvival.UI
         private bool _docksBottom;
         private GameObject _doneButton;
         private GameObject _skipButton;
+        private GameObject _warningRoot;
+        private Text _warningText;
 
         public static TutorialOverlay Create(Font font, Sprite buttonSprite, Action onSkip, Action onStart)
         {
@@ -53,6 +55,30 @@ namespace SushiSurvival.UI
             _banner.anchorMax = new Vector2(0.5f, anchorY);
             _banner.pivot = new Vector2(0.5f, anchorY);
             _banner.anchoredPosition = new Vector2(0f, bottom ? 60f : -130f);
+        }
+
+        /// <summary>
+        /// 화면 가운데에 경고창(글 + 확인 버튼)을 띄운다. 뒤 화면을 어둡게 가리고 클릭을 막는다.
+        /// 확인을 누르면 창이 닫히고 onOk이 불린다.
+        /// </summary>
+        public void ShowWarning(string text, Action onOk)
+        {
+            _warningText.text = text;
+            _warningOk = onOk;
+            _warningRoot.transform.SetAsLastSibling();
+            _warningRoot.SetActive(true);
+        }
+
+        public bool IsWarningOpen => _warningRoot != null && _warningRoot.activeSelf;
+
+        private Action _warningOk;
+
+        private void OnWarningConfirmed()
+        {
+            _warningRoot.SetActive(false);
+            Action callback = _warningOk;
+            _warningOk = null;
+            callback?.Invoke();
         }
 
         /// <summary>끝났을 때: 건너뛰기 대신 "시작하기"를 보여 준다.</summary>
@@ -102,6 +128,32 @@ namespace SushiSurvival.UI
             MakeButton(start.gameObject, "시작하기", 44, GoldColor, onStart);
             _doneButton = start.gameObject;
             _doneButton.SetActive(false);
+
+            BuildWarning();
+        }
+
+        // 경고창: 화면 전체를 덮는 어두운 막 위에 테두리 있는 상자, 글, 확인 버튼. 처음에는 숨겨 둔다.
+        private void BuildWarning()
+        {
+            RectTransform dim = NewRect("Warning", transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            AddImage(dim.gameObject, new Color(0f, 0f, 0f, 0.6f), true);
+            _warningRoot = dim.gameObject;
+
+            RectTransform border = NewRect("Border", dim, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000f, 420f));
+            AddImage(border.gameObject, GoldColor, false);
+            RectTransform box = NewRect("Box", border, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(988f, 408f));
+            AddImage(box.gameObject, new Color(0.1f, 0.08f, 0.14f, 0.97f), false);
+
+            RectTransform title = NewRect("Title", box, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -30f), new Vector2(900f, 70f));
+            AddText(title.gameObject, 55, GoldColor, TextAnchor.MiddleCenter).text = "잠깐!";
+
+            RectTransform body = NewRect("Body", box, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -120f), new Vector2(900f, 150f));
+            _warningText = AddText(body.gameObject, 33, Color.white, TextAnchor.UpperCenter);
+
+            RectTransform ok = NewRect("Ok", box, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f), new Vector2(380f, 72f));
+            MakeButton(ok.gameObject, "확인", 44, GoldColor, OnWarningConfirmed);
+
+            _warningRoot.SetActive(false);
         }
 
         private RectTransform NewRect(string objectName, Transform parent, Vector2 anchorMin, Vector2 anchorMax,
