@@ -60,6 +60,9 @@ namespace SushiSurvival.Core
             DifficultyCurve.GetMultiplier(ElapsedTime, enemyHealthScalePerMinute, maxEnemyHealthScale);
         public int KillCount { get; private set; }
 
+        /// <summary>연습 플레이(튜토리얼) 중인지. 웨이브·보스 시간표가 없고 쓰러져도 게임오버가 되지 않는다.</summary>
+        public bool IsTutorial { get; private set; }
+
         private PlayerHealth _playerHealth;
         private PlayerStats _playerStats;
         private Transform _playerTransform;
@@ -119,7 +122,7 @@ namespace SushiSurvival.Core
 
             // 만약 일반 게임 씬("Game")이라면 보스 스폰 시간을 체크한다.
             // 보스 씬("BossScene")에서는 이미 보스전이 시작된 상태이므로 이 체크를 건너 뛴다.
-            if (SceneManager.GetActiveScene().name == "GameScene")
+            if (SceneManager.GetActiveScene().name == "GameScene" && !IsTutorial)
             {
                 if (ElapsedTime >= bossSpawnTime)
                 {
@@ -170,10 +173,51 @@ namespace SushiSurvival.Core
 
             Debug.Log($"[GameManager] 런 시작 - 캐릭터: {characterData.characterName}");
 
+            if (!SpawnAndWirePlayer(characterData)) return;
+
+            if (characterData.affinityDialogue != null && affinityDialogueController != null)
+            {
+                CurrentState = RunState.Intro;
+                affinityDialogueController.Show(
+                    characterData.affinityDialogue, characterData.portraitSprite, characterData.standingSprite,
+                    _playerStats, _playerHealth, levelSystem.RecordExternalBuff, BeginCombat);
+            }
+            else
+            {
+                BeginCombat();
+            }
+        }
+
+        /// <summary>
+        /// 연습 플레이 시작. 캐릭터를 스폰하고 HUD·레벨업을 연결하지만 호감도 대화와 웨이브 스폰은 하지 않는다.
+        /// 적은 TutorialDirector가 단계에 맞춰 직접 내보낸다.
+        /// </summary>
+        public void StartTutorialRun(CharacterData characterData)
+        {
+            if (CurrentState != RunState.CharacterSelect) return;
+
+            Debug.Log($"[GameManager] 연습 플레이 시작 - 캐릭터: {characterData.characterName}");
+
+            IsTutorial = true;
+            if (!SpawnAndWirePlayer(characterData))
+            {
+                IsTutorial = false;
+                return;
+            }
+
+            ElapsedTime = 0f;
+            KillCount = 0;
+            CurrentState = RunState.Playing;
+            AudioManager.PlayBgm(BgmId.Battle);
+        }
+
+        /// <summary>플레이어를 스폰하고 체력바·레벨업·카메라에 연결한다. 실패하면 false.</summary>
+        private bool SpawnAndWirePlayer(CharacterData characterData)
+        {
             _selectedCharacterData = characterData;
 
             GameObject player = playerSpawner.Spawn(characterData);
-            if (player == null) return;
+            if (player == null) return false;
 
             _playerHealth = player.GetComponent<PlayerHealth>();
             if (_playerHealth != null)
@@ -198,17 +242,7 @@ namespace SushiSurvival.Core
             if (characterSelectPanel != null)
                 characterSelectPanel.SetActive(false);
 
-            if (characterData.affinityDialogue != null && affinityDialogueController != null)
-            {
-                CurrentState = RunState.Intro;
-                affinityDialogueController.Show(
-                    characterData.affinityDialogue, characterData.portraitSprite, characterData.standingSprite,
-                    _playerStats, _playerHealth, levelSystem.RecordExternalBuff, BeginCombat);
-            }
-            else
-            {
-                BeginCombat();
-            }
+            return true;
         }
 
         private void BeginCombat()
@@ -253,6 +287,13 @@ namespace SushiSurvival.Core
 
         private void HandlePlayerDeath()
         {
+            // 연습 플레이에서는 쓰러져도 게임오버 대신 체력을 채워 이어 간다.
+            if (IsTutorial)
+            {
+                if (_playerHealth != null) _playerHealth.SetHealth(_playerHealth.MaxHealth);
+                return;
+            }
+
             // 1. 런 결과를 미리 저장해 둘 수 있습니다 (선택 사항)
             RunResultCarrier.Outcome = RunOutcome.Defeat;
             RunResultCarrier.ElapsedTime = ElapsedTime;

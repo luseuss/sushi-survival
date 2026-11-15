@@ -75,6 +75,9 @@ namespace SushiSurvival.UI
             if (opponentHandText != null) opponentHandText.text = string.Empty;
         }
 
+        /// <summary>플레이어가 이길 확률(0~1)을 바꾼다. 연습 플레이에서 한 번은 꼭 이기게 할 때 쓴다.</summary>
+        public void SetWinChance(float chance) => winChance = Mathf.Clamp01(chance);
+
         /// <summary>대결 중 보여 줄 캐릭터 프로필. Show보다 먼저 불러도 된다.</summary>
         public void SetPortrait(Sprite portrait)
         {

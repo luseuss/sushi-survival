@@ -67,7 +67,21 @@ namespace SushiSurvival.Enemies
                 SpawnOne();
         }
 
-        private void SpawnOne()
+        /// <summary>
+        /// 지속 스폰과 별개로 적을 count마리 한꺼번에 내보낸다(연습 플레이용). 플레이어 둘레 radius 거리에 나온다.
+        /// 런 시간이 0이면 기본 잡몹 풀만 열려 있어 가장 약한 적이 나온다.
+        /// </summary>
+        public void SpawnBurst(Transform player, int count, float radius)
+        {
+            if (player == null) return;
+
+            for (int i = 0; i < count; i++)
+                SpawnOne(player, radius);
+        }
+
+        private void SpawnOne() => SpawnOne(_player, spawnRadius);
+
+        private void SpawnOne(Transform player, float radius)
         {
             if (enemyPools == null || enemyPools.Length == 0)
             {
@@ -79,7 +93,7 @@ namespace SushiSurvival.Enemies
             GameObjectPool pool = enemyPools[available[Random.Range(0, available.Count)]];
 
             float angle = Random.Range(0f, Mathf.PI * 2f);
-            Vector2 spawnPos = SpawnRingUtility.GetPositionOnRing(_player.position, spawnRadius, angle);
+            Vector2 spawnPos = SpawnRingUtility.GetPositionOnRing(player.position, radius, angle);
             GameObject enemyObj = pool.Get(spawnPos, Quaternion.identity);
 
             if (enemyObj.TryGetComponent<EnemyBase>(out var enemy))

@@ -27,7 +27,7 @@ namespace SushiSurvival.Weapons
         /// </summary>
         public static string DescribeEggUpgrade(string statText, int currentHits, int nextHits, bool evolvesNext)
         {
-            if (evolvesNext) return "회전 우산으로 변화!\n우산이 몸 주위를 돈다";
+            if (evolvesNext) return "회전 우산 스킬 획득!\n마우스 클릭으로 발동";
 
             if (nextHits <= currentHits) return statText;
 

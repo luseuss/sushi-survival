@@ -123,7 +123,8 @@ namespace SushiSurvival.UI
         {
             // 캐릭터 선택 화면이 새로 나타난 프레임에 설명창을 자동으로 연다.
             bool selectVisible = characterSelectPanel != null && characterSelectPanel.activeInHierarchy;
-            if (openWhenSelectShown && selectVisible && !_selectWasVisible)
+            // 연습 플레이에서는 설명창을 자동으로 열지 않는다(연습이 직접 알려 준다).
+            if (openWhenSelectShown && selectVisible && !_selectWasVisible && !TutorialState.Active)
                 Open();
             _selectWasVisible = selectVisible;
 
@@ -133,7 +134,8 @@ namespace SushiSurvival.UI
             // 설명창을 연 동안과 캐릭터 선택이 끝난 뒤에는 열기 버튼을 숨긴다.
             if (openButton != null)
             {
-                bool showButton = !open && (characterSelectPanel == null || characterSelectPanel.activeInHierarchy);
+                bool showButton = !open && !TutorialState.Active &&
+                                  (characterSelectPanel == null || characterSelectPanel.activeInHierarchy);
                 if (openButton.gameObject.activeSelf != showButton)
                     openButton.gameObject.SetActive(showButton);
             }

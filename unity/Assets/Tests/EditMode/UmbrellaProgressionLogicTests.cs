@@ -45,6 +45,7 @@ namespace SushiSurvival.EditModeTests
             string text = UmbrellaProgressionLogic.DescribeEggUpgrade("공격력 8 → 12", 2, 2, true);
 
             StringAssert.Contains("회전 우산", text);
+            StringAssert.Contains("클릭", text);
             StringAssert.DoesNotContain("공격력", text);
         }
 

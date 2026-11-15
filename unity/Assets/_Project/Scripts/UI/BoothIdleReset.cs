@@ -160,6 +160,8 @@ namespace SushiSurvival.UI
             Debug.Log("[BoothIdleReset] 입력이 없어 인트로로 돌아갑니다.");
 
             Time.timeScale = 1f;
+            // 자리를 떠난 방문자 다음에 오는 사람은 연습 플레이 안내를 다시 보게 한다.
+            TutorialState.ResetForNewVisitor();
             SceneManager.LoadScene(IdleResetLogic.IntroScene);
         }
 
