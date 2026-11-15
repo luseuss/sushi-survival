@@ -41,6 +41,8 @@ namespace SushiSurvival.UI
         [SerializeField] private GameObject gameplayRoot;
         [Tooltip("게임플레이 탭의 영상 박스에 재생할 영상. 비우면 검은 바탕만 보인다.")]
         [SerializeField] private VideoClip gameplayVideo;
+        [Tooltip("게임플레이 탭 오른쪽에 영상 박스 대신 보여 줄 캐릭터 입상. 비우면 영상 박스를 보여 준다.")]
+        [SerializeField] private Sprite gameplayStanding;
 
         [Header("격자 화면 (증강·와사비·요정 탭)")]
         [Tooltip("옛 스크롤 목록 오브젝트. 새 격자 화면을 쓰므로 항상 꺼 둔다. 이 오브젝트의 부모(두루마리)에 격자를 만든다.")]
@@ -318,7 +320,7 @@ namespace SushiSurvival.UI
             {
                 switch (tab)
                 {
-                    case GuideTab.Gameplay: _board.ShowVideoOnly(gameplayVideo); break;
+                    case GuideTab.Gameplay: _board.ShowStandingOnly(gameplayStanding, gameplayVideo); break;
                     case GuideTab.Augments: _board.ShowGrid(_augmentItems); break;
                     default: _board.ShowGrid(_fairyItems); break;
                 }

@@ -3966,6 +3966,7 @@ MonoBehaviour:
   fairyTabButton: {fileID: 2131909078}
   gameplayRoot: {fileID: 223014629}
   gameplayVideo: {fileID: 0}
+  gameplayStanding: {fileID: 21300000, guid: 7c7218cf916557fef01c5c46a8c6ef5d, type: 3}
   listRoot: {fileID: 559844612}
   slotFrameSprite: {fileID: 21300000, guid: 3a84e1b390a571f561d270ed36c8e657, type: 3}
   slotFrameSelectedSprite: {fileID: 21300000, guid: a0bd1b433677d5b04bd527af0bed4015, type: 3}
@@ -10784,12 +10785,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uC774\uB3D9   W A S D  (\uAC8C\uC784\uD328\uB4DC \uC67C\uCABD \uC2A4\uD2F1)\n\uACF5\uACA9  
-    \uC790\uB3D9\uC73C\uB85C \uB098\uAC11\uB2C8\uB2E4\n\uC120\uD0DD   \uB9C8\uC6B0\uC2A4
-    \uD074\uB9AD\n\uC77C\uC2DC\uC815\uC9C0   ESC\n\n\n\n\n\n\n\n\n\uBAB0\uB824\uC624\uB294
-    \uCD08\uBC25\uC744 \uD53C\uD574 \uB2E4\uB2C8\uBA70 5\uBD84\uC744 \uBC84\uD2F0\uC138\uC694.\n5\uBD84\uC774
-    \uB418\uBA74 \uB098\uD0C0\uB098\uB294 \uBCF4\uC2A4\uB97C \uC4F0\uB7EC\uB728\uB9AC\uBA74
-    \uC2B9\uB9AC!"
+  m_Text: "\uC774\uB3D9   W A S D  (\uAC8C\uC784\uD328\uB4DC \uC67C\uCABD \uC2A4\uD2F1)\n\uACF5\uACA9   \uC790\uB3D9\uC73C\uB85C \uB098\uAC11\uB2C8\uB2E4\n\uC120\uD0DD   \uB9C8\uC6B0\uC2A4 \uD074\uB9AD\n\uC77C\uC2DC\uC815\uC9C0   ESC\n\n\uC640\uC0AC\uBE44   \uB808\uBCA8\uC5C5 \uCC3D\uC5D0\uC11C \uC640\uC0AC\uBE44 \uBC84\uD2BC\uC744 \uB204\uB974\uBA74\n\uC655\uACFC \uAC00\uC704\uBC14\uC704\uBCF4! \uC774\uAE30\uBA74 \uC640\uC0AC\uBE44\uC758 \uD798\uC73C\uB85C\n\uB354 \uAC15\uB825\uD55C \uBB34\uAE30\uB97C \uC5BB\uC5B4\uC694\n\n\n\n\n\uBAB0\uB824\uC624\uB294 \uCD08\uBC25\uC744 \uD53C\uD574 \uB2E4\uB2C8\uBA70 5\uBD84\uC744 \uBC84\uD2F0\uC138\uC694.\n5\uBD84\uC774 \uB418\uBA74 \uB098\uD0C0\uB098\uB294 \uBCF4\uC2A4\uB97C \uC4F0\uB7EC\uB728\uB9AC\uBA74 \uC2B9\uB9AC!"
 --- !u!222 &1739777736
 CanvasRenderer:
   m_ObjectHideFlags: 0
