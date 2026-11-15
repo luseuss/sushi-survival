@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: BossData
   m_EditorClassIdentifier: 
   monsterName: "\uB864\uBC95\uC0AC"
-  maxHealth: 2700
+  maxHealth: 6000
   contactDamage: 15
   moveSpeed: 1.6
   knockbackResistance: 0.9
   xpGemDrop: 2
+  xpVacuumDropChance: 0
   scalesWithTime: 0
   gemUpgradeTime: 0
   upgradedGemDrop: 1
