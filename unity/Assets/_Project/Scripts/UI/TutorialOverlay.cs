@@ -14,16 +14,20 @@ namespace SushiSurvival.UI
         private static readonly Color GoldColor = new Color(0.96f, 0.78f, 0.26f, 1f);
 
         private Font _font;
+        private Sprite _buttonSprite;
         private Text _stepLabel;
         private Text _body;
+        private RectTransform _banner;
+        private bool _docksBottom;
         private GameObject _doneButton;
         private GameObject _skipButton;
 
-        public static TutorialOverlay Create(Font font, Action onSkip, Action onStart)
+        public static TutorialOverlay Create(Font font, Sprite buttonSprite, Action onSkip, Action onStart)
         {
             var go = new GameObject("TutorialOverlay");
             var overlay = go.AddComponent<TutorialOverlay>();
             overlay._font = font != null ? font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            overlay._buttonSprite = buttonSprite;
             overlay.Build(onSkip, onStart);
             return overlay;
         }
@@ -33,6 +37,22 @@ namespace SushiSurvival.UI
         {
             _stepLabel.text = number > 0 ? $"{number}/{total}" : string.Empty;
             _body.text = text;
+        }
+
+        /// <summary>
+        /// 안내 띠의 자리. 평소에는 화면 위쪽이고, 레벨업 카드 팝업(제목과 카드가 위쪽에 있다)이 떠 있는 동안에는
+        /// 아래쪽으로 내려서 팝업 글자와 겹치지 않게 한다.
+        /// </summary>
+        public void SetDock(bool bottom)
+        {
+            if (_docksBottom == bottom) return;
+            _docksBottom = bottom;
+
+            float anchorY = bottom ? 0f : 1f;
+            _banner.anchorMin = new Vector2(0.5f, anchorY);
+            _banner.anchorMax = new Vector2(0.5f, anchorY);
+            _banner.pivot = new Vector2(0.5f, anchorY);
+            _banner.anchoredPosition = new Vector2(0f, bottom ? 60f : -130f);
         }
 
         /// <summary>끝났을 때: 건너뛰기 대신 "시작하기"를 보여 준다.</summary>
@@ -55,30 +75,31 @@ namespace SushiSurvival.UI
 
             // 위쪽 안내 띠: 타이머(맨 위 가운데)와 겹치지 않게 조금 아래에 둔다.
             RectTransform banner = NewRect("Banner", transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                                           new Vector2(0f, -130f), new Vector2(1300f, 130f));
+                                           new Vector2(0f, -130f), new Vector2(1500f, 150f));
+            _banner = banner;
             AddImage(banner.gameObject, PanelColor, false);
 
             RectTransform label = NewRect("Step", banner, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                                          new Vector2(100f, 0f), new Vector2(180f, 100f));
+                                          new Vector2(20f, 0f), new Vector2(170f, 100f));
             _stepLabel = AddText(label.gameObject, 44, GoldColor, TextAnchor.MiddleCenter);
 
             RectTransform body = NewRect("Body", banner, new Vector2(0f, 0f), new Vector2(1f, 1f),
                                          Vector2.zero, Vector2.zero);
-            body.offsetMin = new Vector2(210f, 8f);
-            body.offsetMax = new Vector2(-30f, -8f);
+            body.offsetMin = new Vector2(215f, 8f);
+            body.offsetMax = new Vector2(-30f, -8f); // 번호 칸(왼쪽 20~190)과 글 사이를 비워 글자가 겹치지 않게 한다
             _body = AddText(body.gameObject, 33, Color.white, TextAnchor.MiddleLeft);
 
             // 왼쪽 위 건너뛰기
             RectTransform skip = NewRect("Skip", transform, new Vector2(0f, 1f), new Vector2(0f, 1f),
-                                         new Vector2(24f, -24f), new Vector2(240f, 64f));
+                                         new Vector2(24f, -24f), new Vector2(315f, 60f));
             skip.pivot = new Vector2(0f, 1f);
-            MakeButton(skip.gameObject, "건너뛰기", 33, PanelColor, Color.white, onSkip);
+            MakeButton(skip.gameObject, "건너뛰기", 33, PanelColor, onSkip);
             _skipButton = skip.gameObject;
 
             // 끝났을 때 시작하기(처음에는 숨김)
             RectTransform start = NewRect("Start", transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                                          new Vector2(0f, -330f), new Vector2(420f, 90f));
-            MakeButton(start.gameObject, "시작하기", 44, GoldColor, new Color(0.23f, 0.16f, 0f, 1f), onStart);
+                                          new Vector2(0f, -330f), new Vector2(433f, 82f));
+            MakeButton(start.gameObject, "시작하기", 44, GoldColor, onStart);
             _doneButton = start.gameObject;
             _doneButton.SetActive(false);
         }
@@ -127,9 +148,12 @@ namespace SushiSurvival.UI
             return text;
         }
 
-        private void MakeButton(GameObject go, string label, int size, Color background, Color textColor, Action onClick)
+        // 게임의 기본 버튼 그림이 있으면 그것을 쓰고(글자는 흰색), 없으면 단색 버튼으로 만든다.
+        private void MakeButton(GameObject go, string label, int size, Color fallbackBackground, Action onClick)
         {
-            Image image = AddImage(go, background, true);
+            Image image = AddImage(go, _buttonSprite != null ? Color.white : fallbackBackground, true);
+            if (_buttonSprite != null) image.sprite = _buttonSprite;
+            Color textColor = Color.white;
             var button = go.AddComponent<Button>();
             button.targetGraphic = image;
             button.onClick.AddListener(() => onClick?.Invoke());

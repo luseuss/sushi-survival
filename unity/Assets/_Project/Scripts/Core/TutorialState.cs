@@ -13,6 +13,12 @@ namespace SushiSurvival.Core
         /// <summary>메인화면에서 연습 플레이를 골라 GameScene이 연습 모드로 시작해야 하는지.</summary>
         public static bool Requested { get; private set; }
 
+        /// <summary>
+        /// 연습 플레이가 진행 중인지. 연습이 시작되는 순간(요청을 읽을 때)부터 끝나거나 처음 화면으로 돌아갈 때까지 true.
+        /// 설명창 자동 열림처럼 연습 중에 꺼 두어야 하는 것들이 이 값을 본다.
+        /// </summary>
+        public static bool Active { get; private set; }
+
         /// <summary>"게임 시작"을 눌렀을 때 연습 안내를 띄워야 하는지.</summary>
         public static bool ShouldPrompt => !SeenThisVisitor;
 
@@ -27,8 +33,12 @@ namespace SushiSurvival.Core
         {
             bool requested = Requested;
             Requested = false;
+            if (requested) Active = true;
             return requested;
         }
+
+        /// <summary>연습이 끝났거나 건너뛰었을 때 부른다.</summary>
+        public static void EndTutorial() => Active = false;
 
         public static void MarkSeen() => SeenThisVisitor = true;
 
@@ -36,6 +46,7 @@ namespace SushiSurvival.Core
         {
             SeenThisVisitor = false;
             Requested = false;
+            Active = false;
         }
     }
 }

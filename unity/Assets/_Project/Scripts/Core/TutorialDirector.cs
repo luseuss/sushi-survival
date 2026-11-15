@@ -22,6 +22,8 @@ namespace SushiSurvival.Core
         [SerializeField] private float moveMarkerDistance = 5f;
         [Tooltip("공격 단계에서 적이 나타나는 캐릭터 둘레 거리.")]
         [SerializeField] private float attackSpawnRadius = 5f;
+        [Tooltip("안내 띠의 버튼(건너뛰기·시작하기)에 쓸 게임의 기본 버튼 그림. 비우면 단색 버튼이 된다.")]
+        [SerializeField] private Sprite buttonSprite;
         [Tooltip("연습이 끝나면 넘어갈 장면.")]
         [SerializeField] private string nextScene = "StoryScene";
         [Tooltip("끝 단계에서 아무것도 누르지 않아도 이 시간(초) 뒤에 넘어간다.")]
@@ -92,7 +94,7 @@ namespace SushiSurvival.Core
             if (rps != null) rps.SetWinChance(1f);
 
             Text anyText = FindObjectOfType<Text>(true);
-            _overlay = TutorialOverlay.Create(anyText != null ? anyText.font : null, Finish, Finish);
+            _overlay = TutorialOverlay.Create(anyText != null ? anyText.font : null, buttonSprite, Finish, Finish);
 
             _active = true;
             EnterStep(TutorialStep.Move);
@@ -108,6 +110,9 @@ namespace SushiSurvival.Core
         private void Update()
         {
             if (!_active || _finished || _player == null) return;
+
+            // 레벨업 카드 팝업이 떠 있는 동안에는 안내 띠를 아래로 내려 팝업 글자를 가리지 않게 한다.
+            _overlay.SetDock(LevelUpPanel.Instance != null && LevelUpPanel.Instance.IsOpen);
 
             switch (_step)
             {
@@ -232,6 +237,7 @@ namespace SushiSurvival.Core
             _finished = true;
 
             TutorialState.MarkSeen();
+            TutorialState.EndTutorial();
             Time.timeScale = 1f;
             SceneTransition.Go(nextScene);
         }

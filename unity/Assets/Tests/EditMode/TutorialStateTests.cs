@@ -41,6 +41,39 @@ namespace SushiSurvival.EditModeTests
         }
 
         [Test]
+        public void Active_BeginsWhenRequestIsConsumed_AndEndsOnEnd()
+        {
+            Assert.IsFalse(TutorialState.Active);
+
+            TutorialState.RequestTutorial();
+            Assert.IsFalse(TutorialState.Active, "요청만으로는 아직 진행 중이 아니다");
+
+            TutorialState.ConsumeRequest();
+            Assert.IsTrue(TutorialState.Active);
+
+            TutorialState.EndTutorial();
+            Assert.IsFalse(TutorialState.Active);
+        }
+
+        [Test]
+        public void ConsumeRequest_WithoutRequest_DoesNotStartTutorial()
+        {
+            Assert.IsFalse(TutorialState.ConsumeRequest());
+            Assert.IsFalse(TutorialState.Active);
+        }
+
+        [Test]
+        public void ResetForNewVisitor_EndsActiveTutorial()
+        {
+            TutorialState.RequestTutorial();
+            TutorialState.ConsumeRequest();
+
+            TutorialState.ResetForNewVisitor();
+
+            Assert.IsFalse(TutorialState.Active);
+        }
+
+        [Test]
         public void ResetForNewVisitor_PromptsAgain()
         {
             TutorialState.RequestTutorial();

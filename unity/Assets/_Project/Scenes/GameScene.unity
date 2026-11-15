@@ -23594,6 +23594,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterData: {fileID: 11400000, guid: 920fb1f04bd4b3642a9eb25be2ff9806, type: 2}
+  buttonSprite: {fileID: 521873489, guid: a7811bf404e17f44c94742ed92d4310a, type: 3}
   moveMarkerDistance: 5
   attackSpawnRadius: 5
   nextScene: StoryScene
