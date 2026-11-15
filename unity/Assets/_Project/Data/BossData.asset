@@ -65,6 +65,10 @@ MonoBehaviour:
     basicCount: 3
     californiaCount: 3
     midCount: 0
+  - healthThreshold: 0.5
+    basicCount: 0
+    californiaCount: 0
+    midCount: 2
   - healthThreshold: 0.4
     basicCount: 0
     californiaCount: 6
@@ -73,7 +77,7 @@ MonoBehaviour:
     basicCount: 8
     californiaCount: 8
     midCount: 0
-  - healthThreshold: 0.1
+  - healthThreshold: 0.2
     basicCount: 0
     californiaCount: 0
-    midCount: 2
+    midCount: 4
