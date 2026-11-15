@@ -64,7 +64,7 @@ section[id], div[id="about"] { scroll-margin-top: var(--bar-h); }
 .hero-inner { padding: calc(var(--bar-h) + 12px) 20px calc(var(--gh) + 56px); display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .logo-wrap { margin: 0; line-height: 0; }
 .logo {
-  height: min(40vh, 400px); width: auto; max-width: 78vw;
+  width: auto; height: auto; max-height: min(40vh, 400px); max-width: 78vw; /* 둘 중 하나만 걸려도 비율을 유지 */
   filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.22));
   animation: bob 3.4s ease-in-out infinite;
 }
