@@ -152,7 +152,20 @@ namespace SushiSurvival.Enemies.Boss
                     var umbrella = eggWeapon.GetComponent<RotatingUmbrellaWeapon>();
                     if (umbrella != null)
                     {
-                        eggWeapon.enabled = false;
+                        // 와사비 보상(추가 공격력 배율 > 1)이면 양산도 계속 켜 둔다.
+                        // 레벨업 진화(배율 1)일 때는 예전처럼 양산을 끄고 우산으로 교체한다.
+                        bool keepEgg = RunResultCarrier.WeaponDamageBonus > 1.0001f;
+                        if (keepEgg)
+                        {
+                            // 양산도 우산과 같은 레벨로 복원해야 연타 횟수가 이어진다.
+                            eggWeapon.SetLevel(RunResultCarrier.WeaponLevel);
+                            if (levelSystem != null) levelSystem.SetCompanionEgg(eggWeapon);
+                        }
+                        else
+                        {
+                            eggWeapon.enabled = false;
+                        }
+
                         umbrella.enabled = true;
                         weapon = umbrella;
                     }

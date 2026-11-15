@@ -91,6 +91,8 @@ namespace SushiSurvival.Core
         private PlayerStats _playerStats;
         private PlayerHealth _playerHealth;
         private WeaponBase _weapon;
+        // 와사비 보상 뒤에도 계속 공격하는 계란 양산. 우산이 레벨업할 때 같은 레벨로 맞춘다.
+        private EggFanWeapon _keptEgg;
         private Sprite _portrait;
         private RuntimeAnimatorController _royalSceneAnimator;
 
@@ -122,6 +124,7 @@ namespace SushiSurvival.Core
             _playerStats = stats;
             _playerHealth = health;
             _weapon = weapon;
+            _keptEgg = null;
             _portrait = portrait;
             _royalSceneAnimator = royalSceneAnimator;
 
@@ -134,6 +137,12 @@ namespace SushiSurvival.Core
         /// 활성 무기가 다른 컴포넌트로 바뀌었을 때 쓴다. 안 바꾸면 꺼진 무기(양산 Lv1)가 계속 강화 대상이 된다.
         /// </summary>
         public void SetWeapon(WeaponBase weapon) => _weapon = weapon;
+
+        /// <summary>
+        /// 와사비 보상으로 우산과 함께 계속 공격하는 양산을 알려 준다(보스 씬 복원용).
+        /// 이후 우산이 레벨업하면 이 양산도 같은 레벨로 맞춘다.
+        /// </summary>
+        public void SetCompanionEgg(EggFanWeapon egg) => _keptEgg = egg;
 
         /// <summary>
         /// 씬 전환(GameScene → BossScene) 직후, 이전 씬에서 쌓은 레벨·경험치·
@@ -300,7 +309,8 @@ namespace SushiSurvival.Core
 
             var lines = new List<string>();
             if (_weapon is EggFanWeapon)
-                lines.AddRange(ConvertToUmbrella());
+                // 와사비 보상은 양산을 끄지 않고 우산을 더해 준다(아델린은 기본 공격이 계속 나간다).
+                lines.AddRange(ConvertToUmbrella(keepEggAttacking: true));
             else if (_weapon is ShrimpRifleWeapon)
                 lines.AddRange(ConvertToShotgun());
 
@@ -313,8 +323,11 @@ namespace SushiSurvival.Core
             return lines.ToArray();
         }
 
-        /// <summary>아델린 전용 — 계란 양산을 회전 우산으로 바꾼다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>
-        private string[] ConvertToUmbrella()
+        /// <summary>
+        /// 아델린 전용 — 계란 양산을 회전 우산으로 바꾼다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).
+        /// keepEggAttacking이 true(와사비 보상)면 양산을 끄지 않아 기본 공격이 우산과 함께 계속 나간다.
+        /// </summary>
+        private string[] ConvertToUmbrella(bool keepEggAttacking = false)
         {
             if (_weapon is not EggFanWeapon eggWeapon) return Array.Empty<string>();
 
@@ -326,11 +339,19 @@ namespace SushiSurvival.Core
             }
 
             umbrella.SetLevel(eggWeapon.CurrentLevel);
-            eggWeapon.enabled = false;
+            if (keepEggAttacking)
+                _keptEgg = eggWeapon;
+            else
+                eggWeapon.enabled = false;
             umbrella.enabled = true;
             _weapon = umbrella;
 
-            return new[] { "계란 양산이 회전 우산으로 변했다!" };
+            return new[]
+            {
+                keepEggAttacking
+                    ? "계란 양산에 회전 우산이 더해졌다!"
+                    : "계란 양산이 회전 우산으로 변했다!"
+            };
         }
 
         /// <summary>카마리온 전용 — 간장 소총이 산탄을 부채꼴로 쏘는 샷건이 된다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>
@@ -373,6 +394,10 @@ namespace SushiSurvival.Core
         private void OnOptionChosen(IUpgradeOption option)
         {
             option.Apply();
+
+            // 와사비 뒤에도 계속 공격하는 양산은 우산과 같은 레벨로 맞춘다(연타 횟수가 레벨로 정해진다).
+            if (option is WeaponLevelUpOption && _keptEgg != null && _weapon is RotatingUmbrellaWeapon)
+                _keptEgg.SetLevel(_weapon.CurrentLevel);
 
             // 아델린의 양산은 정해진 레벨에 닿으면 회전 우산으로 바뀐다(와사비와 무관한 성장 경로).
             // 아래 카마리온의 샷건 전환도 같은 방식이다.

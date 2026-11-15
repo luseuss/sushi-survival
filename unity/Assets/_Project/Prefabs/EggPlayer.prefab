@@ -566,6 +566,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 3685209888068490168}
+  aimWithMouse: 1
+  mouseDeadZone: 0.15
 --- !u!114 &4444200661486265867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -625,12 +627,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5746ad32c4332b544894984d28362ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeIcon: {fileID: 21300000, guid: 1e770387e034c61b3395fa02e346ea56, type: 3}
   weaponData: {fileID: 11400000, guid: bb432c457314eac4fb9d5078f9d5ed2d, type: 2}
   attackAnimator: {fileID: 2101254156065262463}
   currentLevel: 1
   minCooldown: 0.2
   playerStats: {fileID: 1684592149345602573}
+  upgradeIcon: {fileID: 21300000, guid: 1e770387e034c61b3395fa02e346ea56, type: 3}
   facing: {fileID: 4542973571035354992}
   enemyLayer:
     serializedVersion: 2
@@ -689,12 +691,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9556cca7942b484da046891e81cabdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeIcon: {fileID: 21300000, guid: 1e770387e034c61b3395fa02e346ea56, type: 3}
   weaponData: {fileID: 11400000, guid: 480310f94ba1faf49a4671ae2a629ea2, type: 2}
   attackAnimator: {fileID: 0}
   currentLevel: 1
   minCooldown: 0.2
   playerStats: {fileID: 1684592149345602573}
+  upgradeIcon: {fileID: 21300000, guid: 1e770387e034c61b3395fa02e346ea56, type: 3}
   umbrellas:
   - {fileID: 1248223125135256390}
   - {fileID: 2943669867541755183}
@@ -702,7 +704,8 @@ MonoBehaviour:
   - {fileID: 6560580102141252179}
   - {fileID: 5486540132371675448}
   umbrellaCountByLevel: 04000000040000000500000005000000
-  rotationSpeedDegreesPerSecond: 360
+  spinCooldown: 2
+  rotationSpeedDegreesPerSecond: 720
   spriteAngleOffset: 90
   hitRadius: 0.3
   enemyLayer:
