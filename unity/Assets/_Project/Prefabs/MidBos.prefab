@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: -4672852390917677874}
   - component: {fileID: 3300000000000000001}
   - component: {fileID: 2054945952394759817}
+  - component: {fileID: 6183667187175564997}
   m_Layer: 6
   m_Name: MidBos
   m_TagString: Untagged
@@ -203,6 +204,9 @@ MonoBehaviour:
   knockbackForce: 3
   knockbackDecay: 12
   spriteFlasher: {fileID: -4672852390917677874}
+  hitFlashHoldSeconds: 0.06
+  hitFlashFadeSeconds: 0.14
+  hitFlashFadeColor: {r: 1, g: 0.35, b: 0.3, a: 1}
 --- !u!114 &1108281474064982475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +226,9 @@ MonoBehaviour:
   separationRadius: 1.2
   separationStrength: 0
   separationInterval: 0.1
+  blockAgainstMobs: 1
+  mobOverlapResolveSpeed: 0.6
+  mobBlockQueryRadius: 1.2
   contactOverlap: 0.02
 --- !u!114 &-4672852390917677874
 MonoBehaviour:
@@ -274,3 +281,17 @@ MonoBehaviour:
   flightSeconds: 0.9
   damage: 12
   landingRadius: 1
+--- !u!114 &6183667187175564997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159080399903384064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c24f2491cb47467ca0d54e9eca6fab14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artFacesRight: 1
+  deadZone: 0.15
