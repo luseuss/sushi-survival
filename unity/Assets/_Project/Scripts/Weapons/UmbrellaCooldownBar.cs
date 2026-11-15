@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace SushiSurvival.Weapons
 {
     /// <summary>
-    /// 회전 우산 스킬의 쿨타임 막대. 체력바(HudHealthBar)의 자식으로 바로 아래에 붙어서 체력바를 따라다니며,
+    /// 클릭 스킬(아델린 회전 우산, 카마리온 와사비 샷건)의 쿨타임 막대. 체력바(HudHealthBar)의 자식으로 바로 아래에 붙어서 체력바를 따라다니며,
     /// 체력바와 같은 그림(틀)을 더 작게 쓴다. 쿨타임 동안 차오르고, 다 차면 금색으로 반짝여 "지금 쓸 수 있다"를 알린다.
     /// 우산 무기가 코드로 만들고 없앤다(씬 배선 없음). 체력바가 숨으면(전투 중이 아닐 때) 함께 숨는다.
     /// </summary>
@@ -16,11 +16,14 @@ namespace SushiSurvival.Weapons
 
         private static readonly Color FillColor = new Color(0.35f, 0.8f, 1f, 1f);
         private static readonly Color ReadyColor = new Color(1f, 0.85f, 0.25f, 1f);
+        // 스킬이 켜져 있는 동안(막대가 줄어드는 동안)의 색.
+        private static readonly Color ActiveColor = new Color(1f, 0.55f, 0.15f, 1f);
 
         private Image _fill;
         private RectTransform _rect;
         private float _ratio;
         private bool _ready;
+        private bool _active;
         private float _readySince;
 
         /// <summary>
@@ -60,9 +63,20 @@ namespace SushiSurvival.Weapons
             return bar;
         }
 
-        /// <summary>막대가 찬 정도(0~1). 1이면 쓸 수 있는 상태로 보고 반짝인다.</summary>
+        /// <summary>
+        /// 스킬이 켜져 있는 동안 남은 시간 비율(1 → 0). 주황색으로 줄어든다. 쿨타임이 돌기 시작하면 SetFill로 바꾼다.
+        /// </summary>
+        public void SetActiveRatio(float ratio)
+        {
+            _active = true;
+            _ready = false;
+            _ratio = Mathf.Clamp01(ratio);
+        }
+
+        /// <summary>쿨타임으로 막대가 찬 정도(0~1). 1이면 쓸 수 있는 상태로 보고 반짝인다.</summary>
         public void SetFill(float ratio)
         {
+            _active = false;
             bool nowReady = ratio >= 1f;
             if (nowReady && !_ready) _readySince = Time.unscaledTime;
 
@@ -93,6 +107,13 @@ namespace SushiSurvival.Weapons
             if (_fill == null) return;
 
             _fill.fillAmount = _ratio;
+
+            if (_active)
+            {
+                _fill.color = ActiveColor;
+                _rect.localScale = Vector3.one;
+                return;
+            }
 
             if (!_ready)
             {

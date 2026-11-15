@@ -292,9 +292,9 @@ namespace SushiSurvival.Core
         /// <summary>지금 무기로 와사비를 받으면 무엇을 얻는지. 이미 변신했으면 None이라 버튼을 숨긴다.</summary>
         private WasabiReward CurrentWasabiReward()
         {
-            bool canTransform = _weapon is EggFanWeapon || (_weapon is ShrimpRifleWeapon rifle && !rifle.IsShotgun);
+            bool canTransform = _weapon is EggFanWeapon || (_weapon is ShrimpRifleWeapon rifle && !rifle.HasShotgunSkill);
             bool alreadyTransformed = _weapon is RotatingUmbrellaWeapon ||
-                                      (_weapon is ShrimpRifleWeapon shotgun && shotgun.IsShotgun);
+                                      (_weapon is ShrimpRifleWeapon shotgun && shotgun.HasShotgunSkill);
             return WasabiRewardLogic.Decide(canTransform, alreadyTransformed);
         }
 
@@ -345,14 +345,14 @@ namespace SushiSurvival.Core
             return new[] { "회전 우산 스킬을 얻었다! 마우스 클릭으로 발동" };
         }
 
-        /// <summary>카마리온 전용 — 간장 소총이 산탄을 부채꼴로 쏘는 샷건이 된다(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>
+        /// <summary>카마리온 전용 — 와사비 샷건 스킬을 얻는다(마우스 클릭으로 일정 시간 산탄 샷건, 소총은 계속 자동 공격)(레벨업 성장 경로, 예전 와사비 보상이기도 했다).</summary>
         private string[] ConvertToShotgun()
         {
             if (_weapon is not ShrimpRifleWeapon rifle) return Array.Empty<string>();
 
-            rifle.EnableShotgun();
+            rifle.UnlockShotgunSkill();
 
-            return new[] { "간장 소총이 샷건으로 변했다!" };
+            return new[] { "와사비 샷건 스킬을 얻었다! 마우스 클릭으로 발동" };
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace SushiSurvival.Core
             if (option is WeaponLevelUpOption && _weapon is EggFanWeapon egg && egg.ReadyToEvolve)
                 ConvertToUmbrella();
 
-            // 카마리온의 소총도 정해진 레벨에 닿으면 샷건으로 바뀐다.
+            // 카마리온의 소총도 정해진 레벨에 닿으면 와사비 샷건 스킬을 얻는다.
             if (option is WeaponLevelUpOption && _weapon is ShrimpRifleWeapon rifle && rifle.ReadyToEvolve)
                 ConvertToShotgun();
 

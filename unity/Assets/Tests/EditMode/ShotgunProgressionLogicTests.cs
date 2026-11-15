@@ -26,7 +26,8 @@ namespace SushiSurvival.EditModeTests
         {
             string text = ShotgunProgressionLogic.DescribeRifleUpgrade("공격력 14 → 17", true, 5);
 
-            StringAssert.Contains("샷건으로 변화", text);
+            StringAssert.Contains("와사비 샷건 스킬", text);
+            StringAssert.Contains("클릭", text);
             StringAssert.Contains("산탄 5발", text);
             StringAssert.DoesNotContain("공격력", text);
         }
