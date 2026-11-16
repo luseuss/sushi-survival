@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3413810673626076289}
+  - component: {fileID: 4190022126023741251}
   - component: {fileID: 676669210647032333}
   - component: {fileID: 8545534518783757137}
   m_Layer: 0
@@ -33,6 +34,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4190022126023741251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4636267110097940967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4786110ea48cf4147bc3f93f9b799e28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.06, y: -0.06}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.55}
+  orderOffset: -1
 --- !u!212 &676669210647032333
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -99,3 +115,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallbackPickupRadius: 0.5
   xpValue: 5
+  attractStartSpeed: 8
+  attractAcceleration: 30
+  attractMaxSpeed: 25
+  collectStartSpeed: 6
+  collectAcceleration: 45
+  collectMaxSpeed: 22
+  collectDistance: 0.15
+  maxFlightSeconds: 0.5
+  arrivalScale: 0.55

@@ -2592,6 +2592,7 @@ GameObject:
   - component: {fileID: 2041373431}
   - component: {fileID: 2041373430}
   - component: {fileID: 2041373429}
+  - component: {fileID: 2041373432}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -2660,6 +2661,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2041373432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2041373428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f8199ac8a42a79469ac843cd9b63eaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cursorTexture: {fileID: 2800000, guid: 50332338010256742980159c00bffeab, type: 3}
+  tint: {r: 1, g: 0, b: 0, a: 1}
+  replaceColor: 1
+  useCenterHotspot: 1
+  hotspot: {x: 0, y: 0}
 --- !u!1 &3100000010
 GameObject:
   m_ObjectHideFlags: 0
