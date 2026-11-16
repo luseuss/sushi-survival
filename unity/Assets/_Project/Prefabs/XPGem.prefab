@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7205941417746012281}
   - component: {fileID: 676669210647032333}
   - component: {fileID: 8545534518783757137}
-  - component: {fileID: 6168591540031063816}
   m_Layer: 0
   m_Name: XPGem
   m_TagString: Untagged
@@ -125,18 +124,3 @@ MonoBehaviour:
   collectDistance: 0.15
   maxFlightSeconds: 0.5
   arrivalScale: 0.55
---- !u!114 &6168591540031063816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4636267110097940967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 2.5, y: 2.5}
-  m_UseGraphicAlpha: 1
