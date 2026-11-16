@@ -103,6 +103,10 @@ namespace SushiSurvival.Enemies
 
         private void Die()
         {
+            // 스포너가 풀을 못 넘겨줬어도(스폰 경로마다 주입이 빠질 수 있다) 씬의 젬 풀로 대신 드롭한다.
+            if (_xpGemPools == null)
+                _xpGemPools = FindObjectOfType<XPGemPoolSet>();
+
             if (_xpGemPools == null)
             {
                 Debug.LogError($"{name}: xpGemPools가 설정되지 않아 XP 젬을 드롭할 수 없습니다.");
