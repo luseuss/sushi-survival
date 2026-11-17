@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3085627467183355856}
   - component: {fileID: 2426610766524228250}
   - component: {fileID: 1365816526184720157}
-  - component: {fileID: 3319406163119523195}
   - component: {fileID: 3596138435572102197}
   - component: {fileID: 3921557646366699725}
   - component: {fileID: 2060466612959061517}
@@ -20,6 +19,7 @@ GameObject:
   - component: {fileID: 859233559979313158}
   - component: {fileID: 3062537633644617506}
   - component: {fileID: 8400244482859671446}
+  - component: {fileID: 8383199573046566460}
   m_Layer: 0
   m_Name: ShrimpPlayer
   m_TagString: Player
@@ -122,41 +122,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &3319406163119523195
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 629794472604786000}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.11
 --- !u!114 &3596138435572102197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,6 +135,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 2426610766524228250}
+  aimWithMouse: 1
+  mouseDeadZone: 0.15
 --- !u!114 &3921557646366699725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,14 +175,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb6c0c110d81304793621ed116baaf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeIcon: {fileID: 21300000, guid: c1f004c098d43bbbac70fb272ac65862, type: 3}
   weaponData: {fileID: 11400000, guid: b77dcefefb47f7344b9e259da98ca698, type: 2}
   attackAnimator: {fileID: 0}
   currentLevel: 1
   minCooldown: 0.2
   playerStats: {fileID: 6343328608926914217}
+  upgradeIcon: {fileID: 21300000, guid: c1f004c098d43bbbac70fb272ac65862, type: 3}
   facing: {fileID: 3596138435572102197}
   muzzle: {fileID: 1367590040473950150}
+  shotgunFromLevel: 3
+  skillDuration: 5
+  skillCooldown: 10
+  shotgunFireInterval: 0.5
+  clickBufferSeconds: 0.25
+  shakeMagnitude: 0.1
+  shakeSeconds: 0.12
   shotgunPelletCount: 5
   shotgunSpreadDegrees: 40
   shotgunDamageRatio: 0.5
@@ -225,10 +199,12 @@ MonoBehaviour:
   shotgunVisualScale: 0.7
   shotgunOrbitDistance: 0.2
   weaponVisual: {fileID: 5971176351539035451}
+  shotgunUpgradeIcon: {fileID: 21300000, guid: 4062021a8d42b25264db9ec79707e85c, type: 3}
   shotgunBulletTint: {r: 0.75, g: 0.75, b: 0.75, a: 1}
   cooldownBarFrame: {fileID: 21300000, guid: a7e2ea0d28a56e0428f6132ae46ef7d6, type: 3}
   cooldownBarFill: {fileID: 21300000, guid: 6699107eb2b098e4c2f44fd0230f4b2b, type: 3}
-  shotgunUpgradeIcon: {fileID: 21300000, guid: 4062021a8d42b25264db9ec79707e85c, type: 3}
+  cooldownBarScale: 0.7
+  cooldownBarGap: 4
 --- !u!114 &6343328608926914217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -288,6 +264,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a4e45a0ed66ca4999cada08bbfa2fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!70 &8383199573046566460
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629794472604786000}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.162, y: 0.28}
+  m_Direction: 0
 --- !u!1 &7212407171583317725
 GameObject:
   m_ObjectHideFlags: 0
