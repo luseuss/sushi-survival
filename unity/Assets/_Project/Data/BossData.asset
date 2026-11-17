@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterName: "\uB864\uBC95\uC0AC"
   maxHealth: 6000
-  contactDamage: 15
+  contactDamage: 22.5
   moveSpeed: 1.6
   knockbackResistance: 0.9
   xpGemDrop: 2
@@ -29,7 +29,7 @@ MonoBehaviour:
     meteorCount: 3
     meteorSpacing: 0.35
     meteorWarningTime: 0.7
-    meteorDamage: 20
+    meteorDamage: 30
     meteorRadius: 1.2
     chargeWindup: 0.8
     chargeDuration: 0.55
@@ -43,7 +43,7 @@ MonoBehaviour:
     meteorCount: 5
     meteorSpacing: 0.3
     meteorWarningTime: 0.6
-    meteorDamage: 25
+    meteorDamage: 37.5
     meteorRadius: 1.2
     chargeWindup: 0.6
     chargeDuration: 0.6
