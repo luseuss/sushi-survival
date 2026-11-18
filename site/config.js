@@ -5,7 +5,7 @@ window.SITE_CONFIG = {
 
   version: "2.0",
   fileSize: "약 151MB",
-  releaseDate: "2026-11-16",
+  releaseDate: "2026-11-19",
 
   // GitHub Release에 올린 zip의 다운로드 주소. 비워 두면 버튼이 "곧 공개됩니다"로 잠긴다.
   // 예: "https://github.com/<계정>/<저장소>/releases/download/v2.0/WasabiSurvival_v2.0_win64.zip"
