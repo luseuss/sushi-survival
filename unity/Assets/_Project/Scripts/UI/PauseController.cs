@@ -13,6 +13,8 @@ namespace SushiSurvival.UI
     {
         [SerializeField] private GameObject panel;
         [SerializeField] private Button resumeButton;
+        [Tooltip("켜면 인트로 같은 메뉴 화면용으로 동작한다. 전투 중이 아니어도 ESC로 설정 창을 열고, 게임 시간은 멈추지 않는다(배경 연출이 그대로 돈다).")]
+        [SerializeField] private bool menuMode;
 
         private bool _paused;
 
@@ -42,18 +44,21 @@ namespace SushiSurvival.UI
                 resumeButton.onClick.RemoveListener(Resume);
 
             // 멈춘 채로 씬이 바뀌면 다음 씬이 timeScale 0으로 시작한다.
-            if (_paused)
+            if (_paused && !menuMode)
                 Time.timeScale = 1f;
         }
 
         private void TryPause()
         {
             GameManager manager = GameManager.Instance;
-            bool isPlaying = manager != null && manager.CurrentState == RunState.Playing;
-            if (!PauseLogic.CanPause(isPlaying, Time.timeScale)) return;
+            if (!menuMode)
+            {
+                bool isPlaying = manager != null && manager.CurrentState == RunState.Playing;
+                if (!PauseLogic.CanPause(isPlaying, Time.timeScale)) return;
+            }
 
             _paused = true;
-            Time.timeScale = 0f;
+            if (!menuMode) Time.timeScale = 0f;
 
             if (panel != null)
                 panel.SetActive(true);
@@ -64,7 +69,7 @@ namespace SushiSurvival.UI
             if (!_paused) return;
 
             _paused = false;
-            Time.timeScale = 1f;
+            if (!menuMode) Time.timeScale = 1f;
 
             if (panel != null)
                 panel.SetActive(false);
